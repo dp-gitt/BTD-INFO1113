@@ -31,11 +31,12 @@ public class App extends PApplet {
 
     public Random random = new Random();
 
-    private static String levelName = "level4.txt";
+    private static String levelName = "level3.txt";
     // private int TESTING_VAR = 0;
     // private char[][] levelDataMatrix;
     private ArrayList<MapElements> elementsList = new ArrayList<MapElements>();
     private ArrayList<Paths> pathsList = new ArrayList<Paths>();
+    private ArrayList<WizardHouse> wizardHouseList = new ArrayList<WizardHouse>();
 
     // Feel free to add any additional methods or attributes you want. Please put
     // classes in different files.
@@ -45,24 +46,23 @@ public class App extends PApplet {
      * level file, and stores them into a 2D matrix such that the symbols
      * can be individually iterated through and the correct image is drawn.
      */
-    public char[][] loadLevelData(String levelName) {
-        String[] levelLines = loadStrings(levelName);
-        int numRows = levelLines.length;
-        int numColumns = levelLines[0].length();
-        char[][] levelDataMatrix = new char[numRows][numColumns];
 
-        for (int currRow = 0; currRow < numRows; currRow++) {
-            for (int currCol = 0; currCol < numColumns; currCol++) {
-                levelDataMatrix[currRow][currCol] = levelLines[currRow].charAt(currCol);
-            }
+    public char[][] loadLevelData(String levelName) {
+    String[] levelLines = loadStrings(levelName);
+    int numRows = levelLines.length;
+    int numColumns = levelLines[0].length();
+    char[][] levelDataMatrix = new char[numRows][numColumns];
+
+    for (int currRow = 0; currRow < numRows; currRow++) {
+        for (int currCol = 0; currCol < numColumns; currCol++) {
+            char currentChar = ' ';
+            if (currCol < levelLines[currRow].length()) {
+                currentChar = levelLines[currRow].charAt(currCol);
+            } 
+            levelDataMatrix[currRow][currCol] = currentChar;
         }
+    }
         return levelDataMatrix;
-        // for (int currRow = 0; currRow < numRows; currRow++) {
-        // for (int currCol = 0; currCol < numColumns; currCol++) {
-        // System.out.print(levelDataMatrix[currRow][currCol] + " ");
-        // }
-        // System.out.println(); // Move to the next row
-        // }
     }
 
     public void createMapElements(char[][] levelDataMatrix) {
@@ -81,8 +81,9 @@ public class App extends PApplet {
                     elementsList.add(new Shrub(xPos, yPos, loadImage("src/main/resources/WizardTD/shrub.png")));
                     // new instance of shrub
                 } else if (mapSymbol == 'W') {
-                    elementsList.add(
-                            new WizardHouse(xPos, yPos, loadImage("src/main/resources/WizardTD/wizard_house.png")));
+                    xPos += (CELLSIZE - 48) / 2;  // Center horizontally
+                    yPos += (CELLSIZE - 48) / 2;  // Center vertically
+                    wizardHouseList.add(new WizardHouse(xPos, yPos, loadImage("src/main/resources/WizardTD/wizard_house.png")));
                     // new instance of Wizard House
                 } else if (mapSymbol == 'X') {
                     createMapPaths(levelDataMatrix, row, column);
@@ -170,8 +171,16 @@ public class App extends PApplet {
             pathsList.add(new Paths(xPos, yPos, leftUp));
         } else if (!isAbove && isBelow && isToRight && !isToLeft) {
             pathsList.add(new Paths(xPos, yPos, upRight));
-        } 
-        
+        } else if (isAbove && !isBelow && !isToRight && !isToLeft) {
+            pathsList.add(new Paths(xPos, yPos, verticalPath));
+        } else if (!isAbove && isBelow && !isToRight && !isToLeft) {
+            pathsList.add(new Paths(xPos, yPos, verticalPath));
+        } else if (!isAbove && !isBelow && isToRight && !isToLeft) {
+            pathsList.add(new Paths(xPos, yPos, horizontalPath));
+        } else if (!isAbove && !isBelow && !isToRight && isToLeft) {
+            pathsList.add(new Paths(xPos, yPos, horizontalPath));
+        }
+            
         
         else {
             System.out.println("right: " + isToRight);
@@ -204,6 +213,7 @@ public class App extends PApplet {
     public void setup() {
         frameRate(FPS);
         createMapElements(loadLevelData(levelName));
+        noStroke();
 
         // Load images during setup
         // Eg:
@@ -251,6 +261,8 @@ public class App extends PApplet {
 
     @Override
     public void draw() {
+        rect(640, 40, 120, 640);
+        fill(132, 115, 74);
         for (MapElements elementToDraw : elementsList) {
             elementToDraw.draw(this);
         }
@@ -258,6 +270,28 @@ public class App extends PApplet {
         for (Paths pathsToDraw : pathsList) {
             pathsToDraw.draw(this);
         }
+
+        for (WizardHouse wizardHouse : wizardHouseList) {
+            int wizardXPos = wizardHouse.getXPos();
+            int wizardYPos = wizardHouse.getYpos();
+            MapElements grassUnderWizard = new Grass(wizardXPos, wizardYPos, loadImage("src/main/resources/WizardTD/grass.png"));
+            grassUnderWizard.draw(this);
+            wizardHouse.draw(this);
+        }
+        
+        // side and top backgrounds 
+        rect(640, 40, 120, 640);
+        fill(132, 115, 74);
+        rect(0,0,760,40);
+        fill(132, 115, 74);
+
+
+
+
+
+
+
+        // rgb(132, 115, 74);
 
         // if (TESTING_VAR == 0) {
         // loadLevelData(levelName);

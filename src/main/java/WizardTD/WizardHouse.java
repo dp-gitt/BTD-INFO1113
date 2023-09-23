@@ -12,6 +12,14 @@ public class WizardHouse extends MapElements {
             app.image(sprite,xPos,yPos);
         }
 
+        public int getXPos() {
+            return this.xPos;
+        }
+
+        public int getYpos() {
+            return this.yPos;
+        }
+
         public void tick() {
 
         }
