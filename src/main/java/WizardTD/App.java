@@ -1,6 +1,7 @@
 package WizardTD;
 
 import processing.core.PApplet;
+import processing.core.PFont;
 import processing.core.PImage;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
@@ -31,12 +32,13 @@ public class App extends PApplet {
 
     public Random random = new Random();
 
-    private static String levelName = "level3.txt";
+    private static String levelName = "level2.txt";
     // private int TESTING_VAR = 0;
     // private char[][] levelDataMatrix;
     private ArrayList<MapElements> elementsList = new ArrayList<MapElements>();
     private ArrayList<Paths> pathsList = new ArrayList<Paths>();
     private ArrayList<WizardHouse> wizardHouseList = new ArrayList<WizardHouse>();
+    private ArrayList<Buttons> buttonsList = new ArrayList<Buttons>();
 
     // Feel free to add any additional methods or attributes you want. Please put
     // classes in different files.
@@ -193,6 +195,24 @@ public class App extends PApplet {
         }
     }
 
+    public void createButtons() {
+
+        Buttons twoXButton = new Buttons(this, 650, 50, 40, 40,color(132, 115, 74 ),"2x Speed", "FF");
+        Buttons pauseButton = new Buttons(this, 650, 100, 40, 40,color(132, 115, 74), "PAUSE", "P");
+        Buttons buildTowerButton = new Buttons(this, 650, 150, 40, 40,color(132, 115, 74), "Build Tower", "T");
+        Buttons upgradeRangeButton = new Buttons(this, 650, 200, 40, 40,color(132, 115, 74), "Upgrade Range", "U1");
+        Buttons upgradeSpeedButton = new Buttons(this, 650, 250, 40, 40,color(132, 115, 74), "Upgrade Speed", "U2");
+        Buttons upgradeDamageButton = new Buttons(this, 650, 300, 40, 40,color(132, 115, 74), "Upgrade Damage", "U3");
+        Buttons manaPoolButton = new Buttons(this, 650, 350, 40, 40,color(132, 115, 74), "Mana Pool cost: 100", "M");
+        buttonsList.add(twoXButton);
+        buttonsList.add(pauseButton);
+        buttonsList.add(buildTowerButton);
+        buttonsList.add(upgradeRangeButton);
+        buttonsList.add(upgradeSpeedButton);
+        buttonsList.add(upgradeDamageButton);
+        buttonsList.add(manaPoolButton);
+    }
+
     public App() {
         this.configPath = "config.json";
     }
@@ -213,7 +233,11 @@ public class App extends PApplet {
     public void setup() {
         frameRate(FPS);
         createMapElements(loadLevelData(levelName));
+        textFont(createFont("Arial", 12));
         noStroke();
+        textAlign(LEFT);
+        createButtons();
+
 
         // Load images during setup
         // Eg:
@@ -263,6 +287,12 @@ public class App extends PApplet {
     public void draw() {
         rect(640, 40, 120, 640);
         fill(132, 115, 74);
+
+        // side and top backgrounds 
+        rect(640, 40, 120, 640);
+        fill(132, 115, 74);
+        rect(0,0,760,40);
+        fill(132, 115, 74);
         for (MapElements elementToDraw : elementsList) {
             elementToDraw.draw(this);
         }
@@ -278,26 +308,13 @@ public class App extends PApplet {
             grassUnderWizard.draw(this);
             wizardHouse.draw(this);
         }
-        
-        // side and top backgrounds 
-        rect(640, 40, 120, 640);
-        fill(132, 115, 74);
-        rect(0,0,760,40);
-        fill(132, 115, 74);
 
+        for (Buttons button : buttonsList) {
+            button.drawText();
+            button.drawButton();
+            button.drawLabel();
+        }
 
-
-
-
-
-
-        // rgb(132, 115, 74);
-
-        // if (TESTING_VAR == 0) {
-        // loadLevelData(levelName);
-        // TESTING_VAR++;
-        // }
-        // this.grass.draw(this);
 
     }
 
