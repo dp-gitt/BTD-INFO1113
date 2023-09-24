@@ -50,7 +50,7 @@ public class Buttons {
     public void drawLabel() {
         app.fill(0);
         app.textSize(24);
-        float fontHeight = app.textAscent() + app.textDescent();
+        // float fontHeight = app.textAscent() + app.textDescent();
         if (label.length() == 2) {
             app.text(label, x + width/2 - app.textWidth(label)/2 , y +height/2 + app.textAscent()/2);
             

@@ -3,6 +3,7 @@ package WizardTD;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PImage;
+import processing.core.PVector;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
 import processing.event.MouseEvent;
@@ -31,14 +32,16 @@ public class App extends PApplet {
     public String configPath;
 
     public Random random = new Random();
+    
 
-    private static String levelName = "level2.txt";
+    private static String levelName = "level3.txt";
     // private int TESTING_VAR = 0;
     // private char[][] levelDataMatrix;
     private ArrayList<MapElements> elementsList = new ArrayList<MapElements>();
     private ArrayList<Paths> pathsList = new ArrayList<Paths>();
     private ArrayList<WizardHouse> wizardHouseList = new ArrayList<WizardHouse>();
     private ArrayList<Buttons> buttonsList = new ArrayList<Buttons>();
+    private ArrayList<PVector> MonsterSpawnPointsList = new ArrayList<PVector>();
 
     // Feel free to add any additional methods or attributes you want. Please put
     // classes in different files.
@@ -89,16 +92,14 @@ public class App extends PApplet {
                     // new instance of Wizard House
                 } else if (mapSymbol == 'X') {
                     createMapPaths(levelDataMatrix, row, column);
-                    // System.out.println("X found");
+                    if (row == 0 || row == 19) {
+                        System.out.println("Theres a path on the top or row");
+                        MonsterSpawnPointsList.add(new PVector(xPos, yPos));
+                    } else if (column == 0 || column == 19) {
+                        MonsterSpawnPointsList.add(new PVector(xPos, yPos));
+                        System.out.println("theres a path on the first or last column");
+                    }
                 }
-                // else if (mapSymbol == 'X') {
-                // elementsList.add(new
-                // Paths(xPos,yPos,loadImage("src/main/resources/WizardTD/path0.png")));
-                // // for paths i might not need 3rd input because there is different types of
-                // paths
-                // // new instance of Paths
-                // }
-
             }
 
         }
