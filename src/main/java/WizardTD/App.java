@@ -32,7 +32,8 @@ public class App extends PApplet {
     public String configPath;
 
     public Random random = new Random();
-    
+    public char[][] mapGrid;
+    public PVector wizardSpawnPoint;
 
     private static String levelName = "level3.txt";
     // private int TESTING_VAR = 0;
@@ -42,6 +43,8 @@ public class App extends PApplet {
     private ArrayList<WizardHouse> wizardHouseList = new ArrayList<WizardHouse>();
     private ArrayList<Buttons> buttonsList = new ArrayList<Buttons>();
     private ArrayList<PVector> MonsterSpawnPointsList = new ArrayList<PVector>();
+    private ArrayList<Monster> monsterList = new ArrayList<Monster>();
+    // public int[][] mapGrid;
 
     // Feel free to add any additional methods or attributes you want. Please put
     // classes in different files.
@@ -52,21 +55,31 @@ public class App extends PApplet {
      * can be individually iterated through and the correct image is drawn.
      */
 
-    public char[][] loadLevelData(String levelName) {
-    String[] levelLines = loadStrings(levelName);
-    int numRows = levelLines.length;
-    int numColumns = levelLines[0].length();
-    char[][] levelDataMatrix = new char[numRows][numColumns];
+    public void createMonsters() {
+        PVector firstCoordinate = MonsterSpawnPointsList.get(0); // Get the first coordinate
+        monsterList.add(new Monster(this, "gremlin", 100, 2, 150, 100, firstCoordinate, wizardSpawnPoint, mapGrid));
+        // for (PVector coordinate : MonsterSpawnPointsList) {
+        // monsterList.add(new Monster(this,"gremlin",100,2,150,100,coordinate,
+        // wizardSpawnPoint, mapGrid));
+        // }
 
-    for (int currRow = 0; currRow < numRows; currRow++) {
-        for (int currCol = 0; currCol < numColumns; currCol++) {
-            char currentChar = ' ';
-            if (currCol < levelLines[currRow].length()) {
-                currentChar = levelLines[currRow].charAt(currCol);
-            } 
-            levelDataMatrix[currRow][currCol] = currentChar;
-        }
     }
+
+    public char[][] loadLevelData(String levelName) {
+        String[] levelLines = loadStrings(levelName);
+        int numRows = levelLines.length;
+        int numColumns = levelLines[0].length();
+        char[][] levelDataMatrix = new char[numRows][numColumns];
+
+        for (int currRow = 0; currRow < numRows; currRow++) {
+            for (int currCol = 0; currCol < numColumns; currCol++) {
+                char currentChar = ' ';
+                if (currCol < levelLines[currRow].length()) {
+                    currentChar = levelLines[currRow].charAt(currCol);
+                }
+                levelDataMatrix[currRow][currCol] = currentChar;
+            }
+        }
         return levelDataMatrix;
     }
 
@@ -86,17 +99,19 @@ public class App extends PApplet {
                     elementsList.add(new Shrub(xPos, yPos, loadImage("src/main/resources/WizardTD/shrub.png")));
                     // new instance of shrub
                 } else if (mapSymbol == 'W') {
-                    xPos += (CELLSIZE - 48) / 2;  // Center horizontally
-                    yPos += (CELLSIZE - 48) / 2;  // Center vertically
-                    wizardHouseList.add(new WizardHouse(xPos, yPos, loadImage("src/main/resources/WizardTD/wizard_house.png")));
+                    wizardSpawnPoint = new PVector(row, column);
+                    xPos += (CELLSIZE - 48) / 2; // Center horizontally
+                    yPos += (CELLSIZE - 48) / 2; // Center vertically
+                    wizardHouseList.add(
+                            new WizardHouse(xPos, yPos, loadImage("src/main/resources/WizardTD/wizard_house.png")));
                     // new instance of Wizard House
                 } else if (mapSymbol == 'X') {
                     createMapPaths(levelDataMatrix, row, column);
                     if (row == 0 || row == 19) {
                         System.out.println("Theres a path on the top or row");
-                        MonsterSpawnPointsList.add(new PVector(xPos, yPos));
+                        MonsterSpawnPointsList.add(new PVector(row, column));
                     } else if (column == 0 || column == 19) {
-                        MonsterSpawnPointsList.add(new PVector(xPos, yPos));
+                        MonsterSpawnPointsList.add(new PVector(row, column));
                         System.out.println("theres a path on the first or last column");
                     }
                 }
@@ -117,7 +132,7 @@ public class App extends PApplet {
         PImage intersection = loadImage("src/main/resources/WizardTD/path3.png");
         PImage rightDown = loadImage("src/main/resources/WizardTD/path1.png");
         PImage downLeft = rotateImageByDegrees(rightDown, 90);
-        PImage leftUp = rotateImageByDegrees(rightDown, 180);  
+        PImage leftUp = rotateImageByDegrees(rightDown, 180);
         PImage upRight = rotateImageByDegrees(rightDown, 270);
 
         // Edges Or Corners
@@ -151,8 +166,8 @@ public class App extends PApplet {
 
         } else if (isAbove && isBelow && !isToLeft && !isToRight) {
             pathsList.add(new Paths(xPos, yPos, verticalPath));
-            //System.out.println("VERTICAL DRAWN");
-        }  else if (isToRight && isToLeft &&!isAbove && !isBelow) {
+            // System.out.println("VERTICAL DRAWN");
+        } else if (isToRight && isToLeft && !isAbove && !isBelow) {
             pathsList.add(new Paths(xPos, yPos, horizontalPath));
             // System.out.println("HORIZONTAL DRAWN");
         } else if (isAbove && isBelow && isToRight && !isToLeft) {
@@ -183,8 +198,7 @@ public class App extends PApplet {
         } else if (!isAbove && !isBelow && !isToRight && isToLeft) {
             pathsList.add(new Paths(xPos, yPos, horizontalPath));
         }
-            
-        
+
         else {
             System.out.println("right: " + isToRight);
             System.out.println("lef: " + isToLeft);
@@ -198,13 +212,13 @@ public class App extends PApplet {
 
     public void createButtons() {
 
-        Buttons twoXButton = new Buttons(this, 650, 50, 40, 40,color(132, 115, 74 ),"2x Speed", "FF");
-        Buttons pauseButton = new Buttons(this, 650, 100, 40, 40,color(132, 115, 74), "PAUSE", "P");
-        Buttons buildTowerButton = new Buttons(this, 650, 150, 40, 40,color(132, 115, 74), "Build Tower", "T");
-        Buttons upgradeRangeButton = new Buttons(this, 650, 200, 40, 40,color(132, 115, 74), "Upgrade Range", "U1");
-        Buttons upgradeSpeedButton = new Buttons(this, 650, 250, 40, 40,color(132, 115, 74), "Upgrade Speed", "U2");
-        Buttons upgradeDamageButton = new Buttons(this, 650, 300, 40, 40,color(132, 115, 74), "Upgrade Damage", "U3");
-        Buttons manaPoolButton = new Buttons(this, 650, 350, 40, 40,color(132, 115, 74), "Mana Pool cost: 100", "M");
+        Buttons twoXButton = new Buttons(this, 650, 50, 40, 40, color(132, 115, 74), "2x Speed", "FF");
+        Buttons pauseButton = new Buttons(this, 650, 100, 40, 40, color(132, 115, 74), "PAUSE", "P");
+        Buttons buildTowerButton = new Buttons(this, 650, 150, 40, 40, color(132, 115, 74), "Build Tower", "T");
+        Buttons upgradeRangeButton = new Buttons(this, 650, 200, 40, 40, color(132, 115, 74), "Upgrade Range", "U1");
+        Buttons upgradeSpeedButton = new Buttons(this, 650, 250, 40, 40, color(132, 115, 74), "Upgrade Speed", "U2");
+        Buttons upgradeDamageButton = new Buttons(this, 650, 300, 40, 40, color(132, 115, 74), "Upgrade Damage", "U3");
+        Buttons manaPoolButton = new Buttons(this, 650, 350, 40, 40, color(132, 115, 74), "Mana Pool cost: 100", "M");
         buttonsList.add(twoXButton);
         buttonsList.add(pauseButton);
         buttonsList.add(buildTowerButton);
@@ -233,12 +247,16 @@ public class App extends PApplet {
     @Override
     public void setup() {
         frameRate(FPS);
-        createMapElements(loadLevelData(levelName));
+        mapGrid = loadLevelData(levelName);
+        createMapElements(mapGrid);
+        createMonsters();
+        for (Monster monster : monsterList) {
+            monster.determineMonsterPath();
+        }
         textFont(createFont("Arial", 12));
         noStroke();
         textAlign(LEFT);
         createButtons();
-
 
         // Load images during setup
         // Eg:
@@ -289,10 +307,10 @@ public class App extends PApplet {
         rect(640, 40, 120, 640);
         fill(132, 115, 74);
 
-        // side and top backgrounds 
+        // side and top backgrounds
         rect(640, 40, 120, 640);
         fill(132, 115, 74);
-        rect(0,0,760,40);
+        rect(0, 0, 760, 40);
         fill(132, 115, 74);
         for (MapElements elementToDraw : elementsList) {
             elementToDraw.draw(this);
@@ -305,7 +323,8 @@ public class App extends PApplet {
         for (WizardHouse wizardHouse : wizardHouseList) {
             int wizardXPos = wizardHouse.getXPos();
             int wizardYPos = wizardHouse.getYpos();
-            MapElements grassUnderWizard = new Grass(wizardXPos, wizardYPos, loadImage("src/main/resources/WizardTD/grass.png"));
+            MapElements grassUnderWizard = new Grass(wizardXPos, wizardYPos,
+                    loadImage("src/main/resources/WizardTD/grass.png"));
             grassUnderWizard.draw(this);
             wizardHouse.draw(this);
         }
@@ -315,7 +334,6 @@ public class App extends PApplet {
             button.drawButton();
             button.drawLabel();
         }
-
 
     }
 
@@ -364,4 +382,3 @@ public class App extends PApplet {
         return result;
     }
 }
-
