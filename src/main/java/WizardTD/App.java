@@ -34,8 +34,15 @@ public class App extends PApplet {
     public Random random = new Random();
     public char[][] mapGrid;
     public PVector wizardSpawnPoint;
+    private int numMonstersCreated = 0;
+    private int j;
+    // private int m;
 
-    private static String levelName = "level3.txt";
+    private static final String levelName = "level4.txt";
+    private static int noOfMonstersNeeded = 5;
+    public int firstSpawnVecX;
+    public int firstSpawnVecY;
+    private int numberOfPossibleSpawns;
     // private int TESTING_VAR = 0;
     // private char[][] levelDataMatrix;
     private ArrayList<MapElements> elementsList = new ArrayList<MapElements>();
@@ -56,8 +63,20 @@ public class App extends PApplet {
      */
 
     public void createMonsters() {
-        PVector firstCoordinate = MonsterSpawnPointsList.get(0); // Get the first coordinate
-        monsterList.add(new Monster(this, "gremlin", 100, 2, 150, 100, firstCoordinate, wizardSpawnPoint, mapGrid));
+
+        int randomIndex = random.nextInt(MonsterSpawnPointsList.size());
+        PVector firstCoordinate = MonsterSpawnPointsList.get(randomIndex); // gets a random spawnPoint
+        // PVector firstCoordinate = MonsterSpawnPointsList.get(1); // Get the first coordinate
+        int firstSpawnVecX = (int) firstCoordinate.x;
+        int firstSpawnVecY = (int) firstCoordinate.y;
+        
+        //int randomIndex = random.nextInt(myList.size());
+
+        //MonsterSpawnPointsList = 
+
+
+
+        monsterList.add(new Monster(this, "gremlin", 100, 1, 150, 100, firstCoordinate, wizardSpawnPoint, mapGrid, loadImage("src/main/resources/WizardTD/gremlin.png")));
         // for (PVector coordinate : MonsterSpawnPointsList) {
         // monsterList.add(new Monster(this,"gremlin",100,2,150,100,coordinate,
         // wizardSpawnPoint, mapGrid));
@@ -110,9 +129,11 @@ public class App extends PApplet {
                     if (row == 0 || row == 19) {
                         System.out.println("Theres a path on the top or row");
                         MonsterSpawnPointsList.add(new PVector(row, column));
+                        numberOfPossibleSpawns += 1;
                     } else if (column == 0 || column == 19) {
                         MonsterSpawnPointsList.add(new PVector(row, column));
                         System.out.println("theres a path on the first or last column");
+                        numberOfPossibleSpawns += 1;
                     }
                 }
             }
@@ -249,7 +270,12 @@ public class App extends PApplet {
         frameRate(FPS);
         mapGrid = loadLevelData(levelName);
         createMapElements(mapGrid);
-        createMonsters();
+        while (numMonstersCreated < noOfMonstersNeeded) {
+            createMonsters();
+            System.out.println("MONSTER CREATED");
+            numMonstersCreated++;
+        }
+        
         for (Monster monster : monsterList) {
             monster.determineMonsterPath();
         }
@@ -304,6 +330,7 @@ public class App extends PApplet {
 
     @Override
     public void draw() {
+        background(255);
         rect(640, 40, 120, 640);
         fill(132, 115, 74);
 
@@ -335,6 +362,10 @@ public class App extends PApplet {
             button.drawLabel();
         }
 
+        for (Monster monster: monsterList) {
+            monster.moveMonster();
+            monster.drawMonster();
+        }
     }
 
     public static void main(String[] args) {
