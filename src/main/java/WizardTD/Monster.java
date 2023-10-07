@@ -10,7 +10,8 @@ import processing.core.PVector;
 
 public class Monster {
     private String type;
-    private int hp;
+    private float currHp = 50;
+    private float maxHp;
     private float speed;
     private float armour;
     private float manaGainedOnKill;
@@ -26,9 +27,9 @@ public class Monster {
     // private boolean isInVisibleArea = false;
     int i = 0;
 
-    public Monster(PApplet app, String type, int hp, float speed, float armour, float manaGainedOnKill, PVector spawnPoint, PVector wizardSpawnPoint, char[][] map, PImage sprite) {
+    public Monster(PApplet app, String type, float maxHp, float speed, float armour, float manaGainedOnKill, PVector spawnPoint, PVector wizardSpawnPoint, char[][] map, PImage sprite) {
         this.type = type;
-        this.hp = hp;
+        this.maxHp = maxHp;
         this.speed = speed;
         this.armour = armour;
         this.manaGainedOnKill = manaGainedOnKill;
@@ -130,7 +131,27 @@ public class Monster {
             return;
         }
         app.image(sprite,x,y);
+        System.out.println("drawn monster at");
+        System.out.println(x);
+        System.out.println(y);
+
+        float barWidth = 30; // Adjust this to fit your needs
+        float barHeight = 4; // Adjust this to fit your needs
+
+        // Calculate the position of the health bars above the monster
+        float barX = x - barWidth / 2 + 10;
+        float barY = y - 7; // Adjust this to position the bars correctly
+
+        // Draw the red background bar
+        app.fill(255, 0, 0); // Red color
+        app.rect(barX, barY, barWidth, barHeight);
+
+        // Calculate the width of the green HP bar based on current HP
+        float hpBarWidth = PApplet.map(currHp, 0, maxHp, 0, barWidth);
+
+        // Draw the green HP bar
+        app.fill(0, 255, 0); // Green color
+        app.rect(barX, barY, hpBarWidth, barHeight);
     }
+
 }
-
-

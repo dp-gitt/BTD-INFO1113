@@ -38,11 +38,15 @@ public class App extends PApplet {
     private int j;
     // private int m;
 
-    private static final String levelName = "level4.txt";
+    private static final String levelName = "level1.txt";
     private static int noOfMonstersNeeded = 5;
     public int firstSpawnVecX;
     public int firstSpawnVecY;
     private int numberOfPossibleSpawns;
+    private int maxMana = 1000;
+    ManaBar manaBar;
+    private int framesBetweenSpawn = 12;
+    private int spawnCounter = 0;
     // private int TESTING_VAR = 0;
     // private char[][] levelDataMatrix;
     private ArrayList<MapElements> elementsList = new ArrayList<MapElements>();
@@ -73,10 +77,10 @@ public class App extends PApplet {
         //int randomIndex = random.nextInt(myList.size());
 
         //MonsterSpawnPointsList = 
-
-
-
         monsterList.add(new Monster(this, "gremlin", 100, 1, 150, 100, firstCoordinate, wizardSpawnPoint, mapGrid, loadImage("src/main/resources/WizardTD/gremlin.png")));
+        System.out.println("Monster has been added ot the list");
+        System.out.println(monsterList.size());
+        
         // for (PVector coordinate : MonsterSpawnPointsList) {
         // monsterList.add(new Monster(this,"gremlin",100,2,150,100,coordinate,
         // wizardSpawnPoint, mapGrid));
@@ -270,11 +274,11 @@ public class App extends PApplet {
         frameRate(FPS);
         mapGrid = loadLevelData(levelName);
         createMapElements(mapGrid);
-        while (numMonstersCreated < noOfMonstersNeeded) {
-            createMonsters();
-            System.out.println("MONSTER CREATED");
-            numMonstersCreated++;
-        }
+        // while (numMonstersCreated < noOfMonstersNeeded) {
+        //     createMonsters();
+        //     System.out.println("MONSTER CREATED");
+        //     numMonstersCreated++;
+        // }
         
         for (Monster monster : monsterList) {
             monster.determineMonsterPath();
@@ -283,6 +287,7 @@ public class App extends PApplet {
         noStroke();
         textAlign(LEFT);
         createButtons();
+        manaBar = new ManaBar(maxMana);
 
         // Load images during setup
         // Eg:
@@ -339,6 +344,9 @@ public class App extends PApplet {
         fill(132, 115, 74);
         rect(0, 0, 760, 40);
         fill(132, 115, 74);
+
+        manaBar.draw(this, 375, 9, 345, 22);
+        // manaBar.increaseMana(1);
         for (MapElements elementToDraw : elementsList) {
             elementToDraw.draw(this);
         }
@@ -362,16 +370,37 @@ public class App extends PApplet {
             button.drawLabel();
         }
 
-        for (Monster monster: monsterList) {
-            monster.moveMonster();
+        if (spawnCounter >= framesBetweenSpawn && numMonstersCreated < noOfMonstersNeeded) {
+            createMonsters(); // Spawn a new monster
+            spawnCounter = 0; // Reset the counter
+            numMonstersCreated++;
+            System.out.println("MONSTER CREATED");
+        } else {
+            spawnCounter++; // Increment the counter on each frame
+        }
+        
+        for (Monster monster : monsterList) {
+            System.out.println("MADE IN HERE");
             monster.drawMonster();
+            monster.moveMonster();
         }
     }
+
+
+    // if (spawnCounter >= framesBetweenSpawn && numMonstersCreated < noOfMonstersNeeded) {
+    //     createMonster(); // Spawn a new monster
+    //     spawnCounter = 0; // Reset the counter
+    //     numMonstersCreated++; // Increment the number of monsters created
+    // } else {
+    //     spawnCounter++; // Increment the counter on each frame
+    // }
 
     public static void main(String[] args) {
         PApplet.main("WizardTD.App");
     }
 
+
+    
     /**
      * Source:
      * https://stackoverflow.com/questions/37758061/rotate-a-buffered-image-in-java
