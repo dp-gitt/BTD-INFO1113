@@ -38,14 +38,14 @@ public class App extends PApplet {
     private int j;
     // private int m;
 
-    private static final String levelName = "level1.txt";
+    private static final String levelName = "level4.txt";
     private static int noOfMonstersNeeded = 5;
     public int firstSpawnVecX;
     public int firstSpawnVecY;
     private int numberOfPossibleSpawns;
     private int maxMana = 1000;
     ManaBar manaBar;
-    private int framesBetweenSpawn = 12;
+    private int framesBetweenSpawn = 30;
     private int spawnCounter = 0;
     // private int TESTING_VAR = 0;
     // private char[][] levelDataMatrix;
@@ -71,15 +71,17 @@ public class App extends PApplet {
         int randomIndex = random.nextInt(MonsterSpawnPointsList.size());
         PVector firstCoordinate = MonsterSpawnPointsList.get(randomIndex); // gets a random spawnPoint
         // PVector firstCoordinate = MonsterSpawnPointsList.get(1); // Get the first coordinate
-        int firstSpawnVecX = (int) firstCoordinate.x;
-        int firstSpawnVecY = (int) firstCoordinate.y;
+        // int firstSpawnVecX = (int) firstCoordinate.x;
+        // int firstSpawnVecY = (int) firstCoordinate.y;
         
         //int randomIndex = random.nextInt(myList.size());
 
         //MonsterSpawnPointsList = 
-        monsterList.add(new Monster(this, "gremlin", 100, 1, 150, 100, firstCoordinate, wizardSpawnPoint, mapGrid, loadImage("src/main/resources/WizardTD/gremlin.png")));
-        System.out.println("Monster has been added ot the list");
-        System.out.println(monsterList.size());
+        monsterList.add(new Monster(this, "gremlin", 100, 1, 150, 100, firstCoordinate, wizardSpawnPoint, mapGrid, loadImage("src/main/resources/WizardTD/gremlin.png") , manaBar));
+        // System.out.println("Monster has been added ot the list");
+        Monster newMonster = monsterList.get(monsterList.size() - 1); // Get the last added monster
+        newMonster.determineMonsterPath(); // Calculate the path for this specific monster
+        //System.out.println(monsterList.size());
         
         // for (PVector coordinate : MonsterSpawnPointsList) {
         // monsterList.add(new Monster(this,"gremlin",100,2,150,100,coordinate,
@@ -280,9 +282,9 @@ public class App extends PApplet {
         //     numMonstersCreated++;
         // }
         
-        for (Monster monster : monsterList) {
-            monster.determineMonsterPath();
-        }
+        // for (Monster monster : monsterList) {
+        //     monster.determineMonsterPath();
+        // }
         textFont(createFont("Arial", 12));
         noStroke();
         textAlign(LEFT);
@@ -359,7 +361,7 @@ public class App extends PApplet {
             int wizardXPos = wizardHouse.getXPos();
             int wizardYPos = wizardHouse.getYpos();
             MapElements grassUnderWizard = new Grass(wizardXPos, wizardYPos,
-                    loadImage("src/main/resources/WizardTD/grass.png"));
+            loadImage("src/main/resources/WizardTD/grass.png"));
             grassUnderWizard.draw(this);
             wizardHouse.draw(this);
         }
@@ -380,7 +382,7 @@ public class App extends PApplet {
         }
         
         for (Monster monster : monsterList) {
-            System.out.println("MADE IN HERE");
+            // System.out.println("MADE IN HERE");
             monster.drawMonster();
             monster.moveMonster();
         }

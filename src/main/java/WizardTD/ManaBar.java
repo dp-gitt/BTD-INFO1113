@@ -19,7 +19,7 @@ public class ManaBar {
         }
     }
 
-    public void decreaseMana(int amount) {
+    public void decreaseMana(float amount) {
         currMana -= amount;
         if (currMana < 0) {
             currMana = 0; // Ensure mana doesn't go negative

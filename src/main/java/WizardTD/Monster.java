@@ -24,10 +24,12 @@ public class Monster {
     private float speedPixelsPerFrame;
     private ArrayList<Point> monsterPathList = new ArrayList<>();
     private PImage sprite;
+    private ManaBar manaBar;
+    int monsterDead = 0;
     // private boolean isInVisibleArea = false;
     int i = 0;
 
-    public Monster(PApplet app, String type, float maxHp, float speed, float armour, float manaGainedOnKill, PVector spawnPoint, PVector wizardSpawnPoint, char[][] map, PImage sprite) {
+    public Monster(PApplet app, String type, float maxHp, float speed, float armour, float manaGainedOnKill, PVector spawnPoint, PVector wizardSpawnPoint, char[][] map, PImage sprite, ManaBar manaBar) {
         this.type = type;
         this.maxHp = maxHp;
         this.speed = speed;
@@ -41,6 +43,7 @@ public class Monster {
         this.y = (spawnPoint.x + 1) * 32 + 16; // Centered vertically on the spawn row
         this.x = (spawnPoint.y) * 32 + 8 ; // Centered horizontally on the spawn column
         this.sprite = sprite;
+        this.manaBar = manaBar;
         // System.out.println(x);
         // System.out.println(y);
 
@@ -121,6 +124,10 @@ public class Monster {
             if (PApplet.dist(x, y, targetX, targetY) < speed) {
                 monsterPathList.remove(0);
             }
+            if (monsterPathList.size() == 0 && monsterDead == 0) {
+                manaBar.decreaseMana(currHp);
+                monsterDead = 1;
+            }
         }
     }
 
@@ -131,9 +138,9 @@ public class Monster {
             return;
         }
         app.image(sprite,x,y);
-        System.out.println("drawn monster at");
-        System.out.println(x);
-        System.out.println(y);
+        // System.out.println("drawn monster at");
+        // System.out.println(x);
+        // System.out.println(y);
 
         float barWidth = 30; // Adjust this to fit your needs
         float barHeight = 4; // Adjust this to fit your needs
