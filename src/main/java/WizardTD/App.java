@@ -15,9 +15,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 
-import javafx.scene.control.Button;
-import javafx.scene.shape.Path;
-
 public class App extends PApplet {
 
     public static final int CELLSIZE = 32;
@@ -31,7 +28,7 @@ public class App extends PApplet {
     public static final int FPS = 60;
 
     public String configPath;
-
+    private PImage fireballSprite;
     public Random random = new Random();
     public char[][] mapGrid;
     public char[][] towerGrid;
@@ -45,6 +42,7 @@ public class App extends PApplet {
 
     private static final String levelName = "level3.txt";
     private static int noOfMonstersNeeded = 5;
+    
     public int firstSpawnVecX;
     public int firstSpawnVecY;
     private int numberOfPossibleSpawns;
@@ -57,6 +55,7 @@ public class App extends PApplet {
     private int brown = color(132, 115, 74);
     private boolean towerMode;
     private boolean towerHover;
+    ArrayList<Fireball> fireballList = new ArrayList<Fireball>();
     Buttons twoXButton;
     Buttons pauseButton;
     Buttons upgradeSpeedButton;
@@ -73,6 +72,7 @@ public class App extends PApplet {
     private ArrayList<PVector> MonsterSpawnPointsList = new ArrayList<PVector>();
     private ArrayList<Monster> monsterList = new ArrayList<Monster>();
     private ArrayList<Tower> towerList = new ArrayList<Tower>();
+    private ArrayList<Fireball> fireballsToRemoveList = new ArrayList<Fireball>();
     // public int[][] mapGrid;
 
     // Feel free to add any additional methods or attributes you want. Please put
@@ -97,7 +97,7 @@ public class App extends PApplet {
 
         // MonsterSpawnPointsList =
         monsterList.add(new Monster(this, "gremlin", 100, 1, 150, 100, firstCoordinate, wizardSpawnPoint, mapGrid,
-                loadImage("src/main/resources/WizardTD/gremlin.png"), manaBar));
+                loadImage("src/main/resources/WizardTD/gremlin.png"), manaBar, monsterList));
         // System.out.println("Monster has been added ot the list");
         Monster newMonster = monsterList.get(monsterList.size() - 1); // Get the last added monster
         newMonster.determineMonsterPath(); // Calculate the path for this specific monster
@@ -297,6 +297,7 @@ public class App extends PApplet {
         mapGrid = loadLevelData(levelName);
         towerGrid = loadLevelData(levelName);
         createMapElements(mapGrid);
+        fireballSprite = loadImage("src/main/resources/WizardTD/fireball.png");
         // while (numMonstersCreated < noOfMonstersNeeded) {
         // createMonsters();
         // System.out.println("MONSTER CREATED");
@@ -311,6 +312,7 @@ public class App extends PApplet {
         textAlign(LEFT);
         createButtons();
         manaBar = new ManaBar(maxMana);
+        
 
         // Load images during setup
         // Eg:
@@ -488,15 +490,13 @@ public class App extends PApplet {
             int towerYPos = gridRow * CELLSIZE + 40;
             int towerCost = 100;
             if (manaBar.getMana() > towerCost) {
-                Tower newTower = new Tower(this, towerXPos, towerYPos,
-                        loadImage("src\\main\\resources\\WizardTD\\tower0.png"), towerCost, 100, 5, 20);
+                Tower newTower = new Tower(this, towerXPos, towerYPos, loadImage("src/main/resources/WizardTD/tower0.png"), towerCost, 100, (float) 1, 20, fireballSprite, fireballList);
 
                 manaBar.decreaseMana((float) towerCost);
                 towerList.add(newTower);
                 towerGrid[gridRow][gridColumn] = 'T';
             }
         }
-
     }
 
     /*
@@ -513,7 +513,8 @@ public class App extends PApplet {
     @Override
     public void draw() {
         background(255);
-
+        
+    
         for (Paths pathsToDraw : pathsList) {
             pathsToDraw.draw(this);
         }
@@ -586,7 +587,34 @@ public class App extends PApplet {
             }
         }
 
-        // System.out.println(towerMode);
+        //fireballList.clear();
+
+        for (Tower tower : towerList) {
+            tower.survey(monsterList);
+            fireballList.addAll(tower.getFireballList());
+            tower.updateTimer();
+        }
+    
+        for (Fireball fireball : fireballList) {
+            fireball.updateTargetPosition();
+            fireball.moveFireball();
+            fireball.draw();       
+            if (fireball.hasHitTarget()) {
+                fireballsToRemoveList.add(fireball);
+                if (!fireball.getHasRemovedHP()) {
+                    fireball.reduceHP();
+                    fireball.setHasRemovedHP(true);
+                }
+            }
+        }
+
+        for (Fireball fireball: fireballsToRemoveList) {
+            fireball.removeFireball();
+            
+        }
+        
+        fireballsToRemoveList.clear();
+        
     }
 
     // if (spawnCounter >= framesBetweenSpawn && numMonstersCreated <

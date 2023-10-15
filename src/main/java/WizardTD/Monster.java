@@ -25,11 +25,14 @@ public class Monster {
     private ArrayList<Point> monsterPathList = new ArrayList<>();
     private PImage sprite;
     private ManaBar manaBar;
+    private ArrayList<Monster> monsterList;
+    
     int monsterDead = 0;
     // private boolean isInVisibleArea = false;
     int i = 0;
 
-    public Monster(PApplet app, String type, float maxHp, float speed, float armour, float manaGainedOnKill, PVector spawnPoint, PVector wizardSpawnPoint, char[][] map, PImage sprite, ManaBar manaBar) {
+    public Monster(PApplet app, String type, float maxHp, float speed, float armour, int manaGainedOnKill, 
+                    PVector spawnPoint, PVector wizardSpawnPoint, char[][] map, PImage sprite, ManaBar manaBar, ArrayList<Monster> monsterList) {
         this.type = type;
         this.maxHp = maxHp;
         this.speed = speed;
@@ -39,11 +42,13 @@ public class Monster {
         this.map = map;
         this.app = app;
         this.wizardSpawnPoint = wizardSpawnPoint;
-        this.speedPixelsPerFrame = speed * (float) app.frameRate / 60.0f; // this can be changed to speed
+        //this.speedPixelsPerFrame = speed * (float) app.frameRate / 60.0f; // this can be changed to speed
+        this.speedPixelsPerFrame = speed;
         this.y = (spawnPoint.x + 1) * 32 + 16; // Centered vertically on the spawn row
         this.x = (spawnPoint.y) * 32 + 8 ; // Centered horizontally on the spawn column
         this.sprite = sprite;
         this.manaBar = manaBar;
+        this.monsterList = monsterList;
         // System.out.println(x);
         // System.out.println(y);
 
@@ -88,6 +93,7 @@ public class Monster {
 
     public void moveMonster() {
         // System.out.println("Monster is at " + "x" + x + "y"+ y);
+        // System.out.println("OLD X AND Y" + x + " and " + y);
         if (!monsterPathList.isEmpty()) {
             // System.out.println(x);
             Point target = monsterPathList.get(0);
@@ -116,6 +122,7 @@ public class Monster {
             // Update the monster's position based on the calculated speed values
             x += speedX;
             y += speedY;
+            // System.out.println("NEW X AND Y" + x + " and " + y);
 
             // System.out.println(x);
             // System.out.println(y);
@@ -159,6 +166,28 @@ public class Monster {
         // Draw the green HP bar
         app.fill(0, 255, 0); // Green color
         app.rect(barX, barY, hpBarWidth, barHeight);
+    }
+
+    public float getX() {
+        return this.x;
+    }
+
+    public float getY() {
+        return this.y;
+    }
+
+    public void decreaseHealth(int damage) {
+        currHp -= damage;
+        System.out.println("MADE IT HERE");
+
+        if (currHp <= 0) {
+            removeMonster();
+        } 
+    }
+
+    private void removeMonster() {
+        monsterList.remove(this);
+        manaBar.increaseMana((int) manaGainedOnKill);
     }
 
 }
