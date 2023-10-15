@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 
+import javafx.scene.control.Button;
 import javafx.scene.shape.Path;
 
 public class App extends PApplet {
@@ -47,6 +48,9 @@ public class App extends PApplet {
     ManaBar manaBar;
     private int framesBetweenSpawn = 30;
     private int spawnCounter = 0;
+    private boolean isPaused = false;
+    private int yellow = color(255,255,0);
+    private int brown = color(132, 115, 74);
     // private int TESTING_VAR = 0;
     // private char[][] levelDataMatrix;
     private ArrayList<MapElements> elementsList = new ArrayList<MapElements>();
@@ -313,9 +317,43 @@ public class App extends PApplet {
     public void keyReleased() {
 
     }
+    
+    @Override
+    public void mouseMoved() {
+        for (Buttons button : buttonsList) {
+            if (button.isMouseOver()) {
+                if (button.getIsToggled()) {
+                    button.changeButtonColour(yellow);
+                } else {
+                    button.changeButtonColour(color(200)); // Change to grey
+                }
+            } else {
+                if (!button.getIsToggled()) {
+                    button.changeButtonColour(brown); // Reset to the original color
+                }
+                
+            }
+        }
+    }
+
 
     @Override
     public void mousePressed(MouseEvent e) {
+        for (Buttons button : buttonsList) {
+            if (button.isMouseOver()) {
+                if (button.getIsToggled() == false)
+                    button.changeButtonColour(yellow);
+                else {
+                    button.changeButtonColour(brown);
+                }
+                
+                button.setIsToggled(!button.getIsToggled());
+
+                if (button.getLabel() == "P") {
+                    isPaused = !isPaused; 
+                } 
+            }
+        }
 
     }
 
@@ -384,7 +422,9 @@ public class App extends PApplet {
         for (Monster monster : monsterList) {
             // System.out.println("MADE IN HERE");
             monster.drawMonster();
-            monster.moveMonster();
+            if (!isPaused) {
+                monster.moveMonster();
+            }
         }
     }
 

@@ -14,6 +14,8 @@ public class Buttons {
     private int fillColour;
     private String text;
     private String label;
+    private boolean isToggled = false;
+    
     
     /// to initalise fillColour you use method color(r,g,b);
     public Buttons(PApplet app, int x, int y, int width, int height, int fillColour, String text, String label) {
@@ -27,6 +29,22 @@ public class Buttons {
         this.text = text;
         this.label = label;
 
+    }
+
+    public String getLabel () {
+        return this.label;
+    }
+
+    public int getFillColour() {
+        return this.fillColour;
+    }
+
+    public boolean getIsToggled() {
+        return this.isToggled;
+    }
+
+    public void setIsToggled(boolean isToggled) {
+        this.isToggled = isToggled;
     }
 
     public void drawButton() {
@@ -61,4 +79,13 @@ public class Buttons {
         }
         app.textSize(12);
     }
+
+    public boolean isMouseOver() {
+        float leftEdge = x;
+        float rightEdge = x + width;
+        float topEdge = y;
+        float bottomEdge = y + height;
+        return app.mouseX >= leftEdge && app.mouseX <= rightEdge && app.mouseY >= topEdge && app.mouseY <= bottomEdge;
+    }
+
 }
