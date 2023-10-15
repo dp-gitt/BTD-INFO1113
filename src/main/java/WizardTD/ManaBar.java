@@ -8,7 +8,7 @@ public class ManaBar {
 
     public ManaBar(int maxMana) {
         this.maxMana = maxMana;
-        this.currMana = 200;
+        this.currMana = 1000;
     }
 
 
@@ -29,6 +29,10 @@ public class ManaBar {
     public float getMana() {
         return currMana;
     } 
+
+    public float getMaxMana() {
+        return maxMana;
+    }
 
     public void draw(PApplet app, float x, float y, float width, float height) {
         app.textSize(18);

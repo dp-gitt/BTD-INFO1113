@@ -34,12 +34,16 @@ public class App extends PApplet {
 
     public Random random = new Random();
     public char[][] mapGrid;
+    public char[][] towerGrid;
     public PVector wizardSpawnPoint;
     private int numMonstersCreated = 0;
     private int j;
+    private int counter = 0;
+    private Buttons upgradeRangeButton;
+    private Buttons buildTowerButton;
     // private int m;
 
-    private static final String levelName = "level4.txt";
+    private static final String levelName = "level3.txt";
     private static int noOfMonstersNeeded = 5;
     public int firstSpawnVecX;
     public int firstSpawnVecY;
@@ -49,8 +53,17 @@ public class App extends PApplet {
     private int framesBetweenSpawn = 30;
     private int spawnCounter = 0;
     private boolean isPaused = false;
-    private int yellow = color(255,255,0);
+    private int yellow = color(255, 255, 0);
     private int brown = color(132, 115, 74);
+    private boolean towerMode;
+    private boolean towerHover;
+    Buttons twoXButton;
+    Buttons pauseButton;
+    Buttons upgradeSpeedButton;
+    Buttons upgradeDamageButton;
+    Buttons manaPoolButton;
+
+
     // private int TESTING_VAR = 0;
     // private char[][] levelDataMatrix;
     private ArrayList<MapElements> elementsList = new ArrayList<MapElements>();
@@ -59,6 +72,7 @@ public class App extends PApplet {
     private ArrayList<Buttons> buttonsList = new ArrayList<Buttons>();
     private ArrayList<PVector> MonsterSpawnPointsList = new ArrayList<PVector>();
     private ArrayList<Monster> monsterList = new ArrayList<Monster>();
+    private ArrayList<Tower> towerList = new ArrayList<Tower>();
     // public int[][] mapGrid;
 
     // Feel free to add any additional methods or attributes you want. Please put
@@ -74,19 +88,21 @@ public class App extends PApplet {
 
         int randomIndex = random.nextInt(MonsterSpawnPointsList.size());
         PVector firstCoordinate = MonsterSpawnPointsList.get(randomIndex); // gets a random spawnPoint
-        // PVector firstCoordinate = MonsterSpawnPointsList.get(1); // Get the first coordinate
+        // PVector firstCoordinate = MonsterSpawnPointsList.get(1); // Get the first
+        // coordinate
         // int firstSpawnVecX = (int) firstCoordinate.x;
         // int firstSpawnVecY = (int) firstCoordinate.y;
-        
-        //int randomIndex = random.nextInt(myList.size());
 
-        //MonsterSpawnPointsList = 
-        monsterList.add(new Monster(this, "gremlin", 100, 1, 150, 100, firstCoordinate, wizardSpawnPoint, mapGrid, loadImage("src/main/resources/WizardTD/gremlin.png") , manaBar));
+        // int randomIndex = random.nextInt(myList.size());
+
+        // MonsterSpawnPointsList =
+        monsterList.add(new Monster(this, "gremlin", 100, 1, 150, 100, firstCoordinate, wizardSpawnPoint, mapGrid,
+                loadImage("src/main/resources/WizardTD/gremlin.png"), manaBar));
         // System.out.println("Monster has been added ot the list");
         Monster newMonster = monsterList.get(monsterList.size() - 1); // Get the last added monster
         newMonster.determineMonsterPath(); // Calculate the path for this specific monster
-        //System.out.println(monsterList.size());
-        
+        // System.out.println(monsterList.size());
+
         // for (PVector coordinate : MonsterSpawnPointsList) {
         // monsterList.add(new Monster(this,"gremlin",100,2,150,100,coordinate,
         // wizardSpawnPoint, mapGrid));
@@ -243,13 +259,13 @@ public class App extends PApplet {
 
     public void createButtons() {
 
-        Buttons twoXButton = new Buttons(this, 650, 50, 40, 40, color(132, 115, 74), "2x Speed", "FF");
-        Buttons pauseButton = new Buttons(this, 650, 100, 40, 40, color(132, 115, 74), "PAUSE", "P");
-        Buttons buildTowerButton = new Buttons(this, 650, 150, 40, 40, color(132, 115, 74), "Build Tower", "T");
-        Buttons upgradeRangeButton = new Buttons(this, 650, 200, 40, 40, color(132, 115, 74), "Upgrade Range", "U1");
-        Buttons upgradeSpeedButton = new Buttons(this, 650, 250, 40, 40, color(132, 115, 74), "Upgrade Speed", "U2");
-        Buttons upgradeDamageButton = new Buttons(this, 650, 300, 40, 40, color(132, 115, 74), "Upgrade Damage", "U3");
-        Buttons manaPoolButton = new Buttons(this, 650, 350, 40, 40, color(132, 115, 74), "Mana Pool cost: 100", "M");
+        twoXButton = new Buttons(this, 650, 50, 40, 40, color(132, 115, 74), "2x Speed", "FF");
+        pauseButton = new Buttons(this, 650, 100, 40, 40, color(132, 115, 74), "PAUSE", "P");
+        buildTowerButton = new Buttons(this, 650, 150, 40, 40, color(132, 115, 74), "Build Tower", "T");
+        upgradeRangeButton = new Buttons(this, 650, 200, 40, 40, color(132, 115, 74), "Upgrade Range", "U1");
+        upgradeSpeedButton = new Buttons(this, 650, 250, 40, 40, color(132, 115, 74), "Upgrade Speed", "U2");
+        upgradeDamageButton = new Buttons(this, 650, 300, 40, 40, color(132, 115, 74), "Upgrade Damage", "U3");
+        manaPoolButton = new Buttons(this, 650, 350, 40, 40, color(132, 115, 74), "Mana Pool cost: 100", "M");
         buttonsList.add(twoXButton);
         buttonsList.add(pauseButton);
         buttonsList.add(buildTowerButton);
@@ -279,15 +295,16 @@ public class App extends PApplet {
     public void setup() {
         frameRate(FPS);
         mapGrid = loadLevelData(levelName);
+        towerGrid = loadLevelData(levelName);
         createMapElements(mapGrid);
         // while (numMonstersCreated < noOfMonstersNeeded) {
-        //     createMonsters();
-        //     System.out.println("MONSTER CREATED");
-        //     numMonstersCreated++;
+        // createMonsters();
+        // System.out.println("MONSTER CREATED");
+        // numMonstersCreated++;
         // }
-        
+
         // for (Monster monster : monsterList) {
-        //     monster.determineMonsterPath();
+        // monster.determineMonsterPath();
         // }
         textFont(createFont("Arial", 12));
         noStroke();
@@ -307,7 +324,59 @@ public class App extends PApplet {
      */
     @Override
     public void keyPressed() {
+        // to upgrade a tower, need:
+        // not in tower toggle mode
+        // be in tower upgrade Toggled
+        // need to press on the tower. check towerList
 
+        // if (key == '1') {
+        //     upgradeRangeButton.setIsToggled(!upgradeRangeButton.getIsToggled());
+        // } else if (key == 'p') {
+        //     pauseButton.setIsToggled(!pauseButton.getIsToggled());
+        // }
+
+        switch (key) {
+            case 'f':
+            twoXButton.setIsToggled(!twoXButton.getIsToggled());
+            break;
+
+            case 'p':
+            pauseButton.setIsToggled(!pauseButton.getIsToggled());
+            isPaused = !isPaused;
+            break;
+
+            case 't': 
+            buildTowerButton.setIsToggled(!buildTowerButton.getIsToggled());
+            break;
+
+            case '1':
+            upgradeRangeButton.setIsToggled(!upgradeRangeButton.getIsToggled());
+            break;
+
+            case '2':
+            upgradeSpeedButton.setIsToggled(!upgradeSpeedButton.getIsToggled());
+            break;
+
+            case '3': 
+            upgradeDamageButton.setIsToggled(!upgradeDamageButton.getIsToggled());
+            break;
+
+            case 'm': 
+            manaPoolButton.setIsToggled(!manaPoolButton.getIsToggled());
+            break;
+
+        }
+            
+
+
+
+        // if (!buildTowerButton.getIsToggled()) {
+        //     if (key == '1') {
+        //         upgradeRangeButton.setIsToggled(!upgradeRangeButton.getIsToggled());
+        //         System.out.println("Button1 Toggled");
+        //         System.out.println(upgradeRangeButton.getIsToggled());
+        //     }
+        // }
     }
 
     /**
@@ -317,25 +386,52 @@ public class App extends PApplet {
     public void keyReleased() {
 
     }
-    
+
     @Override
     public void mouseMoved() {
-        for (Buttons button : buttonsList) {
-            if (button.isMouseOver()) {
-                if (button.getIsToggled()) {
-                    button.changeButtonColour(yellow);
+
+        // for (Buttons button : buttonsList) {
+        // if (!button.getIsToggled() && button.isMouseOver()) {
+        // button.changeButtonColour(color(200));
+        // }
+        // }
+
+        // for (Buttons button : buttonsList) {
+        // if (!button.getIsToggled() && button.isMouseOver()) {
+        // button.changeButtonColour(color(200));
+        // } else if (button.getIsToggled()) {
+        // button.changeButtonColour(yellow);
+        // } else {
+        // button.changeButtonColour(brown);
+        // }
+        // }
+
+        // for (Buttons button : buttonsList) {
+        // if (button.isMouseOver() ) {
+        // if (button.getIsToggled()) {
+        // button.changeButtonColour(yellow);
+        // } else {
+        // button.changeButtonColour(color(200)); // Change to grey
+        // }
+        // } else {
+        // if (!button.getIsToggled()) {
+        // button.changeButtonColour(brown); // Reset to the original color
+        // }
+
+        // }
+        // }
+
+        if (!towerList.isEmpty()) {
+            for (Tower tower : towerList) {
+                if (tower.isMouseOver()) {
+                    tower.setIsHovered(true);
                 } else {
-                    button.changeButtonColour(color(200)); // Change to grey
+                    tower.setIsHovered(false);
                 }
-            } else {
-                if (!button.getIsToggled()) {
-                    button.changeButtonColour(brown); // Reset to the original color
-                }
-                
             }
         }
-    }
 
+    }
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -346,19 +442,60 @@ public class App extends PApplet {
                 else {
                     button.changeButtonColour(brown);
                 }
-                
+
                 button.setIsToggled(!button.getIsToggled());
 
                 if (button.getLabel() == "P") {
-                    isPaused = !isPaused; 
-                } 
+
+                    isPaused = !isPaused;
+                    System.out.println(isPaused);
+                }
+
+                if (button.getLabel() == "T") {
+                    System.out.println("Button T pressed");
+                    towerMode = !towerMode;
+                    System.out.println(towerMode);
+                }
             }
         }
 
+        if (buildTowerButton.getIsToggled()) {
+            int gridRow = (int) (mouseY / CELLSIZE);
+            gridRow -= 1;
+            int gridColumn = (int) (mouseX / CELLSIZE);
+            System.out.println(gridRow);
+            System.out.println(gridColumn);
+            createTower(gridRow, gridColumn);
+
+        }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+    }
+
+    public boolean isTileEmpty(int row, int col) {
+        if (row >= 0 && row < towerGrid.length && col >= 0 && col < towerGrid[0].length) {
+            return towerGrid[row][col] != 'S' && towerGrid[row][col] != 'T' && towerGrid[row][col] != 'X';
+        }
+
+        return false; // invalid coordinates. e.g. outside map
+    }
+
+    public void createTower(int gridRow, int gridColumn) {
+        if (isTileEmpty(gridRow, gridColumn)) {
+            int towerXPos = gridColumn * CELLSIZE;
+            int towerYPos = gridRow * CELLSIZE + 40;
+            int towerCost = 100;
+            if (manaBar.getMana() > towerCost) {
+                Tower newTower = new Tower(this, towerXPos, towerYPos,
+                        loadImage("src\\main\\resources\\WizardTD\\tower0.png"), towerCost, 100, 5, 20);
+
+                manaBar.decreaseMana((float) towerCost);
+                towerList.add(newTower);
+                towerGrid[gridRow][gridColumn] = 'T';
+            }
+        }
 
     }
 
@@ -376,6 +513,30 @@ public class App extends PApplet {
     @Override
     public void draw() {
         background(255);
+
+        for (Paths pathsToDraw : pathsList) {
+            pathsToDraw.draw(this);
+        }
+
+        for (MapElements elementToDraw : elementsList) {
+            elementToDraw.draw(this);
+        }
+
+        for (WizardHouse wizardHouse : wizardHouseList) {
+            int wizardXPos = wizardHouse.getXPos();
+            int wizardYPos = wizardHouse.getYpos();
+            MapElements grassUnderWizard = new Grass(wizardXPos, wizardYPos,
+                    loadImage("src/main/resources/WizardTD/grass.png"));
+            grassUnderWizard.draw(this);
+            wizardHouse.draw(this);
+        }
+
+        for (Tower tower : towerList) {
+            if (tower.getIsHovered() == true) {
+                tower.drawRadius();
+            }
+        }
+
         rect(640, 40, 120, 640);
         fill(132, 115, 74);
 
@@ -387,22 +548,6 @@ public class App extends PApplet {
 
         manaBar.draw(this, 375, 9, 345, 22);
         // manaBar.increaseMana(1);
-        for (MapElements elementToDraw : elementsList) {
-            elementToDraw.draw(this);
-        }
-
-        for (Paths pathsToDraw : pathsList) {
-            pathsToDraw.draw(this);
-        }
-
-        for (WizardHouse wizardHouse : wizardHouseList) {
-            int wizardXPos = wizardHouse.getXPos();
-            int wizardYPos = wizardHouse.getYpos();
-            MapElements grassUnderWizard = new Grass(wizardXPos, wizardYPos,
-            loadImage("src/main/resources/WizardTD/grass.png"));
-            grassUnderWizard.draw(this);
-            wizardHouse.draw(this);
-        }
 
         for (Buttons button : buttonsList) {
             button.drawText();
@@ -418,7 +563,7 @@ public class App extends PApplet {
         } else {
             spawnCounter++; // Increment the counter on each frame
         }
-        
+
         for (Monster monster : monsterList) {
             // System.out.println("MADE IN HERE");
             monster.drawMonster();
@@ -426,23 +571,37 @@ public class App extends PApplet {
                 monster.moveMonster();
             }
         }
+
+        for (Tower tower : towerList) {
+            tower.drawTower();
+        }
+
+        for (Buttons button : buttonsList) {
+            if (!button.getIsToggled() && button.isMouseOver()) {
+                button.changeButtonColour(color(200));
+            } else if (button.getIsToggled()) {
+                button.changeButtonColour(yellow);
+            } else {
+                button.changeButtonColour(brown);
+            }
+        }
+
+        // System.out.println(towerMode);
     }
 
-
-    // if (spawnCounter >= framesBetweenSpawn && numMonstersCreated < noOfMonstersNeeded) {
-    //     createMonster(); // Spawn a new monster
-    //     spawnCounter = 0; // Reset the counter
-    //     numMonstersCreated++; // Increment the number of monsters created
+    // if (spawnCounter >= framesBetweenSpawn && numMonstersCreated <
+    // noOfMonstersNeeded) {
+    // createMonster(); // Spawn a new monster
+    // spawnCounter = 0; // Reset the counter
+    // numMonstersCreated++; // Increment the number of monsters created
     // } else {
-    //     spawnCounter++; // Increment the counter on each frame
+    // spawnCounter++; // Increment the counter on each frame
     // }
 
     public static void main(String[] args) {
         PApplet.main("WizardTD.App");
     }
 
-
-    
     /**
      * Source:
      * https://stackoverflow.com/questions/37758061/rotate-a-buffered-image-in-java
