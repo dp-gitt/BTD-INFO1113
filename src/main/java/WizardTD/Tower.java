@@ -14,35 +14,316 @@ public class Tower {
 
     private int towerCost;
     private int towerRange;
+    private int spriteID;
     // private static float cooldownTimer;
     private float towerFiringSpeed;
-    private int towerDamage;
+    private float towerDamage;
     private boolean isHovered;
     private boolean canFire;
+    // private ArrayList<PImage> towerImageList = new ArrayList<PImage>();
+    PImage[] towerImageList;
     private ArrayList<Fireball> fireballList = new ArrayList<Fireball>();
     Monster targetMonster = null;
     PImage fireballSprite;
     private int cooldownTimer;
+    private int rangeLevel;
+    private int speedLevel;
+    private int damageLevel;
+    private float initialTowerDamage;
+    // private PImage[] towerImageList;
 
-    public Tower(PApplet app, float towerXPos, float towerYPos, PImage sprite, int towerCost, int towerRange,
-            float towerFiringSpeed, int towerDamage, PImage fireballSprite, ArrayList<Fireball> fireballList) {
+    public Tower(PApplet app, float towerXPos, float towerYPos, PImage[] towerImageList, int towerCost, int towerRange,
+            float towerFiringSpeed, int towerDamage, PImage fireballSprite, ArrayList<Fireball> fireballList,
+            int rangeLevel, int speedLevel, int damageLevel) {
         this.app = app;
         this.towerXPos = towerXPos;
         this.towerYPos = towerYPos;
-        this.sprite = sprite;
+        this.towerImageList = towerImageList;
         this.towerCost = towerCost;
-        this.towerRange = towerRange;
-        this.towerFiringSpeed = towerFiringSpeed;
-        this.towerDamage = towerDamage;
+        this.towerRange = towerRange + rangeLevel * 32;
+        this.towerFiringSpeed = (float) (towerFiringSpeed + speedLevel * 0.5);
+        this.initialTowerDamage = towerDamage;
+        this.towerDamage = (float) (towerDamage + damageLevel * 0.5 * initialTowerDamage);
         this.fireballSprite = fireballSprite;
         this.cooldownTimer = 0;
         this.fireballList = fireballList;
+        this.rangeLevel = rangeLevel;
+        this.speedLevel = speedLevel;
+        this.damageLevel = damageLevel;
     }
-
 
     public void drawTower() {
-        app.image(sprite, towerXPos, towerYPos);
+
+        if (rangeLevel >= 2 && speedLevel >= 2 && damageLevel >= 2) {
+            app.image(towerImageList[2], towerXPos, towerYPos);
+            spriteID = 2;
+        } else if (rangeLevel >= 1 && speedLevel >= 1 && damageLevel >= 1) {
+            app.image(towerImageList[1], towerXPos, towerYPos);
+            spriteID = 1;
+        } else {
+            app.image(towerImageList[0], towerXPos, towerYPos);
+            spriteID = 0;
+        }
+
+        // if the tower is purple
+        if (spriteID == 0) {
+            if (rangeLevel >= 1) {
+                // Set the size of each "O"
+                float oSize = 4;
+                float spacing = 2;
+                float yPos = towerYPos + 3;
+                app.stroke(255, 0, 255); // Magenta color (R, G, B)
+                app.strokeWeight(1);
+
+                // Disable fill for the "O"s
+                app.noFill();
+
+                // Draw the "O"s along the top of the tower
+                for (int i = 0; i < rangeLevel; i++) {
+                    float xPos = towerXPos + i * (oSize + spacing);
+                    // Draw an "O" at (xPos, yPos)
+                    // You can use the ellipse method to draw outlined circles as "O"s
+                    app.ellipse(xPos + 3, yPos, oSize, oSize);
+                }
+                app.noStroke();
+            }
+
+            if (damageLevel >= 1) {
+                // Set the size of each "X"
+                float xSize = 1; // Adjust size as needed
+                float spacing = 5; // Adjust spacing as needed
+                float yPos = towerYPos + 32; // Adjust yPos for the bottom edge
+                app.fill(255, 0, 255); // Magenta color (R, G, B)
+        
+                // Draw the "X"s along the bottom edge of the tower
+                for (int i = 0; i < damageLevel; i++) {
+                    float xPos = towerXPos + i * (xSize + spacing); // Adjust xPos as needed
+                    // Draw an "X" at (xPos, yPos)
+                    app.textSize(8);
+                    app.text("X", xPos, yPos);
+                }
+            }
+
+            if (speedLevel >= 1) {
+                // Set the base radius for the ring
+                float baseRadius = 8; // Adjust the base radius as needed
+                int strokeWeight = 1;
+        
+                // Set the number of rings based on speedLevel
+                int numRings = speedLevel;
+
+                
+        
+                // Set the color and thickness for the rings
+                app.stroke(0, 0, 255); // Blue color (R, G, B)
+                app.strokeWeight(2); // Adjust thickness as needed
+        
+                // Draw concentric rings inside the tower
+                for (int i = 0; i < numRings; i++) {
+                    float ringRadius = baseRadius;
+                    float centerX = towerXPos + 16;
+                    float centerY = towerYPos + 16;
+                    app.strokeWeight(strokeWeight);
+                    strokeWeight++;
+        
+                    // Draw a ring using the ellipse function
+                    app.noFill(); // No fill for the ring
+                    app.ellipse(centerX, centerY, ringRadius * 2, ringRadius * 2);
+                }
+                app.noStroke(); // Reset stroke settings
+            }
+
+        }
+
+        if (spriteID == 1) {
+            if (rangeLevel >= 2) {
+                int rangeEditor;
+                rangeEditor = rangeLevel - 1;
+                // Set the size of each "O"
+                float oSize = 4;
+                float spacing = 2;
+                float yPos = towerYPos + 3;
+                app.stroke(255, 0, 255); // Magenta color (R, G, B)
+                app.strokeWeight(1);
+
+                // Disable fill for the "O"s
+                app.noFill();
+
+                // Draw the "O"s along the top of the tower
+                for (int i = 0; i < rangeEditor; i++) {
+                    float xPos = towerXPos + i * (oSize + spacing);
+                    // Draw an "O" at (xPos, yPos)
+                    // You can use the ellipse method to draw outlined circles as "O"s
+                    app.ellipse(xPos + 3, yPos, oSize, oSize);
+                }
+                app.noStroke();
+            }
+
+            if (damageLevel >= 2) {
+                // Set the size of each "X"
+                float xSize = 1; // Adjust size as needed
+                float spacing = 5; // Adjust spacing as needed
+                float yPos = towerYPos + 32; // Adjust yPos for the bottom edge
+                app.fill(255, 0, 255); // Magenta color (R, G, B)
+        
+                // Draw the "X"s along the bottom edge of the tower
+                for (int i = 0; i < damageLevel - 1; i++) {
+                    float xPos = towerXPos - 1 + i* (xSize + spacing); // Adjust xPos as needed
+                    // Draw an "X" at (xPos, yPos)
+                    app.textSize(8);
+                    app.text("X", xPos, yPos);
+                }
+            }
+
+            if (speedLevel >= 2) {
+                // Set the base radius for the ring
+                float baseRadius = 8; // Adjust the base radius as needed
+                int strokeWeight = 1;
+        
+                // Set the number of rings based on speedLevel
+                int numRings = speedLevel -1;
+
+                
+        
+                // Set the color and thickness for the rings
+                app.stroke(0, 0, 255); // Blue color (R, G, B)
+                app.strokeWeight(2); // Adjust thickness as needed
+        
+                // Draw concentric rings inside the tower
+                for (int i = 0; i < numRings; i++) {
+                    float ringRadius = baseRadius;
+                    float centerX = towerXPos + 16;
+                    float centerY = towerYPos + 16;
+                    app.strokeWeight(strokeWeight);
+                    strokeWeight++;
+        
+                    // Draw a ring using the ellipse function
+                    app.noFill(); // No fill for the ring
+                    app.ellipse(centerX, centerY, ringRadius * 2, ringRadius * 2);
+                }
+                app.noStroke(); // Reset stroke settings
+            }
+        }
+
+        if (spriteID == 2) {
+            if (rangeLevel >= 2) {
+
+                // THIS CODE WILL JUST OVERLAP THE O's
+
+                // int availableWidth = 32; // Total available width
+                // float oSize = 4; // Diameter of each "O"
+                // float spacing = 2; // Spacing between "O"s
+                // int maxOs = (int) ((availableWidth - oSize) / (oSize + spacing)); // Calculate the maximum number of
+                //                                                                   // "O"s
+
+                // if (rangeLevel - 2 > maxOs) {
+                //     rangeLevel = maxOs + 2; // Limit the range level to fit within the tower's width
+                // }
+
+                // float yPos = towerYPos + 3; // Y position for the "O"s
+                // app.stroke(255, 0, 255); // Magenta color (R, G, B)
+                // app.strokeWeight(1);
+
+                // // Disable fill for the "O"s
+                // app.noFill();
+
+                // // Draw the "O"s along the top of the tower
+                // for (int i = 0; i < rangeLevel - 2; i++) {
+                //     float xPos = towerXPos + i * (oSize + spacing);
+                //     // Draw an "O" at (xPos, yPos)
+                //     app.ellipse(xPos + 3, yPos, oSize, oSize);
+                // }
+                // app.noStroke();
+
+// THIS CODE WILL MAKE IT SO THEY RUN ACROSS BEYOND THE 32 PIXELS OF THE TOWER
+
+                int rangeEditor1;
+                rangeEditor1 = rangeLevel - 2;
+                // Set the size of each "O"
+                float oSize = 4;
+                float spacing = 2;
+                float yPos = towerYPos + 3;
+                app.stroke(255, 0, 255); // Magenta color (R, G, B)
+                app.strokeWeight(1);
+
+                // Disable fill for the "O"s
+                app.noFill();
+
+                // Draw the "O"s along the top of the tower
+                for (int i = 0; i < rangeEditor1; i++) {
+                float xPos = towerXPos + i * (oSize + spacing);
+                // Draw an "O" at (xPos, yPos)
+                // You can use the ellipse method to draw outlined circles as "O"s
+                app.ellipse(xPos + 3, yPos, oSize, oSize);
+                }
+                app.noStroke();
+            }
+
+            if (damageLevel >= 2) {
+                // Set the size of each "X"
+                float xSize = 1; // Adjust size as needed
+                float spacing = 5; // Adjust spacing as needed
+                float yPos = towerYPos + 32; // Adjust yPos for the bottom edge
+                app.fill(255, 0, 255); // Magenta color (R, G, B)
+        
+                // Draw the "X"s along the bottom edge of the tower
+                for (int i = 0; i < damageLevel - 2; i++) {
+                    float xPos = towerXPos+ i * (xSize + spacing); // Adjust xPos as needed
+                    // Draw an "X" at (xPos, yPos)
+                    app.textSize(8);
+                    app.text("X", xPos, yPos);
+                }
+            }
+
+            if (speedLevel >= 2) {
+                // Set the base radius for the ring
+                float baseRadius = 8; // Adjust the base radius as needed
+                int strokeWeight = 1;
+        
+                // Set the number of rings based on speedLevel
+                int numRings = speedLevel - 2;
+
+                
+        
+                // Set the color and thickness for the rings
+                app.stroke(0, 0, 255); // Blue color (R, G, B)
+                app.strokeWeight(2); // Adjust thickness as needed
+        
+                // Draw concentric rings inside the tower
+                for (int i = 0; i < numRings; i++) {
+                    float ringRadius = baseRadius;
+                    float centerX = towerXPos + 16;
+                    float centerY = towerYPos + 16;
+                    app.strokeWeight(strokeWeight);
+                    strokeWeight++;
+        
+                    // Draw a ring using the ellipse function
+                    app.noFill(); // No fill for the ring
+                    app.ellipse(centerX, centerY, ringRadius * 2, ringRadius * 2);
+                }
+                app.noStroke(); // Reset stroke settings
+            }
+
+        }
+
     }
+
+    // let sprite = something and then use that to minus and add the relevant amount
+    // of stuffs
+
+    // if (!(rangeLevel >= 1 && speedLevel >= 1 && damageLevel >= 1)) {
+    // if (rangeLevel == 0) {
+
+    // }
+    // //all the cases before it turns orange
+    // } else if (!(rangeLevel >= 2 && speedLevel >= 2 && damageLevel >= 2)) {
+    // // orange but not red
+
+    // } else if (!(rangeLevel >= 3 && speedLevel >= 3 && damageLevel >= 3)) {
+    // //red and beyond
+
+    // }
+    // app.image(sprite, towerXPos, towerYPos);
 
     public boolean isMouseOver() {
         float leftEdge = towerXPos;
@@ -108,20 +389,21 @@ public class Tower {
         }
 
         // if (!fireballList.isEmpty()) {
-        //     for (Fireball fireball : fireballList) {
-        //         if (targetMonster != null && fireball != null) {
-        //             float distanceToMonster = PApplet.dist(fireball.getX(), fireball.getY(), targetMonster.getX(), targetMonster.getY());
-        //             if (distanceToMonster <= 16) {
-        //                 targetMonster.decreaseHealth(fireball.getDamage());
-        //                 fireballsToRemove.add(fireball);
-        //             }
-        //         }
-        //     }
+        // for (Fireball fireball : fireballList) {
+        // if (targetMonster != null && fireball != null) {
+        // float distanceToMonster = PApplet.dist(fireball.getX(), fireball.getY(),
+        // targetMonster.getX(), targetMonster.getY());
+        // if (distanceToMonster <= 16) {
+        // targetMonster.decreaseHealth(fireball.getDamage());
+        // fireballsToRemove.add(fireball);
+        // }
+        // }
+        // }
         // }
 
         for (Fireball fireball : fireballsToRemove) {
             removeFireball(fireball);
-        } 
+        }
     }
 
     public void removeFireball(Fireball fireball) {
@@ -131,5 +413,30 @@ public class Tower {
     public ArrayList<Fireball> getFireballList() {
         return this.fireballList;
     }
+
+    public void upgradeRange() {
+        rangeLevel += 1;
+        towerRange += 32;
+
+    }
+
+    public void upgradeDamage() {
+        damageLevel += 1;
+        towerDamage += (float) (0.5 * initialTowerDamage);
+    }
+
+    public void upgradeSpeed() {
+        speedLevel += 1;
+        towerFiringSpeed += 0.5;
+    }
+
+    // public boolean isMouseOver() {
+    // float leftEdge = towerXPos;
+    // float rightEdge = towerXPos + 32;
+    // float topEdge = towerYPos;
+    // float bottomEdge = towerYPos+ 32;
+    // return app.mouseX >= leftEdge && app.mouseX <= rightEdge && app.mouseY >=
+    // topEdge && app.mouseY <= bottomEdge;
+    // }
 
 }

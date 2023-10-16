@@ -38,11 +38,14 @@ public class App extends PApplet {
     private int counter = 0;
     private Buttons upgradeRangeButton;
     private Buttons buildTowerButton;
+    private PImage gremlin;
+    // private ArrayList<PImage> towerImageList = new ArrayList<PImage>();
+    private PImage[] towerImageList = new PImage[3];
     // private int m;
 
     private static final String levelName = "level3.txt";
     private static int noOfMonstersNeeded = 5;
-    
+
     public int firstSpawnVecX;
     public int firstSpawnVecY;
     private int numberOfPossibleSpawns;
@@ -61,7 +64,6 @@ public class App extends PApplet {
     Buttons upgradeSpeedButton;
     Buttons upgradeDamageButton;
     Buttons manaPoolButton;
-
 
     // private int TESTING_VAR = 0;
     // private char[][] levelDataMatrix;
@@ -97,7 +99,7 @@ public class App extends PApplet {
 
         // MonsterSpawnPointsList =
         monsterList.add(new Monster(this, "gremlin", 100, 1, 150, 100, firstCoordinate, wizardSpawnPoint, mapGrid,
-                loadImage("src/main/resources/WizardTD/gremlin.png"), manaBar, monsterList));
+                gremlin, manaBar, monsterList));
         // System.out.println("Monster has been added ot the list");
         Monster newMonster = monsterList.get(monsterList.size() - 1); // Get the last added monster
         newMonster.determineMonsterPath(); // Calculate the path for this specific monster
@@ -298,6 +300,14 @@ public class App extends PApplet {
         towerGrid = loadLevelData(levelName);
         createMapElements(mapGrid);
         fireballSprite = loadImage("src/main/resources/WizardTD/fireball.png");
+        PImage tower0 = loadImage("src/main/resources/WizardTD/tower0.png");
+        towerImageList[0] = tower0;
+        PImage tower1 = loadImage("src/main/resources/WizardTD/tower1.png");
+        towerImageList[1] = tower1;
+        PImage tower2 = loadImage("src/main/resources/WizardTD/tower2.png");
+        gremlin = loadImage("src/main/resources/WizardTD/gremlin.png");
+        towerImageList[2] = tower2;
+
         // while (numMonstersCreated < noOfMonstersNeeded) {
         // createMonsters();
         // System.out.println("MONSTER CREATED");
@@ -312,7 +322,6 @@ public class App extends PApplet {
         textAlign(LEFT);
         createButtons();
         manaBar = new ManaBar(maxMana);
-        
 
         // Load images during setup
         // Eg:
@@ -332,52 +341,49 @@ public class App extends PApplet {
         // need to press on the tower. check towerList
 
         // if (key == '1') {
-        //     upgradeRangeButton.setIsToggled(!upgradeRangeButton.getIsToggled());
+        // upgradeRangeButton.setIsToggled(!upgradeRangeButton.getIsToggled());
         // } else if (key == 'p') {
-        //     pauseButton.setIsToggled(!pauseButton.getIsToggled());
+        // pauseButton.setIsToggled(!pauseButton.getIsToggled());
         // }
 
         switch (key) {
             case 'f':
-            twoXButton.setIsToggled(!twoXButton.getIsToggled());
-            break;
+                twoXButton.setIsToggled(!twoXButton.getIsToggled());
+                break;
 
             case 'p':
-            pauseButton.setIsToggled(!pauseButton.getIsToggled());
-            isPaused = !isPaused;
-            break;
+                pauseButton.setIsToggled(!pauseButton.getIsToggled());
+                isPaused = !isPaused;
+                break;
 
-            case 't': 
-            buildTowerButton.setIsToggled(!buildTowerButton.getIsToggled());
-            break;
+            case 't':
+                buildTowerButton.setIsToggled(!buildTowerButton.getIsToggled());
+                break;
 
             case '1':
-            upgradeRangeButton.setIsToggled(!upgradeRangeButton.getIsToggled());
-            break;
+                upgradeRangeButton.setIsToggled(!upgradeRangeButton.getIsToggled());
+                break;
 
             case '2':
-            upgradeSpeedButton.setIsToggled(!upgradeSpeedButton.getIsToggled());
-            break;
+                upgradeSpeedButton.setIsToggled(!upgradeSpeedButton.getIsToggled());
+                break;
 
-            case '3': 
-            upgradeDamageButton.setIsToggled(!upgradeDamageButton.getIsToggled());
-            break;
+            case '3':
+                upgradeDamageButton.setIsToggled(!upgradeDamageButton.getIsToggled());
+                break;
 
-            case 'm': 
-            manaPoolButton.setIsToggled(!manaPoolButton.getIsToggled());
-            break;
+            case 'm':
+                manaPoolButton.setIsToggled(!manaPoolButton.getIsToggled());
+                break;
 
         }
-            
-
-
 
         // if (!buildTowerButton.getIsToggled()) {
-        //     if (key == '1') {
-        //         upgradeRangeButton.setIsToggled(!upgradeRangeButton.getIsToggled());
-        //         System.out.println("Button1 Toggled");
-        //         System.out.println(upgradeRangeButton.getIsToggled());
-        //     }
+        // if (key == '1') {
+        // upgradeRangeButton.setIsToggled(!upgradeRangeButton.getIsToggled());
+        // System.out.println("Button1 Toggled");
+        // System.out.println(upgradeRangeButton.getIsToggled());
+        // }
         // }
     }
 
@@ -465,11 +471,77 @@ public class App extends PApplet {
             int gridRow = (int) (mouseY / CELLSIZE);
             gridRow -= 1;
             int gridColumn = (int) (mouseX / CELLSIZE);
-            System.out.println(gridRow);
-            System.out.println(gridColumn);
+            // System.out.println(gridRow);
+            // System.out.println(gridColumn);
             createTower(gridRow, gridColumn);
-
         }
+
+        for (Tower tower : towerList) {
+            if (!buildTowerButton.getIsToggled()) {
+
+                boolean rangeToggle = upgradeRangeButton.getIsToggled();
+                boolean speedToggle = upgradeSpeedButton.getIsToggled();
+                boolean damageToggle = upgradeDamageButton.getIsToggled();
+                if (tower.isMouseOver()) {
+
+                    if (rangeToggle && speedToggle && damageToggle) {
+                        tower.upgradeRange();
+                        tower.upgradeSpeed();
+                        tower.upgradeDamage();
+
+                    } else if (rangeToggle && speedToggle && !damageToggle) {
+                        tower.upgradeRange();
+                        tower.upgradeSpeed();
+                    } else if (rangeToggle && !speedToggle && damageToggle) {
+                        tower.upgradeRange();
+                        tower.upgradeDamage();
+                    } else if (!rangeToggle && speedToggle && damageToggle) {
+                        tower.upgradeSpeed();
+                        tower.upgradeDamage();
+
+                    } else if (rangeToggle && !speedToggle && !damageToggle) {
+                        tower.upgradeRange();
+                    } else if (!rangeToggle && speedToggle && !damageToggle) {
+                        tower.upgradeSpeed();
+                    } else if (!rangeToggle && !speedToggle && damageToggle) {
+                        tower.upgradeDamage();
+                    } 
+                }
+
+                
+                // else if (rangeToggle && !speedToggle && !damageToggle) {
+                //     tower.upgradeRange();
+                // } else if (rangeToggle && speedToggle && !damageToggle) {
+                //     tower.upgradeRange();
+                //     tower.upgradeSpeed();
+                // } else if (!rangeToggle && speedToggle && damageToggle) {
+                //     tower.upgradeSpeed();
+                //     tower.upgradeDamage();
+                // } else if (!rangeToggle && speedToggle && !damageToggle) {
+                //     tower.upgradeSpeed();
+                // } else if (rangeToggle && speedToggle && !damageToggle) {
+                //     tower.upgradeSpeed();
+                // } 
+
+
+                // System.out.println("here");
+                // if (tower.isMouseOver()) {
+                //     tower.upgradeRange();
+                //     System.out.println("range upgrade!!");
+                // }
+            }
+        }
+
+
+
+        // if (!buildTowerButton.getIsToggled() && upgradeSpeedButton.getIsToggled()) {
+        //     for (Tower tower : towerList) {
+        //         if (tower.isMouseOver()) {
+        //             tower.upgradeRange();
+        //             System.out.println("RANGE UPGRADED");
+        //         }
+        //     }
+        // }
     }
 
     @Override
@@ -485,12 +557,43 @@ public class App extends PApplet {
     }
 
     public void createTower(int gridRow, int gridColumn) {
+        int rangeLevel = 0;
+        int speedLevel = 0;
+        int damageLevel = 0;
         if (isTileEmpty(gridRow, gridColumn)) {
+
+            if (buildTowerButton.getIsToggled()) {
+                if (upgradeRangeButton.getIsToggled()) {
+                    rangeLevel = 1;
+                }
+
+                if (upgradeSpeedButton.getIsToggled()) {
+                    speedLevel = 1;
+                }
+
+                if (upgradeDamageButton.getIsToggled()) {
+                    damageLevel = 1;
+                }
+
+            }
+
             int towerXPos = gridColumn * CELLSIZE;
             int towerYPos = gridRow * CELLSIZE + 40;
-            int towerCost = 100;
+            int initialTowerCost = 100;
+            // not the right maths but in this case we can only initialise a max of level 1
+            // tower so it works.
+            int towerCost = initialTowerCost + 20 * (rangeLevel) + 20 * (speedLevel) + 20 * (damageLevel);
+
             if (manaBar.getMana() > towerCost) {
-                Tower newTower = new Tower(this, towerXPos, towerYPos, loadImage("src/main/resources/WizardTD/tower0.png"), towerCost, 100, (float) 1, 20, fireballSprite, fireballList);
+                System.out.println("Tower built has levels:");
+                System.out.println("range " + rangeLevel);
+                System.out.println("speed " + speedLevel);
+                System.out.println("damage " + damageLevel);
+                System.out.println("Cost " + towerCost);
+
+                Tower newTower = new Tower(this, towerXPos, towerYPos,
+                        towerImageList, towerCost, 100, (float) 1, 20,
+                        fireballSprite, fireballList, rangeLevel, speedLevel, damageLevel);
 
                 manaBar.decreaseMana((float) towerCost);
                 towerList.add(newTower);
@@ -513,16 +616,15 @@ public class App extends PApplet {
     @Override
     public void draw() {
         background(255);
-        
-    
+        // System.out.println("1");
         for (Paths pathsToDraw : pathsList) {
             pathsToDraw.draw(this);
         }
-
+        // System.out.println("2");
         for (MapElements elementToDraw : elementsList) {
             elementToDraw.draw(this);
         }
-
+        // System.out.println("3");
         for (WizardHouse wizardHouse : wizardHouseList) {
             int wizardXPos = wizardHouse.getXPos();
             int wizardYPos = wizardHouse.getYpos();
@@ -531,13 +633,13 @@ public class App extends PApplet {
             grassUnderWizard.draw(this);
             wizardHouse.draw(this);
         }
-
+        // System.out.println("4");
         for (Tower tower : towerList) {
             if (tower.getIsHovered() == true) {
                 tower.drawRadius();
             }
         }
-
+        // System.out.println("5");
         rect(640, 40, 120, 640);
         fill(132, 115, 74);
 
@@ -549,13 +651,13 @@ public class App extends PApplet {
 
         manaBar.draw(this, 375, 9, 345, 22);
         // manaBar.increaseMana(1);
-
+        // System.out.println("6");
         for (Buttons button : buttonsList) {
             button.drawText();
             button.drawButton();
             button.drawLabel();
         }
-
+        // System.out.println("7");
         if (spawnCounter >= framesBetweenSpawn && numMonstersCreated < noOfMonstersNeeded) {
             createMonsters(); // Spawn a new monster
             spawnCounter = 0; // Reset the counter
@@ -572,11 +674,11 @@ public class App extends PApplet {
                 monster.moveMonster();
             }
         }
-
+        // System.out.println("8");
         for (Tower tower : towerList) {
             tower.drawTower();
         }
-
+        // System.out.println("9");
         for (Buttons button : buttonsList) {
             if (!button.getIsToggled() && button.isMouseOver()) {
                 button.changeButtonColour(color(200));
@@ -586,19 +688,19 @@ public class App extends PApplet {
                 button.changeButtonColour(brown);
             }
         }
-
-        //fireballList.clear();
+        // System.out.println("10");
+        // fireballList.clear();
 
         for (Tower tower : towerList) {
             tower.survey(monsterList);
             fireballList.addAll(tower.getFireballList());
             tower.updateTimer();
         }
-    
+        // System.out.println("11");
         for (Fireball fireball : fireballList) {
             fireball.updateTargetPosition();
             fireball.moveFireball();
-            fireball.draw();       
+            fireball.draw();
             if (fireball.hasHitTarget()) {
                 fireballsToRemoveList.add(fireball);
                 if (!fireball.getHasRemovedHP()) {
@@ -608,13 +710,14 @@ public class App extends PApplet {
             }
         }
 
-        for (Fireball fireball: fireballsToRemoveList) {
+        //System.out.println("12");
+        // System.out.println(fireballList.size());
+        // System.out.println(fireballsToRemoveList.size());
+        for (Fireball fireball : fireballsToRemoveList) {
             fireball.removeFireball();
-            
         }
-        
+        //System.out.println("13");
         fireballsToRemoveList.clear();
-        
     }
 
     // if (spawnCounter >= framesBetweenSpawn && numMonstersCreated <

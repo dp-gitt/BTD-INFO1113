@@ -9,7 +9,7 @@ public class Fireball {
     private float x, y;
     private float targetX, targetY;
     private float speed;
-    private int damage;
+    private float damage;
     private PApplet app;
     private Monster targetMonster;
     private PImage sprite;
@@ -17,7 +17,7 @@ public class Fireball {
     private boolean hasRemovedHP = false;
     // private PImage sprite = app.image(app.loadImage("src/main/resources/WizardTD/fireball.png"));
 
-    Fireball(PApplet app, Monster targetMonster, float x, float y, float targetX, float targetY, float speed, int damage, PImage sprite, ArrayList<Fireball> fireballList) {
+    Fireball(PApplet app, Monster targetMonster, float x, float y, float targetX, float targetY, float speed, float damage, PImage sprite, ArrayList<Fireball> fireballList) {
         this.x = x;
         this.y = y;
         this.targetX = targetX;
@@ -67,18 +67,18 @@ public class Fireball {
         return this.y;
     }
 
-    public int getDamage() {
+    public float getDamage() {
         return this.damage;
     }
 
     public boolean hasHitTarget() {
         // Check if the fireball has reached its target
-        return PApplet.dist(x, y, targetX, targetY) <= 10;
+        return PApplet.dist(x, y, targetX, targetY) <= 16;
     }
 
     public void reduceHP() {
         System.out.println("called HPREDUCTION");
-        targetMonster.decreaseHealth(damage);
+        targetMonster.decreaseHealth((int) damage);
     }
 
     public void removeFireball() {
