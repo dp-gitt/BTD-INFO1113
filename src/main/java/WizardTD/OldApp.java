@@ -295,3 +295,42 @@
 //     }
 // }
 
+
+
+        // Waves currentWave = waveList.get(currentWaveIndex);
+
+        // if (isDelaying) {
+        //     int currentTime = millis();
+        //     int elapsedDelayTime = currentTime - delayStartTime;
+            
+        //     if (elapsedDelayTime >= 5000) {
+        //       // Delay is over, start the next wave
+        //       isDelaying = false;
+        //       currentWaveStartTime = currentTime;
+        //       currentWave.startWave();
+        //       System.out.println("STARTTNIG NEXT WAVE");  
+        //       // Start the next wave here
+        //     } 
+        // } else {
+        //     // Check if the current wave has ended
+        //     for (Monster monster : monsterList) {
+        //         monster.drawMonster();
+        //         monster.moveMonster();
+        //     }
+        //     int elapsedTime = (millis() - currentWaveStartTime) / 1000; // Convert to seconds
+        //     int waveDuration = waveList.get(currentWaveIndex).getDuration();
+            
+        //     if (elapsedTime >= waveDuration) {
+        //       // Current wave has ended, do any cleanup
+        //       currentWaveIndex++;
+              
+        //       if (currentWaveIndex < waveList.size()) {
+        //         // Start the next wave after a 5-second delay
+        //         isDelaying = true;
+        //         delayStartTime = millis();
+        //       } else {
+        //         // All waves have been completed
+        //         // Handle game over or victory logic
+        //       }
+        //     }
+        // }

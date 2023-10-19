@@ -3,19 +3,22 @@ package WizardTD;
 import processing.core.PApplet;
 
 public class ManaBar {
-    public float maxMana;
-    public float currMana;
+    public static float maxMana;
+    public static float currMana;
 
     public ManaBar(int maxMana) {
-        this.maxMana = maxMana;
-        this.currMana = 1000;
+        ManaBar.maxMana = maxMana;
+        ManaBar.currMana = 1000;
     }
 
 
-    public void increaseMana(int amount) {
-        currMana += amount;
-        if (currMana > maxMana) {
+    public static void increaseMana(int amount) {
+        int copyCurrMana = (int) currMana;
+        copyCurrMana += amount;
+        if ((copyCurrMana += amount) > maxMana) {
             currMana = maxMana; // Cap mana at max
+        } else {
+            currMana += amount;
         }
     }
 

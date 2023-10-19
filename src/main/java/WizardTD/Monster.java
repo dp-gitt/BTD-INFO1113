@@ -10,7 +10,7 @@ import processing.core.PVector;
 
 public class Monster {
     private String type;
-    private float currHp = 50;
+    private float currHp;
     private float maxHp;
     private float speed;
     private float armour;
@@ -49,17 +49,18 @@ public class Monster {
         this.sprite = sprite;
         this.manaBar = manaBar;
         this.monsterList = monsterList;
+        this.currHp = maxHp;
         // System.out.println(x);
         // System.out.println(y);
 
         // Prints the map for debugging purposes
-        System.out.println("Map:");
-        for (int row = 0; row < map.length; row++) {
-            for (int col = 0; col < map[row].length; col++) {
-                System.out.print(map[row][col] + " ");
-            }
-            System.out.println();
-        }
+        // System.out.println("Map:");
+        // for (int row = 0; row < map.length; row++) {
+        //     for (int col = 0; col < map[row].length; col++) {
+        //         System.out.print(map[row][col] + " ");
+        //     }
+        //     System.out.println();
+        // }
 
         // Printing vars for debugging
     }
@@ -81,7 +82,7 @@ public class Monster {
             System.out.println("Path found:");
             for (Point point : path) {
                 // System.out.println("made it!");
-                System.out.println(point);
+                // System.out.println(point);
                 monsterPathList.add(point);
             }
         } else {
@@ -142,6 +143,7 @@ public class Monster {
         //System.out.println(x);
         //System.out.println(y);
         if (monsterPathList.isEmpty()) {
+            System.out.println("HI");
             return;
         }
         app.image(sprite,x,y);
@@ -178,16 +180,14 @@ public class Monster {
 
     public void decreaseHealth(int damage) {
         currHp -= damage;
-        System.out.println("MADE IT HERE");
-
         if (currHp <= 0) {
             removeMonster();
         } 
     }
 
-    private void removeMonster() {
+    public void removeMonster() {
         monsterList.remove(this);
-        manaBar.increaseMana((int) manaGainedOnKill);
+        ManaBar.increaseMana((int) manaGainedOnKill);
     }
 
 }
