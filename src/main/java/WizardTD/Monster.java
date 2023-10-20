@@ -88,7 +88,7 @@ public class Monster {
         } else {
             System.out.println("No path found");
         }
-        System.out.println("PATH FINISHED FINDING");
+        // System.out.println("PATH FINISHED FINDING");
         return monsterPathList;
     }
 

@@ -2,7 +2,7 @@
   "layout": "level2.txt",
   "waves": [
     {
-      "duration": 8,
+      "duration": 3,
       "pre_wave_pause": 0.5,
 	  "monsters": [
         {
@@ -16,7 +16,7 @@
 	  ]
     },
     {
-      "duration": 5,
+      "duration": 4,
       "pre_wave_pause": 10,
       "monsters": [
         {

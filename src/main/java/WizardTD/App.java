@@ -778,22 +778,25 @@ public class App extends PApplet {
         
         Waves.increaseFrameCounter();
         int totalPreviousDurations = wave.getDuration();
-        int currentWaveIndex = k;
+        // int currentWaveIndex = k;
         
         
 
-        while (currentWaveIndex > 0) {
-            currentWaveIndex--; // Move to the previous wave
-            Waves previousWave = waveList.get(currentWaveIndex);
-            totalPreviousDurations += previousWave.getDuration();
-        } 
+        // while (currentWaveIndex > 0) {
+        //     currentWaveIndex--; // Move to the previous wave
+        //     Waves previousWave = waveList.get(currentWaveIndex);
+        //     totalPreviousDurations += previousWave.getDuration();
+        // } 
 
         if (!waveChanged) {
             waveStartTime = millis(); // Store the start time of the current wave
+            System.out.println("wave start time" + waveStartTime);
             waveChanged = true;
         }
 
-        if (millis() - totalPreviousDurations >= wave.getDuration() * 1000 && k < waveList.size() - 1 ) {
+        if (millis() - waveStartTime >= wave.getDuration() * 1000 && k < waveList.size() - 1 && waveChanged) {
+            System.out.println(millis() - totalPreviousDurations);
+            System.out.println("wave get duration " + wave.getDuration()*1000);
             System.out.println("NEW WAVE");
             k++;
             waveChanged = false;
@@ -804,7 +807,7 @@ public class App extends PApplet {
             monster.moveMonster();
         }
 
-        System.out.println(k);
+        // System.out.println(k);
         
 
         

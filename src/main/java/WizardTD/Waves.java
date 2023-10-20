@@ -124,7 +124,7 @@ public class Waves {
                             spawnPoint,
                             wizardSpawnPoint, map, sprite, manaBar, monsterList);
 
-                    System.out.println("NEW MONSTER CREATED");
+                    // System.out.println("NEW MONSTER CREATED");
                     monsterList.add(newMonster);
                     newMonster.determineMonsterPath();
                     monsterType.decreaseQuantity(1);
