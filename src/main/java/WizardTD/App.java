@@ -21,10 +21,17 @@ public class App extends PApplet {
     public static final int SIDEBAR = 120;
     public static final int TOPBAR = 40;
     public static final int BOARD_WIDTH = 20;
+    int preWavePauseTime;
     int currentWaveIndex = 0;
     private int k = 0;
     boolean waveChanged = false;
-    int waveStartTime;
+    boolean gotWaveFinishedTime = false;
+    // int waveStartTime;
+
+    int waveStartTime = 0; // Initialize to 0
+    int waveFinishedAt = 0;
+    // int waveFinishedTime = 0; // Initialize to 0
+    // boolean waveChanged = false;
 
     
     
@@ -778,29 +785,50 @@ public class App extends PApplet {
         
         Waves.increaseFrameCounter();
         int totalPreviousDurations = wave.getDuration();
-        // int currentWaveIndex = k;
-        
-        
-
-        // while (currentWaveIndex > 0) {
-        //     currentWaveIndex--; // Move to the previous wave
-        //     Waves previousWave = waveList.get(currentWaveIndex);
-        //     totalPreviousDurations += previousWave.getDuration();
-        // } 
 
         if (!waveChanged) {
             waveStartTime = millis(); // Store the start time of the current wave
-            System.out.println("wave start time" + waveStartTime);
+            // System.out.println("wave start time" + waveStartTime);
             waveChanged = true;
         }
 
         if (millis() - waveStartTime >= wave.getDuration() * 1000 && k < waveList.size() - 1 && waveChanged) {
-            System.out.println(millis() - totalPreviousDurations);
-            System.out.println("wave get duration " + wave.getDuration()*1000);
-            System.out.println("NEW WAVE");
-            k++;
-            waveChanged = false;
+            // System.out.println(millis() - totalPreviousDurations);
+            // System.out.println("wave get duration " + wave.getDuration()*1000);
+            
+            String countdownText = "Wave " + (k + 2) + " starts in " + ((preWavePauseTime - (millis() - waveFinishedAt)) / 1000) + " seconds";
+            fill(0); // Set text color to white
+            textSize(20);
+            text(countdownText, 10, 25); // Adjust position as needed
+            
+            
+
+            if (!gotWaveFinishedTime) {
+                waveFinishedAt = millis();
+                System.out.println(waveFinishedAt);
+                gotWaveFinishedTime = true;
+            }
+  
+            Waves nextWave = waveList.get(k + 1);
+            preWavePauseTime = (int) (nextWave.getPreWavePause() * 1000);
+
+
+
+
+
+            // System.out.println("Wave " + (k + 1) + "starts in " + (preWavePauseTime - (millis() - waveFinishedAt))/1000 );
+            
+            if (millis() >= waveFinishedAt + preWavePauseTime) {
+                // We've waited for the pre-wave pause, so we can now move to the next wave.
+                // System.out.println(millis());
+                System.out.println("NEW WAVE");
+                k++;
+                waveChanged = false;
+                gotWaveFinishedTime = false;
+            }
         }
+
+
        
         for (Monster monster : monsterList) {
             monster.drawMonster();

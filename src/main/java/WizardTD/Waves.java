@@ -192,5 +192,23 @@ public class Waves {
         frameCounter++;
     }
 
+    // public void drawWaveCounter() {
+
+    // }
+
+
+
+    // public void drawWaveCounter(int ) {
+    //     if (currentWaveIndex < waveList.size() - 1) {
+    //         if (millis() > waveStartTime + waveList.get(currentWaveIndex).getDuration() * 1000) {
+    //             int remainingTime = nextWaveStartTime - millis();
+    //             if (remainingTime > 0) {
+    //                 String countdownText = "Wave " + (currentWaveIndex + 2) + " will start in: " + (remainingTime / 1000) + " seconds";
+    //                 app.fill(255); // Set text color to white
+    //                 app.text(countdownText, 20, 20); // Adjust position as needed
+    //             }
+    //         }
+    //     }
+    // }
 
 }

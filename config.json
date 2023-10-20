@@ -8,7 +8,7 @@
         {
           "type": "gremlin",
           "hp": 100,
-          "speed": 1,
+          "speed": 0.2,
           "armour": 0.5,
           "mana_gained_on_kill": 10,
           "quantity": 10
@@ -17,12 +17,12 @@
     },
     {
       "duration": 4,
-      "pre_wave_pause": 10,
+      "pre_wave_pause": 8,
       "monsters": [
         {
           "type": "gremlin",
           "hp": 50,
-          "speed": 2.5,
+          "speed": 0.2,
           "armour": 0.7,
           "mana_gained_on_kill": 20,
           "quantity": 15
@@ -31,12 +31,12 @@
     },
     {
       "duration": 5,
-      "pre_wave_pause": 10,
+      "pre_wave_pause": 5,
       "monsters": [
         {
           "type": "gremlin",
           "hp": 150,
-          "speed": 1.0,
+          "speed": 0.2,
           "armour": 0.7,
           "mana_gained_on_kill": 70,
           "quantity": 25
@@ -44,7 +44,7 @@
         {
           "type": "gremlin",
           "hp": 70,
-          "speed": 2.0,
+          "speed": 0.2,
           "armour": 0.7,
           "mana_gained_on_kill": 10,
           "quantity": 15
