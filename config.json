@@ -6,9 +6,9 @@
       "pre_wave_pause": 0.5,
 	  "monsters": [
         {
-          "type": "gremlin",
+          "type": "worm",
           "hp": 100,
-          "speed": 0.2,
+          "speed": 1,
           "armour": 0.5,
           "mana_gained_on_kill": 10,
           "quantity": 10
@@ -22,7 +22,7 @@
         {
           "type": "gremlin",
           "hp": 50,
-          "speed": 0.2,
+          "speed": 1,
           "armour": 0.7,
           "mana_gained_on_kill": 20,
           "quantity": 15
@@ -34,9 +34,9 @@
       "pre_wave_pause": 5,
       "monsters": [
         {
-          "type": "gremlin",
+          "type": "beetle",
           "hp": 150,
-          "speed": 0.2,
+          "speed": 1,
           "armour": 0.7,
           "mana_gained_on_kill": 70,
           "quantity": 25

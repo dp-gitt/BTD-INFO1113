@@ -26,6 +26,13 @@ public class Monster {
     private PImage sprite;
     private ManaBar manaBar;
     private ArrayList<Monster> monsterList;
+    private ArrayList<Point> copyMonsterPathList = new ArrayList<>();
+
+    // copy 
+    // if done real = copy, 
+    // keep doing real = copy until dead or lost.
+
+    private int k = 0;
     
     int monsterDead = 0;
     // private boolean isInVisibleArea = false;
@@ -89,6 +96,7 @@ public class Monster {
             System.out.println("No path found");
         }
         // System.out.println("PATH FINISHED FINDING");
+        copyMonsterPathList = monsterPathList;
         return monsterPathList;
     }
 
@@ -133,17 +141,21 @@ public class Monster {
                 monsterPathList.remove(0);
             }
             if (monsterPathList.size() == 0 && monsterDead == 0) {
-                manaBar.decreaseMana(currHp);
+
+                // if the wizard can banish it, set mosnterpathlist = coptmonsterpathlist and decrease mana.
+                // else wizard cant banish so you lose.
+                // monster needs to get removed from the wizard house instantly after it reaches.
+                ManaBar.decreaseMana(currHp);
                 monsterDead = 1;
             }
-        }
+        } 
     }
 
     public void drawMonster() {
         //System.out.println(x);
         //System.out.println(y);
         if (monsterPathList.isEmpty()) {
-            System.out.println("HI");
+            System.out.println("monster list is empty");
             return;
         }
         app.image(sprite,x,y);
