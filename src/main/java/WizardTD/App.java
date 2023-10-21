@@ -130,7 +130,6 @@ public class App extends PApplet {
         return wizardSpawnPoint;
     }
 
-
     // public void createMonsters() {
 
     // int randomIndex = random.nextInt(MonsterSpawnPointsList.size());
@@ -345,7 +344,7 @@ public class App extends PApplet {
     @Override
     public void setup() {
         frameRate(FPS);
-      
+
         fireballSprite = loadImage("src/main/resources/WizardTD/fireball.png");
         PImage tower0 = loadImage("src/main/resources/WizardTD/tower0.png");
         towerImageList[0] = tower0;
@@ -362,15 +361,10 @@ public class App extends PApplet {
         gremlinDying3 = loadImage("src/main/resources/WizardTD/gremlin3.png");
         gremlinDying4 = loadImage("src/main/resources/WizardTD/gremlin4.png");
         gremlinDying5 = loadImage("src/main/resources/WizardTD/gremlin5.png");
-        
-        
-         
 
-        config = loadJSONObject("config.json"); 
+        config = loadJSONObject("config.json");
         parseConfig(config);
 
-           
-        
         towerGrid = loadLevelData(levelName);
 
         mapGrid = loadLevelData(levelName);
@@ -684,77 +678,75 @@ public class App extends PApplet {
 
     public void parseConfig(JSONObject config) {
 
+        levelName = config.getString("layout");
+        int initialTowerRange = config.getInt("initial_tower_range");
+        float initialTowerFiringSpeed = config.getFloat("initial_tower_firing_speed");
+        int initialTowerDamage = config.getInt("initial_tower_damage");
+        int initialMana = config.getInt("initial_mana");
+        int initialManaCap = config.getInt("initial_mana_cap");
+        float initialManaGainedPerSecond = config.getFloat("initial_mana_gained_per_second");
+        initialTowerCost = config.getInt("tower_cost");
+        int manaPoolSpellInitialCost = config.getInt("mana_pool_spell_initial_cost");
+        int manaPoolSpellCostIncreasePerUse = config.getInt("mana_pool_spell_cost_increase_per_use");
+        float manaPoolSpellCapMultiplier = config.getFloat("mana_pool_spell_cap_multiplier");
+        float manaPoolSpellManaGainedMultiplier = config.getFloat("mana_pool_spell_mana_gained_multiplier");
 
-            levelName = config.getString("layout");
-            int initialTowerRange = config.getInt("initial_tower_range");
-            float initialTowerFiringSpeed = config.getFloat("initial_tower_firing_speed");
-            int initialTowerDamage = config.getInt("initial_tower_damage");
-            int initialMana = config.getInt("initial_mana");
-            int initialManaCap = config.getInt("initial_mana_cap");
-            float initialManaGainedPerSecond = config.getFloat("initial_mana_gained_per_second");
-            initialTowerCost = config.getInt("tower_cost");
-            int manaPoolSpellInitialCost = config.getInt("mana_pool_spell_initial_cost");
-            int manaPoolSpellCostIncreasePerUse = config.getInt("mana_pool_spell_cost_increase_per_use");
-            float manaPoolSpellCapMultiplier = config.getFloat("mana_pool_spell_cap_multiplier");
-            float manaPoolSpellManaGainedMultiplier = config.getFloat("mana_pool_spell_mana_gained_multiplier");
+        JSONArray waves = config.getJSONArray("waves");
+        for (int i = 0; i < waves.size(); i++) {
+            JSONObject waveNumber = waves.getJSONObject(i);
+            int duration = waveNumber.getInt("duration");
+            int preWavePause = waveNumber.getInt("pre_wave_pause");
+            JSONArray monsters = waveNumber.getJSONArray("monsters");
 
-            JSONArray waves = config.getJSONArray("waves");
-            for (int i = 0; i < waves.size(); i++) {
-                JSONObject waveNumber = waves.getJSONObject(i);
-                int duration = waveNumber.getInt("duration");
-                int preWavePause = waveNumber.getInt("pre_wave_pause");
-                JSONArray monsters = waveNumber.getJSONArray("monsters");
+            for (int j = 0; j < monsters.size(); j++) {
+                JSONObject monster = monsters.getJSONObject(j);
+                String type = monster.getString("type");
+                float hp = monster.getFloat("hp");
+                float speed = monster.getFloat("speed");
+                float armour = monster.getFloat("armour");
+                float manaGainedOnKill = monster.getFloat("mana_gained_on_kill");
+                int quantity = monster.getInt("quantity");
 
-                for (int j = 0; j < monsters.size(); j++) {
-                    JSONObject monster = monsters.getJSONObject(j);
-                    String type = monster.getString("type");
-                    float hp = monster.getFloat("hp");
-                    float speed = monster.getFloat("speed");
-                    float armour = monster.getFloat("armour");
-                    float manaGainedOnKill = monster.getFloat("mana_gained_on_kill");
-                    int quantity = monster.getInt("quantity");
+                MonsterType newMonsterType = new MonsterType(type, hp, speed, armour, manaGainedOnKill, quantity);
 
-
-                    MonsterType newMonsterType = new MonsterType(type, hp, speed, armour, manaGainedOnKill, quantity);
-
-                    monsterTypeList.add(newMonsterType);
-
-                }
-
-                // System.out.println(monsterTypeList.size());
-                // for (Monster monster : mons)
-
-                // List<MonsterType> copyList = new ArrayList<>(monsterTypeList);
-                // for (MonsterType monsterType : copyList) {
-                // System.out.println(monsterType.getName());
-                // }
-
-                List<MonsterType> copyList = new ArrayList<>();
-                copyList.addAll(monsterTypeList);
-                Waves wave = new Waves(this, duration, preWavePause, copyList, MonsterSpawnPointsList, gremlinSprite,
-                        beetleSprite, wormSprite, manaBar,monsterList);
-                waveList.add(wave);
-                // System.out.println(monsterTypeList.size());
-                monsterTypeList.clear();
-
-                    // each wave has a monsterTypesList, and the wave class will have
-                    // a startWave method which will iterate through the monstertypes
-                    // list and based on the quantity, and the individual waves timings
-                    // spawn monsters randomly from the options it has.
-                    // so in app.java i can iterate through the waveList, so i keep track
-                    // of the number of waves and as i iterate through them i call
-                    // startWave method.
-
-                    // i have a waveList of waves. Each wave has its own Monstertype List.
-                    // I can iterate through each wave to start the wave, and then
-                    // for each wave, i can iterate through the monstertypeslist
-                    // and then create instances of monster class using getter methods from it
-                    // eg. for MonsterType monstertype : monsterTypeList {
-                    // Monster newMonster = new Monster(monstertype.getHP())
-                    // }
-                    //
+                monsterTypeList.add(newMonsterType);
 
             }
+
+            // System.out.println(monsterTypeList.size());
+            // for (Monster monster : mons)
+
+            // List<MonsterType> copyList = new ArrayList<>(monsterTypeList);
+            // for (MonsterType monsterType : copyList) {
+            // System.out.println(monsterType.getName());
+            // }
+
+            List<MonsterType> copyList = new ArrayList<>();
+            copyList.addAll(monsterTypeList);
+            Waves wave = new Waves(this, duration, preWavePause, copyList, MonsterSpawnPointsList, gremlinSprite,
+                    beetleSprite, wormSprite, manaBar, monsterList);
+            waveList.add(wave);
+            // System.out.println(monsterTypeList.size());
+            monsterTypeList.clear();
+
+            // each wave has a monsterTypesList, and the wave class will have
+            // a startWave method which will iterate through the monstertypes
+            // list and based on the quantity, and the individual waves timings
+            // spawn monsters randomly from the options it has.
+            // so in app.java i can iterate through the waveList, so i keep track
+            // of the number of waves and as i iterate through them i call
+            // startWave method.
+
+            // i have a waveList of waves. Each wave has its own Monstertype List.
+            // I can iterate through each wave to start the wave, and then
+            // for each wave, i can iterate through the monstertypeslist
+            // and then create instances of monster class using getter methods from it
+            // eg. for MonsterType monstertype : monsterTypeList {
+            // Monster newMonster = new Monster(monstertype.getHP())
+            // }
+            //
+
+        }
     }
 
     public static PImage getGremlinDying1() {
@@ -785,6 +777,36 @@ public class App extends PApplet {
         System.out.println("this method called");
         removeMonsters = true;
     }
+
+
+    public void drawAnimation(String monsterType, float x, float y) {
+        if (monsterType.equals("gremlin")) {
+            // Load gremlin death animation frames as PImage variables
+            PImage[] deathFrames = new PImage[5];
+            deathFrames[0] = getGremlinDying1();
+            deathFrames[1] = getGremlinDying2();
+            deathFrames[2] = getGremlinDying3();
+            deathFrames[3] = getGremlinDying4();
+            deathFrames[4] = getGremlinDying5();
+    
+            // Calculate the frame index based on elapsed time and custom frame rate (4 frames per second)
+            int customFrameRate = 4; // 4 frames per second
+            int frameIndex = (int)((millis() - waveFinishedAt) / (1000.0 / customFrameRate));
+    
+            // Display the current death frame
+            if (frameIndex >= 0 && frameIndex < deathFrames.length) {
+                System.out.println("animation played");
+                image(deathFrames[frameIndex], x, y);
+            } else {
+                // Animation is complete, do additional logic if needed
+            }
+        }
+    }
+
+
+
+
+
 
     @Override
     public void draw() {
@@ -856,7 +878,7 @@ public class App extends PApplet {
 
                 if (!gotWaveFinishedTime) {
                     waveFinishedAt = millis();
-                    System.out.println(waveFinishedAt);
+                    // System.out.println(waveFinishedAt);
                     gotWaveFinishedTime = true;
                 }
 
@@ -869,7 +891,7 @@ public class App extends PApplet {
                 if (millis() >= waveFinishedAt + preWavePauseTime) {
                     // We've waited for the pre-wave pause, so we can now move to the next wave.
                     // System.out.println(millis());
-                    System.out.println("NEW WAVE");
+                    // System.out.println("NEW WAVE");
                     k++;
                     waveChanged = false;
                     gotWaveFinishedTime = false;
@@ -892,8 +914,23 @@ public class App extends PApplet {
             }
 
             for (Monster monster : monstersKilledList) {
+                System.out.println("12");
                 ManaBar.increaseMana((int) monster.getManaGainedOnKill());
+
+                String monsterType = monster.getType();
+                float deathX = monster.getX();
+                float deathY = monster.getY();
+
+                drawAnimation(monsterType, deathX, deathY);
                 monsterList.remove(monster);
+
+                // if (monster.getDeathAnimationPlayed() ) {
+                // System.out.println("hello");
+                // ManaBar.increaseMana((int) monster.getManaGainedOnKill());
+                // System.out.println("REMOVING MONSTER");
+                // monsterList.remove(monster);
+                // }
+
             }
 
             monstersKilledList.clear();
@@ -905,6 +942,7 @@ public class App extends PApplet {
             monstersToRespawnList.clear();
 
             for (Monster monster : monstersToRemoveList) {
+
                 monsterList.remove(monster);
             }
 
@@ -953,6 +991,8 @@ public class App extends PApplet {
             fireballsToRemoveList.clear();
 
         }
+        System.out.println("Method finished at" + millis());
+        System.out.println(frameRate);
     }
 
     // if (spawnCounter >= framesBetweenSpawn && numMonstersCreated <
@@ -967,8 +1007,6 @@ public class App extends PApplet {
     public static void main(String[] args) {
         PApplet.main("WizardTD.App");
     }
-
-    
 
     /**
      * Source:
@@ -1010,4 +1048,5 @@ public class App extends PApplet {
 
         return result;
     }
+    
 }

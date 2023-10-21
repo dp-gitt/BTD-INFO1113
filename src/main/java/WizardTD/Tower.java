@@ -381,7 +381,7 @@ public class Tower {
 
             Fireball fireball = new Fireball(app, targetMonster, towerXPos, towerYPos, targetX, targetY, 5, towerDamage,
                     fireballSprite, fireballList);
-            System.out.println("New Fireball created");
+            // System.out.println("New Fireball created");
             fireballList.add(fireball);
             targetMonster = null;
             canFire = false;

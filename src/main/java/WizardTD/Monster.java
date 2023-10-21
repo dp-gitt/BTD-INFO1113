@@ -6,7 +6,6 @@ import java.util.List;
 import processing.core.PApplet;
 import processing.core.PImage;
 
-
 import processing.core.PVector;
 
 public class Monster {
@@ -35,26 +34,28 @@ public class Monster {
     Monster oldMonster;
     boolean isDying = false;
     int dyingStartFrame;
-    PImage gremlinDying1  = App.getGremlinDying1();
-    PImage gremlinDying2  = App.getGremlinDying2();
-    PImage gremlinDying3  = App.getGremlinDying3();
-    PImage gremlinDying4  = App.getGremlinDying4();
-    PImage gremlinDying5  = App.getGremlinDying5();
+    PImage gremlinDying1 = App.getGremlinDying1();
+    PImage gremlinDying2 = App.getGremlinDying2();
+    PImage gremlinDying3 = App.getGremlinDying3();
+    PImage gremlinDying4 = App.getGremlinDying4();
+    PImage gremlinDying5 = App.getGremlinDying5();
     private boolean gotType = false;
     private String deathType;
-    // copy 
-    // if done real = copy, 
+    // copy
+    // if done real = copy,
     // keep doing real = copy until dead or lost.
 
     private int k = 0;
-    
+
     int monsterDead = 0;
     // private boolean isInVisibleArea = false;
     int i = 0;
     private boolean handleRespawn;
+    private boolean deathAnimationPlayed = false;
 
-    public Monster(PApplet app, String type, float maxHp, float speed, float armour, int manaGainedOnKill, 
-                    PVector spawnPoint, PVector wizardSpawnPoint, char[][] map, PImage sprite, ManaBar manaBar, ArrayList<Monster> monsterList, float currHp) {
+    public Monster(PApplet app, String type, float maxHp, float speed, float armour, int manaGainedOnKill,
+            PVector spawnPoint, PVector wizardSpawnPoint, char[][] map, PImage sprite, ManaBar manaBar,
+            ArrayList<Monster> monsterList, float currHp) {
         this.type = type;
         this.maxHp = maxHp;
         this.speed = speed;
@@ -64,10 +65,11 @@ public class Monster {
         this.map = map;
         this.app = app;
         this.wizardSpawnPoint = wizardSpawnPoint;
-        //this.speedPixelsPerFrame = speed * (float) app.frameRate / 60.0f; // this can be changed to speed
+        // this.speedPixelsPerFrame = speed * (float) app.frameRate / 60.0f; // this can
+        // be changed to speed
         this.speedPixelsPerFrame = speed;
         this.y = (spawnPoint.x + 1) * 32 + 16; // Centered vertically on the spawn row
-        this.x = (spawnPoint.y) * 32 + 8 ; // Centered horizontally on the spawn column
+        this.x = (spawnPoint.y) * 32 + 8; // Centered horizontally on the spawn column
         this.sprite = sprite;
         this.manaBar = manaBar;
         this.monsterList = monsterList;
@@ -78,10 +80,10 @@ public class Monster {
         // Prints the map for debugging purposes
         // System.out.println("Map:");
         // for (int row = 0; row < map.length; row++) {
-        //     for (int col = 0; col < map[row].length; col++) {
-        //         System.out.print(map[row][col] + " ");
-        //     }
-        //     System.out.println();
+        // for (int col = 0; col < map[row].length; col++) {
+        // System.out.print(map[row][col] + " ");
+        // }
+        // System.out.println();
         // }
 
         // Printing vars for debugging
@@ -121,14 +123,13 @@ public class Monster {
         if (!monsterPathList.isEmpty()) {
             // System.out.println(x);
             Point target = monsterPathList.get(0);
-            //System.out.println(target.x);
-            //System.out.println(target.y);
+            // System.out.println(target.x);
+            // System.out.println(target.y);
             float targetX = (target.x) * 32 + 8; // Calculate the target x-coordinate
             float targetY = (target.y + 1) * 32 + 16; // Calculate the target y-coordinate
 
             // System.out.println("GOING TO THE TARGET:" + monsterPathList.get(0));
 
-    
             // Calculate the direction and distance to the next point
             float dx = targetX - x;
             float dy = targetY - y;
@@ -136,13 +137,12 @@ public class Monster {
             // float moveX = dx/speed;
             // float moveY = dy/speed;
 
-
             float distance = PApplet.dist(x, y, targetX, targetY);
-    
+
             // Normalize the direction vector
             float speedX = (dx / distance) * speed;
             float speedY = (dy / distance) * speed;
-    
+
             // Update the monster's position based on the calculated speed values
             x += speedX;
             y += speedY;
@@ -165,7 +165,7 @@ public class Monster {
                 } else {
                     ManaBar.decreaseMana(currHp);
                     // for (Point p : copyMonsterPathList) {
-                    //     System.out.println(p);
+                    // System.out.println(p);
                     // }
                     // System.out.println("monster path copy size" + copyMonsterPathList.size());
                     // monsterDead = 1;
@@ -173,91 +173,132 @@ public class Monster {
                     createRespawnMonster();
                 }
 
-                // if the wizard can banish it, set mosnterpathlist = coptmonsterpathlist and decrease mana.
+                // if the wizard can banish it, set mosnterpathlist = coptmonsterpathlist and
+                // decrease mana.
                 // else wizard cant banish so you lose.
-                // monster needs to get removed from the wizard house instantly after it reaches.
+                // monster needs to get removed from the wizard house instantly after it
+                // reaches.
 
             }
         }
-    } 
+    }
 
-        public void drawMonster() {
-
- 
-
-        //System.out.println(x);
-        //System.out.println(y);
-        if (isDying) {
-
-            // if (!gotType) {
-            //     deathType = type;
-            //     System.out.println(deathType);
-            //     gotType = true;
-            // }
-
-
-            // Calculate the frame difference since dying started
-            int frameDifference = app.frameCount - dyingStartFrame;
+    public void drawMonster() {
+        // if (isDying) {
+        //     if (!gotType) {
+        //         deathType = type;
+        //         // System.out.println(deathType);
+        //         gotType = true;
+        //         dyingStartFrame = app.frameCount;
+        //         // handleRespawn = false;
+        //     }
     
-            // Display different dying images based on the frame difference
-            if (frameDifference < 4) {
-                app.image(gremlinDying1, x, y);
-                System.out.println(type);
-            } else if (frameDifference < 8) {
-                app.image(gremlinDying2, x, y);
-            } else if (frameDifference < 12) {
-                app.image(gremlinDying3, x, y);
-            } else if (frameDifference < 16) {
-                app.image(gremlinDying4, x, y);
-            } else if (frameDifference < 20) {
-                app.image(gremlinDying5, x, y);
-            } else {
-                // Dying animation is finished
-                killMonster = true;
-                isDying = false;
-            }
-        return;
-        } 
-
-    // public void drawMonster() {
-    //     //System.out.println(x);
-    //     //System.out.println(y);
-    //     if (isDying && type == "gremlin") {
-    //         // Calculate the frame difference since dying started
-    //         int frameDifference = app.frameCount - dyingStartFrame;
+        //     // Calculate the frame difference since dying started
+        //     int frameDifference = app.frameCount - dyingStartFrame;
+        //     int deathAnimationFrames = 20;  // Adjust the duration based on your preference
     
-    //         // Display different dying images based on the frame difference
-    //         if (frameDifference < 4) {
-    //             app.image(gremlinDying1, x, y);
-    //         } else if (frameDifference < 8) {
-    //             app.image(gremlinDying2, x, y);
-    //         } else if (frameDifference < 12) {
-    //             app.image(gremlinDying3, x, y);
-    //         } else if (frameDifference < 16) {
-    //             app.image(gremlinDying4, x, y);
-    //         } else if (frameDifference < 20 ) {
-    //             app.image(gremlinDying5, x, y);
-    //         } else {
-    //             // Dying animation is finished
-    //             killMonster = true;
-    //             isDying = false;
-    //         }
-    //     return;
-    //     } else if (isDying) {
-    //         killMonster = true;
-    //         isDying = false;
-    //         return;
-    //     }
+        //     // Display different dying images based on the frame difference
+
+        //     // System.out.println(deathType);
+        //     // System.out.println(frameDifference);
+        //     // System.out.println(deathAnimationFrames);
+        //     if ((frameDifference < deathAnimationFrames  && deathType.compareTo("gremlin") == 0)) {
+        //         System.out.println(deathType);
+        //         if (frameDifference < 4) {
+        //             app.image(gremlinDying1, x, y);              
+        //         } else if (frameDifference < 8) {
+        //             app.image(gremlinDying2, x, y);
+        //         } else if (frameDifference < 12) {
+        //             app.image(gremlinDying3, x, y);
+        //         } else if (frameDifference < 16) {
+        //             app.image(gremlinDying4, x, y);
+        //         } else {
+        //             app.image(gremlinDying5, x, y);
+        //         }
+        //     } else {
+        //         // Dying animation is finished
+        //         // System.out.println("death type " + deathType);
+        //         deathAnimationPlayed = true;
+        //         isDying = false;
+        //         killMonster = true;
+                
+        //     }
+        //     return;
+        // }
 
 
 
+        // if (isDying) {
 
+        //     if (!gotType) {
+        //         deathType = type;
+        //         System.out.println(deathType);
+        //         gotType = true;
+        //         deathAnimationPlayed = false;
+        //     }
+
+        //     // Calculate the frame difference since dying started
+        //     int frameDifference = app.frameCount - dyingStartFrame;
+
+        //     // Display different dying images based on the frame difference
+        //     if (frameDifference < 4 && type == "gremlin") {
+        //         app.image(gremlinDying1, x, y);
+        //         System.out.println(type);
+        //     } else if (frameDifference < 8 && type == "gremlin") {
+        //         app.image(gremlinDying2, x, y);
+        //     } else if (frameDifference < 12 && type == "gremlin") {
+        //         app.image(gremlinDying3, x, y);
+        //     } else if (frameDifference < 16 && type == "gremlin") {
+        //         app.image(gremlinDying4, x, y);
+        //     } else if (frameDifference < 20 && type == "gremlin") {
+        //         app.image(gremlinDying5, x, y);
+        //     } else {
+        //         // Dying animation is finished
+        //         deathAnimationPlayed = true;
+        //         killMonster = true;
+        //         isDying = false;
+        //     }
+        //     return;
+        // }
+// -------------------------------------------
+        // System.out.println(x);
+        // System.out.println(y);
+
+        // public void drawMonster() {
+        // //System.out.println(x);
+        // //System.out.println(y);
+        // if (isDying && type == "gremlin") {
+        // // Calculate the frame difference since dying started
+        // int frameDifference = app.frameCount - dyingStartFrame;
+
+        // // Display different dying images based on the frame difference
+        // if (frameDifference < 4) {
+        // app.image(gremlinDying1, x, y);
+        // } else if (frameDifference < 8) {
+        // app.image(gremlinDying2, x, y);
+        // } else if (frameDifference < 12) {
+        // app.image(gremlinDying3, x, y);
+        // } else if (frameDifference < 16) {
+        // app.image(gremlinDying4, x, y);
+        // } else if (frameDifference < 20 ) {
+        // app.image(gremlinDying5, x, y);
+        // } else {
+        // // Dying animation is finished
+        // killMonster = true;
+        // isDying = false;
+        // }
+        // return;
+        // } else if (isDying) {
+        // killMonster = true;
+        // isDying = false;
+        // return;
+        // }
 
         if (monsterPathList.isEmpty()) {
             // System.out.println("monster list is empty");
             return;
         }
-        app.image(sprite,x,y);
+        app.image(sprite, x, y);
         // System.out.println("drawn monster at");
         // System.out.println(x);
         // System.out.println(y);
@@ -293,27 +334,29 @@ public class Monster {
         currHp -= damage;
         if (currHp <= 0 && !isDying) {
             isDying = true;
+            killMonster = true;
             dyingStartFrame = app.frameCount; // Record the frame when dying starts
-        } 
+        }
     }
 
-    void removeMonster() {
-        monsterList.remove(this);
-        ManaBar.increaseMana((int) manaGainedOnKill);
-    }
-
-    // public void removeMonster() {
-    //     if (type == "gremlin") {
-
-    //     } 
+    // void removeMonster() {
     //     monsterList.remove(this);
     //     ManaBar.increaseMana((int) manaGainedOnKill);
     // }
 
+    // public void removeMonster() {
+    // if (type == "gremlin") {
+
+    // }
+    // monsterList.remove(this);
+    // ManaBar.increaseMana((int) manaGainedOnKill);
+    // }
+
     public void createRespawnMonster() {
-        respawnedMonster = new Monster(app, type, maxHp, speed, armour, (int) manaGainedOnKill, spawnPoint, wizardSpawnPoint, map, sprite, manaBar, monsterList, currHp);
+        respawnedMonster = new Monster(app, type, maxHp, speed, armour, (int) manaGainedOnKill, spawnPoint,
+                wizardSpawnPoint, map, sprite, manaBar, monsterList, currHp);
         respawnedMonster.determineMonsterPath();
-        
+
         handleRespawn = true;
         // System.out.println("made it here");
         // monsterList.add(respawnedMonster);
@@ -321,7 +364,7 @@ public class Monster {
     }
 
     public boolean getHandleRespawn() {
-        return handleRespawn; 
+        return handleRespawn;
     }
 
     public Monster getRespawnMonster() {
@@ -338,6 +381,14 @@ public class Monster {
 
     public float getManaGainedOnKill() {
         return manaGainedOnKill;
+    }
+
+    public boolean getDeathAnimationPlayed() {
+        return deathAnimationPlayed;
+    }
+
+    public String getType() {
+        return type;
     }
 
 }
