@@ -29,7 +29,7 @@ public class ManaBar {
         }
     }
 
-    public float getMana() {
+    public static float getMana() {
         return currMana;
     } 
 

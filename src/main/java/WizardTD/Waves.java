@@ -34,7 +34,7 @@ public class Waves {
 
     public Waves(PApplet app, int duration, int preWavePause, List<MonsterType> monsterTypeList,
             ArrayList<PVector> MonsterSpawnPointsList, PImage gremlinSprite, PImage beetleSprite, PImage wormSprite,
-            ManaBar manaBar, char[][] map, ArrayList<Monster> monsterList) {
+            ManaBar manaBar, ArrayList<Monster> monsterList) {
         this.duration = duration;
         this.preWavePause = preWavePause;
         // monsterTypeList = new ArrayList<>();
@@ -120,9 +120,10 @@ public class Waves {
 
                 // can mess up if there is a bug in framecounting
                 if (frameCounter >= spawnTime) {
+                    map = App.getMapGrid();
                     Monster newMonster = new Monster(app, monsterName, maxHP, speed, armour, manaGainedOnKill,
                             spawnPoint,
-                            wizardSpawnPoint, map, sprite, manaBar, monsterList);
+                            wizardSpawnPoint, map, sprite, manaBar, monsterList, maxHP);
 
                     // System.out.println("NEW MONSTER CREATED");
                     monsterList.add(newMonster);

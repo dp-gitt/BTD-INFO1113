@@ -78,7 +78,9 @@ public class Fireball {
 
     public void reduceHP() {
         System.out.println("called HPREDUCTION");
-        targetMonster.decreaseHealth((int) damage);
+        System.out.println((int) ((float)targetMonster.getArmour() * damage));
+        // System.out.println(targetMonster.getArmour());
+        targetMonster.decreaseHealth( (int) ((float)targetMonster.getArmour() * damage));
     }
 
     public void removeFireball() {

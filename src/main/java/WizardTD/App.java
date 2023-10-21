@@ -21,6 +21,7 @@ public class App extends PApplet {
     public static final int SIDEBAR = 120;
     public static final int TOPBAR = 40;
     public static final int BOARD_WIDTH = 20;
+    static boolean gameLost = false;
     int preWavePauseTime;
     int currentWaveIndex = 0;
     private int k = 0;
@@ -33,9 +34,6 @@ public class App extends PApplet {
     // int waveFinishedTime = 0; // Initialize to 0
     // boolean waveChanged = false;
 
-    
-    
-
     public static int WIDTH = CELLSIZE * BOARD_WIDTH + SIDEBAR;
     public static int HEIGHT = BOARD_WIDTH * CELLSIZE + TOPBAR;
 
@@ -45,8 +43,8 @@ public class App extends PApplet {
     private PImage fireballSprite;
     public Random random = new Random();
     private boolean x = false;
-    public char[][] mapGrid;
-    
+    public static char[][] mapGrid;
+
     public char[][] towerGrid;
     public static PVector wizardSpawnPoint;
     private int numMonstersCreated = 0;
@@ -56,7 +54,7 @@ public class App extends PApplet {
     private Buttons buildTowerButton;
     private PImage gremlinSprite;
     private PImage beetleSprite;
-        
+    int initialTowerCost;
 
     private PImage wormSprite;
     private ArrayList<MonsterType> monsterTypeList = new ArrayList<MonsterType>();
@@ -65,7 +63,8 @@ public class App extends PApplet {
     private PImage[] towerImageList = new PImage[3];
     // private int m;
 
-    private static final String levelName = "level3.txt";
+    // private static final String levelName = "level2.txt";
+    private String levelName;
     private static int noOfMonstersNeeded = 5;
 
     public int firstSpawnVecX;
@@ -87,8 +86,11 @@ public class App extends PApplet {
     Buttons upgradeDamageButton;
     Buttons manaPoolButton;
 
+    public ArrayList<Monster> monstersToRemoveList = new ArrayList<>();
+    public ArrayList<Monster> monstersToRespawnList = new ArrayList<>();
+
     int currentWaveStartTime; // Keep track of the start time for the current wave
-    int delayStartTime;       // Start time for the delay
+    int delayStartTime; // Start time for the delay
     boolean isDelaying = true; // Flag to indicate if you are in a delay
 
     JSONObject config;
@@ -103,7 +105,15 @@ public class App extends PApplet {
     private ArrayList<Monster> monsterList = new ArrayList<Monster>();
     private ArrayList<Tower> towerList = new ArrayList<Tower>();
     private ArrayList<Fireball> fireballsToRemoveList = new ArrayList<Fireball>();
-    private ArrayList<Waves> waveList = new ArrayList<Waves>(); 
+    private ArrayList<Waves> waveList = new ArrayList<Waves>();
+    private ArrayList<Monster> monstersKilledList = new ArrayList<Monster>();
+    private boolean removeMonsters;
+    // private static String levelName = "level2.txt";
+    private static PImage gremlinDying1;
+    private static PImage gremlinDying2;
+    private static PImage gremlinDying3;
+    private static PImage gremlinDying4;
+    private static PImage gremlinDying5;
 
     // public int[][] mapGrid;
 
@@ -120,35 +130,36 @@ public class App extends PApplet {
         return wizardSpawnPoint;
     }
 
-    public char[][] getMapGrid() {
-        return mapGrid;
-    }
 
-    public void createMonsters() {
+    // public void createMonsters() {
 
-        int randomIndex = random.nextInt(MonsterSpawnPointsList.size());
-        PVector firstCoordinate = MonsterSpawnPointsList.get(randomIndex); // gets a random spawnPoint
-        // PVector firstCoordinate = MonsterSpawnPointsList.get(1); // Get the first
-        // coordinate
-        // int firstSpawnVecX = (int) firstCoordinate.x;
-        // int firstSpawnVecY = (int) firstCoordinate.y;
+    // int randomIndex = random.nextInt(MonsterSpawnPointsList.size());
+    // PVector firstCoordinate = MonsterSpawnPointsList.get(randomIndex); // gets a
+    // random spawnPoint
+    // // PVector firstCoordinate = MonsterSpawnPointsList.get(1); // Get the first
+    // // coordinate
+    // // int firstSpawnVecX = (int) firstCoordinate.x;
+    // // int firstSpawnVecY = (int) firstCoordinate.y;
 
-        // int randomIndex = random.nextInt(myList.size());
+    // // int randomIndex = random.nextInt(myList.size());
 
-        // MonsterSpawnPointsList =
-        monsterList.add(new Monster(this, "gremlin", 100, 1, 150, 100, firstCoordinate, wizardSpawnPoint, mapGrid,
-                gremlinSprite, manaBar, monsterList));
-        // System.out.println("Monster has been added ot the list");
-        Monster newMonster = monsterList.get(monsterList.size() - 1); // Get the last added monster
-        newMonster.determineMonsterPath(); // Calculate the path for this specific monster
-        // System.out.println(monsterList.size());
+    // // MonsterSpawnPointsList =
+    // monsterList.add(new Monster(this, "gremlin", 100, 1, 150, 100,
+    // firstCoordinate, wizardSpawnPoint, mapGrid,
+    // gremlinSprite, manaBar, monsterList));
+    // // System.out.println("Monster has been added ot the list");
+    // Monster newMonster = monsterList.get(monsterList.size() - 1); // Get the last
+    // added monster
+    // newMonster.determineMonsterPath(); // Calculate the path for this specific
+    // monster
+    // // System.out.println(monsterList.size());
 
-        // for (PVector coordinate : MonsterSpawnPointsList) {
-        // monsterList.add(new Monster(this,"gremlin",100,2,150,100,coordinate,
-        // wizardSpawnPoint, mapGrid));
-        // }
+    // // for (PVector coordinate : MonsterSpawnPointsList) {
+    // // monsterList.add(new Monster(this,"gremlin",100,2,150,100,coordinate,
+    // // wizardSpawnPoint, mapGrid));
+    // // }
 
-    }
+    // }
 
     public char[][] loadLevelData(String levelName) {
         String[] levelLines = loadStrings(levelName);
@@ -334,29 +345,37 @@ public class App extends PApplet {
     @Override
     public void setup() {
         frameRate(FPS);
-        mapGrid = loadLevelData(levelName);
-        towerGrid = loadLevelData(levelName);
-        createMapElements(mapGrid);
+      
         fireballSprite = loadImage("src/main/resources/WizardTD/fireball.png");
         PImage tower0 = loadImage("src/main/resources/WizardTD/tower0.png");
         towerImageList[0] = tower0;
         PImage tower1 = loadImage("src/main/resources/WizardTD/tower1.png");
         towerImageList[1] = tower1;
         PImage tower2 = loadImage("src/main/resources/WizardTD/tower2.png");
-        
+
         gremlinSprite = loadImage("src/main/resources/WizardTD/gremlin.png");
         beetleSprite = loadImage("src/main/resources/WizardTD/beetle.png");
         wormSprite = loadImage("src/main/resources/WizardTD/worm.png");
 
+        gremlinDying1 = loadImage("src/main/resources/WizardTD/gremlin1.png");
+        gremlinDying2 = loadImage("src/main/resources/WizardTD/gremlin2.png");
+        gremlinDying3 = loadImage("src/main/resources/WizardTD/gremlin3.png");
+        gremlinDying4 = loadImage("src/main/resources/WizardTD/gremlin4.png");
+        gremlinDying5 = loadImage("src/main/resources/WizardTD/gremlin5.png");
+        
+        
+         
 
-
-
-
-
-        towerImageList[2] = tower2;
-
-        config = loadJSONObject("config.json");
+        config = loadJSONObject("config.json"); 
         parseConfig(config);
+
+           
+        
+        towerGrid = loadLevelData(levelName);
+
+        mapGrid = loadLevelData(levelName);
+        createMapElements(mapGrid);
+        towerImageList[2] = tower2;
 
         // while (numMonstersCreated < noOfMonstersNeeded) {
         // createMonsters();
@@ -625,12 +644,12 @@ public class App extends PApplet {
 
             int towerXPos = gridColumn * CELLSIZE;
             int towerYPos = gridRow * CELLSIZE + 40;
-            int initialTowerCost = 100;
+
             // not the right maths but in this case we can only initialise a max of level 1
             // tower so it works.
             int towerCost = initialTowerCost + 20 * (rangeLevel) + 20 * (speedLevel) + 20 * (damageLevel);
 
-            if (manaBar.getMana() > towerCost) {
+            if (ManaBar.getMana() > towerCost) {
                 System.out.println("Tower built has levels:");
                 System.out.println("range " + rangeLevel);
                 System.out.println("speed " + speedLevel);
@@ -638,14 +657,18 @@ public class App extends PApplet {
                 System.out.println("Cost " + towerCost);
 
                 Tower newTower = new Tower(this, towerXPos, towerYPos,
-                        towerImageList, towerCost, 100, (float) 1, 20,
+                        towerImageList, towerCost, 100, (float) 1, 100,
                         fireballSprite, fireballList, rangeLevel, speedLevel, damageLevel);
 
-                manaBar.decreaseMana((float) towerCost);
+                ManaBar.decreaseMana((float) towerCost);
                 towerList.add(newTower);
                 towerGrid[gridRow][gridColumn] = 'T';
             }
         }
+    }
+
+    public static char[][] getMapGrid() {
+        return mapGrid;
     }
 
     /*
@@ -658,82 +681,110 @@ public class App extends PApplet {
     /**
      * Draw all elements in the game by current frame.
      */
-    
 
-    private void parseConfig(JSONObject config) {
-        String layout = config.getString("layout");
-        int initialTowerRange = config.getInt("initial_tower_range");
-        float initialTowerFiringSpeed = config.getFloat("initial_tower_firing_speed");
-        int initialTowerDamage = config.getInt("initial_tower_damage");
-        int initialMana = config.getInt("initial_mana");
-        int initialManaCap = config.getInt("initial_mana_cap");
-        float initialManaGainedPerSecond = config.getFloat("initial_mana_gained_per_second");
-        int towerCost = config.getInt("tower_cost");
-        int manaPoolSpellInitialCost = config.getInt("mana_pool_spell_initial_cost");
-        int manaPoolSpellCostIncreasePerUse = config.getInt("mana_pool_spell_cost_increase_per_use");
-        float manaPoolSpellCapMultiplier = config.getFloat("mana_pool_spell_cap_multiplier");
-        float manaPoolSpellManaGainedMultiplier = config.getFloat("mana_pool_spell_mana_gained_multiplier");
+    public void parseConfig(JSONObject config) {
 
-        JSONArray waves = config.getJSONArray("waves");
-        for (int i = 0; i < waves.size(); i++) {
-            JSONObject waveNumber = waves.getJSONObject(i);
-            int duration = waveNumber.getInt("duration");
-            int preWavePause = waveNumber.getInt("pre_wave_pause");
-            JSONArray monsters = waveNumber.getJSONArray("monsters");
-            
-            for (int j = 0; j < monsters.size(); j++) {
-                JSONObject monster = monsters.getJSONObject(j);
-                String type = monster.getString("type");
-                float hp = monster.getFloat("hp");
-                float speed = monster.getFloat("speed");
-                float armour = monster.getFloat("armour");
-                float manaGainedOnKill = monster.getFloat("mana_gained_on_kill");
-                int quantity = monster.getInt("quantity");
-                
 
-                // each wave has a monsterTypesList, and the wave class will have
-                // a startWave method which will iterate through the monstertypes
-                // list and based on the quantity, and the individual waves timings
-                // spawn monsters randomly from the options it has.
-                // so in app.java i can iterate through the waveList, so i keep track
-                // of the number of waves and as i iterate through them i call 
-                // startWave method.
+            levelName = config.getString("layout");
+            int initialTowerRange = config.getInt("initial_tower_range");
+            float initialTowerFiringSpeed = config.getFloat("initial_tower_firing_speed");
+            int initialTowerDamage = config.getInt("initial_tower_damage");
+            int initialMana = config.getInt("initial_mana");
+            int initialManaCap = config.getInt("initial_mana_cap");
+            float initialManaGainedPerSecond = config.getFloat("initial_mana_gained_per_second");
+            initialTowerCost = config.getInt("tower_cost");
+            int manaPoolSpellInitialCost = config.getInt("mana_pool_spell_initial_cost");
+            int manaPoolSpellCostIncreasePerUse = config.getInt("mana_pool_spell_cost_increase_per_use");
+            float manaPoolSpellCapMultiplier = config.getFloat("mana_pool_spell_cap_multiplier");
+            float manaPoolSpellManaGainedMultiplier = config.getFloat("mana_pool_spell_mana_gained_multiplier");
 
-                // i have a waveList of waves. Each wave has its own Monstertype List.
-                //I can iterate through each wave to start the wave, and then 
-                // for each wave, i can iterate through the monstertypeslist
-                // and then create instances of monster class using getter methods from it
-                // eg. for MonsterType monstertype : monsterTypeList {
-                    //Monster newMonster = new Monster(monstertype.getHP())
-                //} 
-                //
+            JSONArray waves = config.getJSONArray("waves");
+            for (int i = 0; i < waves.size(); i++) {
+                JSONObject waveNumber = waves.getJSONObject(i);
+                int duration = waveNumber.getInt("duration");
+                int preWavePause = waveNumber.getInt("pre_wave_pause");
+                JSONArray monsters = waveNumber.getJSONArray("monsters");
 
-                MonsterType newMonsterType = new MonsterType(type, hp,speed,armour,manaGainedOnKill,quantity);
-                
-                
-                monsterTypeList.add(newMonsterType);
-                
-                
-                    
+                for (int j = 0; j < monsters.size(); j++) {
+                    JSONObject monster = monsters.getJSONObject(j);
+                    String type = monster.getString("type");
+                    float hp = monster.getFloat("hp");
+                    float speed = monster.getFloat("speed");
+                    float armour = monster.getFloat("armour");
+                    float manaGainedOnKill = monster.getFloat("mana_gained_on_kill");
+                    int quantity = monster.getInt("quantity");
+
+
+                    MonsterType newMonsterType = new MonsterType(type, hp, speed, armour, manaGainedOnKill, quantity);
+
+                    monsterTypeList.add(newMonsterType);
+
+                }
+
+                // System.out.println(monsterTypeList.size());
+                // for (Monster monster : mons)
+
+                // List<MonsterType> copyList = new ArrayList<>(monsterTypeList);
+                // for (MonsterType monsterType : copyList) {
+                // System.out.println(monsterType.getName());
+                // }
+
+                List<MonsterType> copyList = new ArrayList<>();
+                copyList.addAll(monsterTypeList);
+                Waves wave = new Waves(this, duration, preWavePause, copyList, MonsterSpawnPointsList, gremlinSprite,
+                        beetleSprite, wormSprite, manaBar,monsterList);
+                waveList.add(wave);
+                // System.out.println(monsterTypeList.size());
+                monsterTypeList.clear();
+
+                    // each wave has a monsterTypesList, and the wave class will have
+                    // a startWave method which will iterate through the monstertypes
+                    // list and based on the quantity, and the individual waves timings
+                    // spawn monsters randomly from the options it has.
+                    // so in app.java i can iterate through the waveList, so i keep track
+                    // of the number of waves and as i iterate through them i call
+                    // startWave method.
+
+                    // i have a waveList of waves. Each wave has its own Monstertype List.
+                    // I can iterate through each wave to start the wave, and then
+                    // for each wave, i can iterate through the monstertypeslist
+                    // and then create instances of monster class using getter methods from it
+                    // eg. for MonsterType monstertype : monsterTypeList {
+                    // Monster newMonster = new Monster(monstertype.getHP())
+                    // }
+                    //
+
             }
-            
-            // System.out.println(monsterTypeList.size());
-            // for (Monster monster : mons)
-
-            // List<MonsterType> copyList = new ArrayList<>(monsterTypeList);
-            // for (MonsterType monsterType : copyList) {
-            //     System.out.println(monsterType.getName());
-            // }
-
-            List<MonsterType> copyList = new ArrayList<>();
-            copyList.addAll(monsterTypeList);
-            Waves wave = new Waves(this, duration, preWavePause, copyList, MonsterSpawnPointsList, gremlinSprite, beetleSprite, wormSprite, manaBar, mapGrid, monsterList);
-            waveList.add(wave);
-            // System.out.println(monsterTypeList.size());
-            monsterTypeList.clear();
-        }
     }
 
+    public static PImage getGremlinDying1() {
+        return gremlinDying1;
+    }
+
+    public static PImage getGremlinDying2() {
+        return gremlinDying2;
+    }
+
+    public static PImage getGremlinDying3() {
+        return gremlinDying3;
+    }
+
+    public static PImage getGremlinDying4() {
+        return gremlinDying4;
+    }
+
+    public static PImage getGremlinDying5() {
+        return gremlinDying5;
+    }
+
+    public static void gameLost() {
+        gameLost = true;
+    }
+
+    public void removeMonsters(Monster monsterToRemove, Monster monsterToSpawn) {
+        System.out.println("this method called");
+        removeMonsters = true;
+    }
 
     @Override
     public void draw() {
@@ -757,7 +808,7 @@ public class App extends PApplet {
         }
         // System.out.println("4");
         for (Tower tower : towerList) {
-            if (tower.getIsHovered() == true) {
+            if (tower.getIsHovered() == true && !gameLost) {
                 tower.drawRadius();
             }
         }
@@ -780,186 +831,128 @@ public class App extends PApplet {
             button.drawLabel();
         }
 
-        Waves wave = waveList.get(k);
-        wave.startWave();
-        
-        Waves.increaseFrameCounter();
-        int totalPreviousDurations = wave.getDuration();
+        if (!gameLost) {
+            Waves wave = waveList.get(k);
+            wave.startWave();
 
-        if (!waveChanged) {
-            waveStartTime = millis(); // Store the start time of the current wave
-            // System.out.println("wave start time" + waveStartTime);
-            waveChanged = true;
-        }
+            Waves.increaseFrameCounter();
+            // int totalPreviousDurations = wave.getDuration();
 
-        if (millis() - waveStartTime >= wave.getDuration() * 1000 && k < waveList.size() - 1 && waveChanged) {
-            // System.out.println(millis() - totalPreviousDurations);
-            // System.out.println("wave get duration " + wave.getDuration()*1000);
-            
-            String countdownText = "Wave " + (k + 2) + " starts in " + ((preWavePauseTime - (millis() - waveFinishedAt)) / 1000) + " seconds";
-            fill(0); // Set text color to white
-            textSize(20);
-            text(countdownText, 10, 25); // Adjust position as needed
-            
-            
-
-            if (!gotWaveFinishedTime) {
-                waveFinishedAt = millis();
-                System.out.println(waveFinishedAt);
-                gotWaveFinishedTime = true;
+            if (!waveChanged) {
+                waveStartTime = millis(); // Store the start time of the current wave
+                // System.out.println("wave start time" + waveStartTime);
+                waveChanged = true;
             }
-  
-            Waves nextWave = waveList.get(k + 1);
-            preWavePauseTime = (int) (nextWave.getPreWavePause() * 1000);
 
+            if (millis() - waveStartTime >= wave.getDuration() * 1000 && k < waveList.size() - 1 && waveChanged) {
+                // System.out.println(millis() - totalPreviousDurations);
+                // System.out.println("wave get duration " + wave.getDuration()*1000);
 
+                String countdownText = "Wave " + (k + 2) + " starts in "
+                        + ((preWavePauseTime - (millis() - waveFinishedAt)) / 1000) + " seconds";
+                fill(0); // Set text color to white
+                textSize(20);
+                text(countdownText, 10, 25); // Adjust position as needed
 
+                if (!gotWaveFinishedTime) {
+                    waveFinishedAt = millis();
+                    System.out.println(waveFinishedAt);
+                    gotWaveFinishedTime = true;
+                }
 
+                Waves nextWave = waveList.get(k + 1);
+                preWavePauseTime = (int) (nextWave.getPreWavePause() * 1000);
 
-            // System.out.println("Wave " + (k + 1) + "starts in " + (preWavePauseTime - (millis() - waveFinishedAt))/1000 );
-            
-            if (millis() >= waveFinishedAt + preWavePauseTime) {
-                // We've waited for the pre-wave pause, so we can now move to the next wave.
-                // System.out.println(millis());
-                System.out.println("NEW WAVE");
-                k++;
-                waveChanged = false;
-                gotWaveFinishedTime = false;
-            }
-        }
+                // System.out.println("Wave " + (k + 1) + "starts in " + (preWavePauseTime -
+                // (millis() - waveFinishedAt))/1000 );
 
-
-       
-        for (Monster monster : monsterList) {
-            monster.drawMonster();
-            monster.moveMonster();
-        }
-
-        // System.out.println(k);
-        
-
-        
-
-        
-
-
-        // if (millis() - waveList.get(k-1).getDuration >= currentWave.getDuration() * 1000) {
-        //     // Current wave's duration has been reached
-        //     currentWaveIndex++; // Move to the next wave
-        //     if (currentWaveIndex < waveList.size()) {
-        //         waveList.get(currentWaveIndex).startWave(); // Start the new wave
-        //     }
-        // }
-        
-
-
-
-
-
-
-        // System.out.println(millis());
-
-
-        // int k = 0;
-        // while (k < waveList.size()) {
-
-        //     boolean waveIsPaused = false;
-
-
-        //     Waves currentWave = waveList.get(k);
-        //     int duration = currentWave.getDuration();
-        //     int preWavePause = currentWave.getPreWavePause();
-
-        //     int elapsedTime = millis();
-
-        //     if (elapsedTime == 
-
-
-
-        //     k++;
-        // }
-        
-        
-
-
-
-
-
-        // Waves.increaseFrameCounter();
-
-        // System.out.println("7");
-        // if (spawnCounter >= framesBetweenSpawn && numMonstersCreated < noOfMonstersNeeded) {
-        //     createMonsters(); // Spawn a new monster
-        //     spawnCounter = 0; // Reset the counter
-        //     numMonstersCreated++;
-        //     System.out.println("MONSTER CREATED");
-        // } else {
-        //     spawnCounter++; // Increment the counter on each frame
-        // }
-
-        // for (Waves wave : waveList) {
-        //     System.out.println(wave.getDuration());
-        // } 
-
-
-        //////DELETED THIS PART 
-
-        // for (Monster monster : monsterList) {
-        //     // System.out.println("MADE IN HERE");
-        //     monster.drawMonster();
-        //     if (!isPaused) {
-        //         monster.moveMonster();
-        //     }
-        // }
-
-
-
-        // System.out.println("8");
-        for (Tower tower : towerList) {
-            tower.drawTower();
-        }
-        // System.out.println("9");
-        for (Buttons button : buttonsList) {
-            if (!button.getIsToggled() && button.isMouseOver()) {
-                button.changeButtonColour(color(200));
-            } else if (button.getIsToggled()) {
-                button.changeButtonColour(yellow);
-            } else {
-                button.changeButtonColour(brown);
-            }
-        }
-        // System.out.println("10");
-        // fireballList.clear();
-
-        for (Tower tower : towerList) {
-            tower.survey(monsterList);
-            fireballList.addAll(tower.getFireballList());
-            tower.updateTimer();
-        }
-        // System.out.println("11");
-        for (Fireball fireball : fireballList) {
-            fireball.updateTargetPosition();
-            fireball.moveFireball();
-            fireball.draw();
-            if (fireball.hasHitTarget()) {
-                fireballsToRemoveList.add(fireball);
-                if (!fireball.getHasRemovedHP()) {
-                    fireball.reduceHP();
-                    fireball.setHasRemovedHP(true);
+                if (millis() >= waveFinishedAt + preWavePauseTime) {
+                    // We've waited for the pre-wave pause, so we can now move to the next wave.
+                    // System.out.println(millis());
+                    System.out.println("NEW WAVE");
+                    k++;
+                    waveChanged = false;
+                    gotWaveFinishedTime = false;
                 }
             }
-        }
 
-        // System.out.println("12");
-        // System.out.println(fireballList.size());
-        // System.out.println(fireballsToRemoveList.size());
-        for (Fireball fireball : fireballsToRemoveList) {
-            fireball.removeFireball();
-        }
-        // System.out.println("13");
-        fireballsToRemoveList.clear();
+            for (Monster monster : monsterList) {
+                monster.drawMonster();
+                // System.out.println("made it past here");
+                monster.moveMonster();
 
-        
+                if (monster.getKillMonster()) {
+                    monstersKilledList.add(monster);
+                }
+
+                if (monster.getHandleRespawn()) {
+                    monstersToRespawnList.add(monster.getRespawnMonster());
+                    monstersToRemoveList.add(monster);
+                }
+            }
+
+            for (Monster monster : monstersKilledList) {
+                ManaBar.increaseMana((int) monster.getManaGainedOnKill());
+                monsterList.remove(monster);
+            }
+
+            monstersKilledList.clear();
+
+            for (Monster monster : monstersToRespawnList) {
+                monsterList.add(monster);
+            }
+
+            monstersToRespawnList.clear();
+
+            for (Monster monster : monstersToRemoveList) {
+                monsterList.remove(monster);
+            }
+
+            for (Tower tower : towerList) {
+                tower.drawTower();
+            }
+            // System.out.println("9");
+            for (Buttons button : buttonsList) {
+                if (!button.getIsToggled() && button.isMouseOver()) {
+                    button.changeButtonColour(color(200));
+                } else if (button.getIsToggled()) {
+                    button.changeButtonColour(yellow);
+                } else {
+                    button.changeButtonColour(brown);
+                }
+            }
+            // System.out.println("10");
+            // fireballList.clear();
+
+            for (Tower tower : towerList) {
+                tower.survey(monsterList);
+                fireballList.addAll(tower.getFireballList());
+                tower.updateTimer();
+            }
+            // System.out.println("11");
+            for (Fireball fireball : fireballList) {
+                fireball.updateTargetPosition();
+                fireball.moveFireball();
+                fireball.draw();
+                if (fireball.hasHitTarget()) {
+                    fireballsToRemoveList.add(fireball);
+                    if (!fireball.getHasRemovedHP()) {
+                        fireball.reduceHP();
+                        fireball.setHasRemovedHP(true);
+                    }
+                }
+            }
+
+            // System.out.println("12");
+            // System.out.println(fireballList.size());
+            // System.out.println(fireballsToRemoveList.size());
+            for (Fireball fireball : fireballsToRemoveList) {
+                fireball.removeFireball();
+            }
+            // System.out.println("13");
+            fireballsToRemoveList.clear();
+
+        }
     }
 
     // if (spawnCounter >= framesBetweenSpawn && numMonstersCreated <
@@ -974,6 +967,8 @@ public class App extends PApplet {
     public static void main(String[] args) {
         PApplet.main("WizardTD.App");
     }
+
+    
 
     /**
      * Source:

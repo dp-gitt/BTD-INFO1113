@@ -1,23 +1,23 @@
 {
-  "layout": "level2.txt",
+  "layout": "level4.txt",
   "waves": [
     {
       "duration": 3,
       "pre_wave_pause": 0.5,
 	  "monsters": [
         {
-          "type": "worm",
+          "type": "gremlin",
           "hp": 100,
           "speed": 1,
           "armour": 0.5,
           "mana_gained_on_kill": 10,
-          "quantity": 10
+          "quantity": 5
         }
 	  ]
     },
     {
-      "duration": 4,
-      "pre_wave_pause": 8,
+      "duration": 10,
+      "pre_wave_pause": 5,
       "monsters": [
         {
           "type": "gremlin",

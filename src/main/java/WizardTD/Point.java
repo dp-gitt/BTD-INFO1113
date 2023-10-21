@@ -69,6 +69,7 @@ public static List<Point> FindNeighbors(char[][] map, Point point) {
 }
 
 public static List<Point> FindPath(char[][] map, Point start, Point end) {
+
     boolean finished = false;
     List<Point> used = new ArrayList<>();
     used.add(start);
