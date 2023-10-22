@@ -52,6 +52,10 @@ public class Monster {
     int i = 0;
     private boolean handleRespawn;
     private boolean deathAnimationPlayed = false;
+    private boolean finishedAnimation = false;
+    private boolean gotDeathFrame = false;
+    private int deathStartFrame;
+    private float initialSpeed;
 
     public Monster(PApplet app, String type, float maxHp, float speed, float armour, int manaGainedOnKill,
             PVector spawnPoint, PVector wizardSpawnPoint, char[][] map, PImage sprite, ManaBar manaBar,
@@ -74,6 +78,7 @@ public class Monster {
         this.manaBar = manaBar;
         this.monsterList = monsterList;
         this.currHp = currHp;
+        this.initialSpeed = speed;
         // System.out.println(x);
         // System.out.println(y);
 
@@ -118,6 +123,15 @@ public class Monster {
     }
 
     public void moveMonster() {
+
+        float calcSpeed = speed;
+
+        if (App.getIs2X()) {
+            calcSpeed *= 2 * speed;
+        } 
+
+
+
         // System.out.println("Monster is at " + "x" + x + "y"+ y);
         // System.out.println("OLD X AND Y" + x + " and " + y);
         if (!monsterPathList.isEmpty()) {
@@ -140,19 +154,23 @@ public class Monster {
             float distance = PApplet.dist(x, y, targetX, targetY);
 
             // Normalize the direction vector
-            float speedX = (dx / distance) * speed;
-            float speedY = (dy / distance) * speed;
+            float speedX = (dx / distance) * calcSpeed;
+            float speedY = (dy / distance) * calcSpeed;
 
             // Update the monster's position based on the calculated speed values
+
             x += speedX;
             y += speedY;
+  
+
+
             // System.out.println("NEW X AND Y" + x + " and " + y);
 
             // System.out.println(x);
             // System.out.println(y);
 
             // Check if the monster has reached the target point
-            if (PApplet.dist(x, y, targetX, targetY) < speed) {
+            if (PApplet.dist(x, y, targetX, targetY) < calcSpeed) {
                 monsterPathList.remove(0);
             }
             if (monsterPathList.size() == 0 && monsterDead == 0) {
@@ -202,19 +220,19 @@ public class Monster {
         //     // System.out.println(deathType);
         //     // System.out.println(frameDifference);
         //     // System.out.println(deathAnimationFrames);
-        //     if ((frameDifference < deathAnimationFrames  && deathType.compareTo("gremlin") == 0)) {
-        //         System.out.println(deathType);
-        //         if (frameDifference < 4) {
-        //             app.image(gremlinDying1, x, y);              
-        //         } else if (frameDifference < 8) {
-        //             app.image(gremlinDying2, x, y);
-        //         } else if (frameDifference < 12) {
-        //             app.image(gremlinDying3, x, y);
-        //         } else if (frameDifference < 16) {
-        //             app.image(gremlinDying4, x, y);
-        //         } else {
-        //             app.image(gremlinDying5, x, y);
-        //         }
+        // if ((frameDifference < deathAnimationFrames  && deathType.compareTo("gremlin") == 0)) {
+        //     System.out.println(deathType);
+        //     if (frameDifference < 4) {
+        //         app.image(gremlinDying1, x, y);              
+        //     } else if (frameDifference < 8) {
+        //         app.image(gremlinDying2, x, y);
+        //     } else if (frameDifference < 12) {
+        //         app.image(gremlinDying3, x, y);
+        //     } else if (frameDifference < 16) {
+        //         app.image(gremlinDying4, x, y);
+        //     } else {
+        //         app.image(gremlinDying5, x, y);
+        //     }
         //     } else {
         //         // Dying animation is finished
         //         // System.out.println("death type " + deathType);
@@ -298,28 +316,32 @@ public class Monster {
             // System.out.println("monster list is empty");
             return;
         }
+
+        
         app.image(sprite, x, y);
         // System.out.println("drawn monster at");
         // System.out.println(x);
         // System.out.println(y);
 
-        float barWidth = 30; // Adjust this to fit your needs
-        float barHeight = 4; // Adjust this to fit your needs
-
-        // Calculate the position of the health bars above the monster
-        float barX = x - barWidth / 2 + 10;
-        float barY = y - 7; // Adjust this to position the bars correctly
-
-        // Draw the red background bar
-        app.fill(255, 0, 0); // Red color
-        app.rect(barX, barY, barWidth, barHeight);
-
-        // Calculate the width of the green HP bar based on current HP
-        float hpBarWidth = PApplet.map(currHp, 0, maxHp, 0, barWidth);
-
-        // Draw the green HP bar
-        app.fill(0, 255, 0); // Green color
-        app.rect(barX, barY, hpBarWidth, barHeight);
+        if (currHp > 0) {  // Only draw health bars if current HP is greater than 0
+            float barWidth = 30; // Adjust this to fit your needs
+            float barHeight = 4; // Adjust this to fit your needs
+        
+            // Calculate the position of the health bars above the monster
+            float barX = x - barWidth / 2 + 10;
+            float barY = y - 7; // Adjust this to position the bars correctly
+        
+            // Draw the red background bar
+            app.fill(255, 0, 0); // Red color
+            app.rect(barX, barY, barWidth, barHeight);
+        
+            // Calculate the width of the green HP bar based on current HP
+            float hpBarWidth = PApplet.map(currHp, 0, maxHp, 0, barWidth);
+        
+            // Draw the green HP bar
+            app.fill(0, 255, 0); // Green color
+            app.rect(barX, barY, hpBarWidth, barHeight);
+        }
     }
 
     public float getX() {
@@ -389,6 +411,30 @@ public class Monster {
 
     public String getType() {
         return type;
+    }
+
+    public boolean getFinishedAnimation() {
+        return finishedAnimation;
+    }
+
+    public boolean gotDeathFrame() {
+        return gotDeathFrame;
+    }
+
+    public void setDeathStartFrame(int frameCount) {
+        deathStartFrame = frameCount;
+    }
+
+    public void setGotDeathFrame(boolean b) {
+        gotDeathFrame = true;
+    }
+
+    public void setDeathAnimationPlayed(boolean p) {
+        deathAnimationPlayed = p;
+    }
+
+    public int getDeathStartFrame() {
+        return deathStartFrame;
     }
 
 }

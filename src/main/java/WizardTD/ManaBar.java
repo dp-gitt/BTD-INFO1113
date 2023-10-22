@@ -5,10 +5,12 @@ import processing.core.PApplet;
 public class ManaBar {
     public static float maxMana;
     public static float currMana;
+    public static float manaGainedPerSecond;
 
-    public ManaBar(int maxMana) {
+    public ManaBar(int initialMana ,int maxMana, float initialManaGainedPerSecond) {
         ManaBar.maxMana = maxMana;
-        ManaBar.currMana = 1000;
+        ManaBar.currMana = initialMana;
+        ManaBar.manaGainedPerSecond = initialManaGainedPerSecond;
     }
 
 
@@ -35,6 +37,10 @@ public class ManaBar {
 
     public float getMaxMana() {
         return maxMana;
+    }
+
+    public static void addTrickle() {
+        currMana += manaGainedPerSecond;
     }
 
     public void draw(PApplet app, float x, float y, float width, float height) {

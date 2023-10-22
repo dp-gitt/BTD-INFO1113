@@ -334,3 +334,47 @@
         //       }
         //     }
         // }
+
+    //     if (!gameLost) {
+    //     if (!isPaused) {
+    //         Waves wave = waveList.get(k);
+    //         wave.startWave();
+
+    //         if (monsterList.isEmpty() && k == waveList.size() - 1) {
+    //             System.out.println("YOU WON");
+    //             gameWon = true;
+    //         }
+
+    //         Waves.increaseFrameCounter();
+            
+    //         // Adjust time intervals based on the is2X condition
+    //         int waveDurationMillis = is2X ? (wave.getDuration() * 500) : (wave.getDuration() * 1000);
+    //         int preWavePauseMillis = is2X ? ((int) (nextWave.getPreWavePause() * 500)) : ((int) (nextWave.getPreWavePause() * 1000));
+
+    //         if (!waveChanged) {
+    //             waveStartTime = millis() - waveDurationMillis;
+    //             waveChanged = true;
+    //         }
+
+    //         if (millis() - waveStartTime >= waveDurationMillis && k < waveList.size() - 1 && waveChanged) {
+    //             String countdownText = "Wave " + (k + 2) + " starts in " + ((preWavePauseMillis - (millis() - waveFinishedAt)) / 1000) + " seconds";
+    //             fill(0); // Set text color to white
+    //             textSize(20);
+    //             text(countdownText, 10, 25); // Adjust position as needed
+
+    //             if (!gotWaveFinishedTime) {
+    //                 waveFinishedAt = millis();
+    //                 gotWaveFinishedTime = true;
+    //             }
+
+    //             // Adjust pre-wave pause time based on is2X
+    //             preWavePauseMillis = is2X ? (preWavePauseMillis / 2) : preWavePauseMillis;
+
+    //             if (millis() >= waveFinishedAt + preWavePauseMillis) {
+    //                 k++;
+    //                 waveChanged = false;
+    //                 gotWaveFinishedTime = false;
+    //             }
+    //         }
+    //     }
+    // }

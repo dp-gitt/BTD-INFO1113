@@ -27,6 +27,7 @@ public class App extends PApplet {
     private int k = 0;
     boolean waveChanged = false;
     boolean gotWaveFinishedTime = false;
+    private boolean gameWon = false;
     // int waveStartTime;
 
     int waveStartTime = 0; // Initialize to 0
@@ -70,7 +71,7 @@ public class App extends PApplet {
     public int firstSpawnVecX;
     public int firstSpawnVecY;
     private int numberOfPossibleSpawns;
-    private int maxMana = 1000;
+    
     ManaBar manaBar;
     private int framesBetweenSpawn = 30;
     private int spawnCounter = 0;
@@ -108,6 +109,13 @@ public class App extends PApplet {
     private ArrayList<Waves> waveList = new ArrayList<Waves>();
     private ArrayList<Monster> monstersKilledList = new ArrayList<Monster>();
     private boolean removeMonsters;
+    private int initialTowerRange;
+    private int initialTowerDamage;
+    private float initialTowerFiringSpeed;
+    private int initialMana;
+    private int initialManaCap;
+    private float initialManaGainedPerSecond;
+    public static boolean is2X = false;
     // private static String levelName = "level2.txt";
     private static PImage gremlinDying1;
     private static PImage gremlinDying2;
@@ -384,7 +392,7 @@ public class App extends PApplet {
         noStroke();
         textAlign(LEFT);
         createButtons();
-        manaBar = new ManaBar(maxMana);
+        manaBar = new ManaBar(initialMana, initialManaCap, initialManaGainedPerSecond);
 
         // Load images during setup
         // Eg:
@@ -412,6 +420,7 @@ public class App extends PApplet {
         switch (key) {
             case 'f':
                 twoXButton.setIsToggled(!twoXButton.getIsToggled());
+                is2X = !is2X;
                 break;
 
             case 'p':
@@ -651,7 +660,7 @@ public class App extends PApplet {
                 System.out.println("Cost " + towerCost);
 
                 Tower newTower = new Tower(this, towerXPos, towerYPos,
-                        towerImageList, towerCost, 100, (float) 1, 100,
+                        towerImageList, towerCost, initialTowerRange, initialTowerFiringSpeed, initialTowerDamage,
                         fireballSprite, fireballList, rangeLevel, speedLevel, damageLevel);
 
                 ManaBar.decreaseMana((float) towerCost);
@@ -679,12 +688,12 @@ public class App extends PApplet {
     public void parseConfig(JSONObject config) {
 
         levelName = config.getString("layout");
-        int initialTowerRange = config.getInt("initial_tower_range");
-        float initialTowerFiringSpeed = config.getFloat("initial_tower_firing_speed");
-        int initialTowerDamage = config.getInt("initial_tower_damage");
-        int initialMana = config.getInt("initial_mana");
-        int initialManaCap = config.getInt("initial_mana_cap");
-        float initialManaGainedPerSecond = config.getFloat("initial_mana_gained_per_second");
+        initialTowerRange = config.getInt("initial_tower_range");
+        initialTowerFiringSpeed = config.getFloat("initial_tower_firing_speed");
+        initialTowerDamage = config.getInt("initial_tower_damage");
+        initialMana = config.getInt("initial_mana");
+        initialManaCap = config.getInt("initial_mana_cap");
+        initialManaGainedPerSecond = config.getFloat("initial_mana_gained_per_second");
         initialTowerCost = config.getInt("tower_cost");
         int manaPoolSpellInitialCost = config.getInt("mana_pool_spell_initial_cost");
         int manaPoolSpellCostIncreasePerUse = config.getInt("mana_pool_spell_cost_increase_per_use");
@@ -778,35 +787,121 @@ public class App extends PApplet {
         removeMonsters = true;
     }
 
+    private boolean gotDeathFrame = false;
+    private int deathStartFrame;
+    private long lastSecond = 0;
+    private int waveDuration;
+    
 
-    public void drawAnimation(String monsterType, float x, float y) {
-        if (monsterType.equals("gremlin")) {
-            // Load gremlin death animation frames as PImage variables
-            PImage[] deathFrames = new PImage[5];
-            deathFrames[0] = getGremlinDying1();
-            deathFrames[1] = getGremlinDying2();
-            deathFrames[2] = getGremlinDying3();
-            deathFrames[3] = getGremlinDying4();
-            deathFrames[4] = getGremlinDying5();
-    
-            // Calculate the frame index based on elapsed time and custom frame rate (4 frames per second)
-            int customFrameRate = 4; // 4 frames per second
-            int frameIndex = (int)((millis() - waveFinishedAt) / (1000.0 / customFrameRate));
-    
-            // Display the current death frame
-            if (frameIndex >= 0 && frameIndex < deathFrames.length) {
-                System.out.println("animation played");
-                image(deathFrames[frameIndex], x, y);
-            } else {
-                // Animation is complete, do additional logic if needed
+    // public void drawAnimation(String monsterType, float x, float y) {
+
+    // if (monsterType.compareTo("gremlin") == 0) {
+    // if (!gotDeathFrame) {
+    // deathStartFrame = frameCount;
+    // gotDeathFrame = true;
+    // }
+
+    // int frameDifference = frameCount - deathStartFrame;
+    // int deathAnimationFrames = 20;
+
+    // if (frameDifference < deathAnimationFrames) {
+    // if (frameDifference < 4) {
+    // System.out.println("playing 1");
+    // image(gremlinDying1, x, y);
+    // } else if (frameDifference < 8) {
+    // System.out.println("playing 2");
+    // image(gremlinDying2, x, y);
+    // } else if (frameDifference < 12) {
+    // System.out.println("playing 3");
+    // image(gremlinDying3, x, y);
+    // } else if (frameDifference < 16) {
+    // System.out.println("playing 4");
+    // image(gremlinDying4, x, y);
+    // } else {
+    // System.out.println("playing 5");
+    // image(gremlinDying5, x, y);
+    // }
+    // } else {
+    // gotDeathFrame = false;
+    // return;
+
+    // }
+    // }
+
+    public void drawAnimation(Monster monster, float x, float y) {
+        int deathAnimationFrames = 20; // Adjust the duration based on your preference
+
+        if (!monster.gotDeathFrame()) {
+            monster.setDeathStartFrame(frameCount);
+            monster.setGotDeathFrame(true);
+        }
+
+        int frameDifference = frameCount - monster.getDeathStartFrame();
+
+        if (frameDifference < deathAnimationFrames) {
+            int frameIndex = floor(map(frameDifference, 0, deathAnimationFrames, 0, 5));
+            PImage deathFrame = null;
+
+            if (monster.getType().equals("gremlin")) {
+                // Set the appropriate death frame based on the frame index
+                switch (frameIndex) {
+                    case 0:
+                        deathFrame = gremlinDying1;
+                        break;
+                    case 1:
+                        deathFrame = gremlinDying2;
+                        break;
+                    case 2:
+                        deathFrame = gremlinDying3;
+                        break;
+                    case 3:
+                        deathFrame = gremlinDying4;
+                        break;
+                    case 4:
+                        deathFrame = gremlinDying5;
+                        monster.setDeathAnimationPlayed(true);
+                        break;
+                }
             }
+
+            if (deathFrame != null) {
+                image(deathFrame, x, y);
+            }
+        } else {
+            monster.setDeathAnimationPlayed(true);
+            gotDeathFrame = false;
         }
     }
 
+    // if (monsterType.equals("gremlin")) {
+    // // Load gremlin death animation frames as PImage variables
+    // PImage[] deathFrames = new PImage[5];
+    // deathFrames[0] = getGremlinDying1();
+    // deathFrames[1] = getGremlinDying2();
+    // deathFrames[2] = getGremlinDying3();
+    // deathFrames[3] = getGremlinDying4();
+    // deathFrames[4] = getGremlinDying5();
 
+    // // Calculate the frame index based on elapsed time and custom frame rate (4
+    // frames per second)
+    // int customFrameRate = 4; // 4 frames per second
+    // int frameIndex = (int)((millis() - waveFinishedAt) / (1000.0 /
+    // customFrameRate));
 
+    // // Display the current death frame
+    // if (frameIndex >= 0 && frameIndex < deathFrames.length) {
+    // System.out.println("animation played");
+    // image(deathFrames[frameIndex], x, y);
+    // } else {
+    // // Animation is complete, do additional logic if needed
+    // }
+    // }
 
+    // }
 
+    public static boolean getIs2X() {
+        return is2X;
+    }
 
     @Override
     public void draw() {
@@ -853,97 +948,183 @@ public class App extends PApplet {
             button.drawLabel();
         }
 
+
         if (!gameLost) {
-            Waves wave = waveList.get(k);
-            wave.startWave();
+            if (!isPaused) {
+                Waves wave = waveList.get(k);
+                wave.startWave();
 
-            Waves.increaseFrameCounter();
-            // int totalPreviousDurations = wave.getDuration();
-
-            if (!waveChanged) {
-                waveStartTime = millis(); // Store the start time of the current wave
-                // System.out.println("wave start time" + waveStartTime);
-                waveChanged = true;
-            }
-
-            if (millis() - waveStartTime >= wave.getDuration() * 1000 && k < waveList.size() - 1 && waveChanged) {
-                // System.out.println(millis() - totalPreviousDurations);
-                // System.out.println("wave get duration " + wave.getDuration()*1000);
-
-                String countdownText = "Wave " + (k + 2) + " starts in "
-                        + ((preWavePauseTime - (millis() - waveFinishedAt)) / 1000) + " seconds";
-                fill(0); // Set text color to white
-                textSize(20);
-                text(countdownText, 10, 25); // Adjust position as needed
-
-                if (!gotWaveFinishedTime) {
-                    waveFinishedAt = millis();
-                    // System.out.println(waveFinishedAt);
-                    gotWaveFinishedTime = true;
+                if (monsterList.isEmpty() && k == waveList.size() - 1) {
+                    System.out.println("YOU WON");
+                    gameWon = true;
                 }
 
-                Waves nextWave = waveList.get(k + 1);
-                preWavePauseTime = (int) (nextWave.getPreWavePause() * 1000);
+                Waves.increaseFrameCounter();
+                // int totalPreviousDurations = wave.getDuration();
 
-                // System.out.println("Wave " + (k + 1) + "starts in " + (preWavePauseTime -
-                // (millis() - waveFinishedAt))/1000 );
+                if (!waveChanged) {
+                    waveStartTime = millis(); // Store the start time of the current wave
+                    System.out.println("wave" + (k+1) + "Start time " + waveStartTime);
+                    // System.out.println("wave start time" + waveStartTime);
+                    waveChanged = true;
+                }
+                // try {
+                //     Waves previousWave = waveList.get(k);
+                //     waveDuration = previousWave.getDuration();
+                // } catch (Exception e) {
+                //     waveDuration = wave.getDuration();
+                // }
 
-                if (millis() >= waveFinishedAt + preWavePauseTime) {
-                    // We've waited for the pre-wave pause, so we can now move to the next wave.
-                    // System.out.println(millis());
-                    // System.out.println("NEW WAVE");
-                    k++;
-                    waveChanged = false;
-                    gotWaveFinishedTime = false;
+                waveDuration = wave.getDuration();
+
+                if (millis() - waveStartTime >= waveDuration * 1000 && k < waveList.size() - 1 && waveChanged) {
+                    // System.out.println(millis() - totalPreviousDurations);
+                    // System.out.println("wave get duration " + wave.getDuration()*1000);
+
+                    String countdownText = "Wave " + (k + 1) + " starts in "
+                            + ((preWavePauseTime - (millis() - waveFinishedAt)) / 1000) + " seconds";
+                    fill(0); // Set text color to white
+                    textSize(20);
+                    text(countdownText, 10, 25); // Adjust position as needed
+
+                    if (!gotWaveFinishedTime) {
+                        waveFinishedAt = millis();
+                        // System.out.println(waveFinishedAt);
+                        gotWaveFinishedTime = true;
+                    }
+
+                    Waves nextWave = waveList.get(k + 1);
+                    preWavePauseTime = (int) (nextWave.getPreWavePause() * 1000);
+                    // System.out.println("prewave pause time " + preWavePauseTime);
+
+                    // System.out.println("Wave " + (k + 1) + "starts in " + (preWavePauseTime -
+                    // (millis() - waveFinishedAt))/1000 );
+
+                    if (millis() >= waveFinishedAt + preWavePauseTime) {
+                        // We've waited for the pre-wave pause, so we can now move to the next wave.
+                        System.out.println(millis());
+                        System.out.println("NEW WAVE");
+                        k++;
+                        waveChanged = false;
+                        gotWaveFinishedTime = false;
+                    }
                 }
             }
+            
+
+        // if (!gameLost) {
+        //     if (!isPaused) {
+        //         Waves wave = waveList.get(k);
+        //         wave.startWave();
+
+        //         if (monsterList.isEmpty() && k == waveList.size() - 1) {
+        //             System.out.println("YOU WON");
+        //             gameWon = true;
+        //         }               
+
+        //         Waves.increaseFrameCounter();
+        //         // int totalPreviousDurations = wave.getDuration();
+
+        //         if (!waveChanged) {
+        //             waveStartTime = millis(); // Store the start time of the current wave
+        //             // System.out.println("wave start time" + waveStartTime);
+        //             waveChanged = true;
+        //         }
+
+        //         // int waveDuration = wave.getDuration();
+
+        //         if (millis() - waveStartTime >= wave.getDuration() * 1000 && k < waveList.size() - 1 && waveChanged) {
+        //             // System.out.println(millis() - totalPreviousDurations);
+        //             // System.out.println("wave get duration " + wave.getDuration()*1000);
+
+        //             String countdownText = "Wave " + (k + 2) + " starts in "
+        //                     + ((preWavePauseTime - (millis() - waveFinishedAt)) / 1000) + " seconds";
+        //             fill(0); // Set text color to white
+        //             textSize(20);
+        //             text(countdownText, 10, 25); // Adjust position as needed
+
+        //             if (!gotWaveFinishedTime) {
+        //                 waveFinishedAt = millis();
+        //                 // System.out.println(waveFinishedAt);
+        //                 gotWaveFinishedTime = true;
+        //             }
+
+        //             Waves nextWave = waveList.get(k + 1);
+        //             preWavePauseTime = (int) (nextWave.getPreWavePause() * 1000);
+
+        //             // System.out.println("Wave " + (k + 1) + "starts in " + (preWavePauseTime -
+        //             // (millis() - waveFinishedAt))/1000 );
+
+        //             if (millis() >= waveFinishedAt + preWavePauseTime) {
+        //                 // We've waited for the pre-wave pause, so we can now move to the next wave.
+        //                 // System.out.println(millis());
+        //                 // System.out.println("NEW WAVE");
+        //                 k++;
+        //                 waveChanged = false;
+        //                 gotWaveFinishedTime = false;
+        //             }
+        //         }
+        //     }
+
+
 
             for (Monster monster : monsterList) {
                 monster.drawMonster();
                 // System.out.println("made it past here");
-                monster.moveMonster();
+                if (!isPaused) {
+                    monster.moveMonster();
+                    
 
-                if (monster.getKillMonster()) {
-                    monstersKilledList.add(monster);
+                    if (monster.getKillMonster()) {
+                        monstersKilledList.add(monster);
+                    }
+
+                    if (monster.getHandleRespawn()) {
+                        monstersToRespawnList.add(monster.getRespawnMonster());
+                        monstersToRemoveList.add(monster);
+                    }
+                }
+            }
+
+            if (!isPaused) {
+
+                for (Monster monster : monstersKilledList) {
+                    System.out.println("12");
+                    ManaBar.increaseMana((int) monster.getManaGainedOnKill());
+
+                    // String monsterType = monster.getType();
+                    // float deathX = monster.getX();
+                    // float deathY = monster.getY();
+
+                    // drawAnimation(monster, deathX, deathY);
+
+                    // if (monster.getDeathAnimationPlayed()) {
+                    // monsterList.remove(monster);
+                    // }
+
+                    monsterList.remove(monster);
+
+                    // if (monster.getDeathAnimationPlayed() ) {
+                    // System.out.println("hello");
+                    // ManaBar.increaseMana((int) monster.getManaGainedOnKill());
+                    // System.out.println("REMOVING MONSTER");
+                    // monsterList.remove(monster);
+                    // }
+
                 }
 
-                if (monster.getHandleRespawn()) {
-                    monstersToRespawnList.add(monster.getRespawnMonster());
-                    monstersToRemoveList.add(monster);
+                monstersKilledList.clear();
+
+                for (Monster monster : monstersToRespawnList) {
+                    monsterList.add(monster);
                 }
-            }
 
-            for (Monster monster : monstersKilledList) {
-                System.out.println("12");
-                ManaBar.increaseMana((int) monster.getManaGainedOnKill());
+                monstersToRespawnList.clear();
 
-                String monsterType = monster.getType();
-                float deathX = monster.getX();
-                float deathY = monster.getY();
+                for (Monster monster : monstersToRemoveList) {
 
-                drawAnimation(monsterType, deathX, deathY);
-                monsterList.remove(monster);
-
-                // if (monster.getDeathAnimationPlayed() ) {
-                // System.out.println("hello");
-                // ManaBar.increaseMana((int) monster.getManaGainedOnKill());
-                // System.out.println("REMOVING MONSTER");
-                // monsterList.remove(monster);
-                // }
-
-            }
-
-            monstersKilledList.clear();
-
-            for (Monster monster : monstersToRespawnList) {
-                monsterList.add(monster);
-            }
-
-            monstersToRespawnList.clear();
-
-            for (Monster monster : monstersToRemoveList) {
-
-                monsterList.remove(monster);
+                    monsterList.remove(monster);
+                }
             }
 
             for (Tower tower : towerList) {
@@ -962,37 +1143,52 @@ public class App extends PApplet {
             // System.out.println("10");
             // fireballList.clear();
 
-            for (Tower tower : towerList) {
-                tower.survey(monsterList);
-                fireballList.addAll(tower.getFireballList());
-                tower.updateTimer();
-            }
-            // System.out.println("11");
-            for (Fireball fireball : fireballList) {
-                fireball.updateTargetPosition();
-                fireball.moveFireball();
-                fireball.draw();
-                if (fireball.hasHitTarget()) {
-                    fireballsToRemoveList.add(fireball);
-                    if (!fireball.getHasRemovedHP()) {
-                        fireball.reduceHP();
-                        fireball.setHasRemovedHP(true);
+            if (!isPaused) {
+
+                for (Tower tower : towerList) {
+                    tower.survey(monsterList);
+                    fireballList.addAll(tower.getFireballList());
+                    tower.updateTimer();
+                }
+                // System.out.println("11");
+                for (Fireball fireball : fireballList) {
+                    fireball.updateTargetPosition();
+                    fireball.moveFireball();
+                    fireball.draw();
+                    if (fireball.hasHitTarget()) {
+                        fireballsToRemoveList.add(fireball);
+                        if (!fireball.getHasRemovedHP()) {
+                            fireball.reduceHP();
+                            fireball.setHasRemovedHP(true);
+                        }
                     }
                 }
-            }
 
-            // System.out.println("12");
-            // System.out.println(fireballList.size());
-            // System.out.println(fireballsToRemoveList.size());
-            for (Fireball fireball : fireballsToRemoveList) {
-                fireball.removeFireball();
-            }
-            // System.out.println("13");
-            fireballsToRemoveList.clear();
+                // System.out.println("12");
+                // System.out.println(fireballList.size());
+                // System.out.println(fireballsToRemoveList.size());
+                for (Fireball fireball : fireballsToRemoveList) {
+                    fireball.removeFireball();
+                }
+                // System.out.println("13");
+                fireballsToRemoveList.clear();
 
+            }
         }
-        System.out.println("Method finished at" + millis());
-        System.out.println(frameRate);
+
+        long currentTime = millis();
+
+        // Check if a second has passed since the last update
+        if (currentTime - lastSecond >= 1000) {
+          // Add a trickle to ManaBar
+          ManaBar.addTrickle();
+      
+          // Update the last timestamp to the current time
+          lastSecond = currentTime;
+        }
+
+        // System.out.println("Method finished at" + millis());
+        // System.out.println(frameRate);
     }
 
     // if (spawnCounter >= framesBetweenSpawn && numMonstersCreated <
@@ -1048,5 +1244,5 @@ public class App extends PApplet {
 
         return result;
     }
-    
+
 }

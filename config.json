@@ -2,7 +2,7 @@
   "layout": "level4.txt",
   "waves": [
     {
-      "duration": 3,
+      "duration": 10,
       "pre_wave_pause": 0.5,
 	  "monsters": [
         {
@@ -11,12 +11,12 @@
           "speed": 1,
           "armour": 0.5,
           "mana_gained_on_kill": 10,
-          "quantity": 10
+          "quantity": 1
         }
 	  ]
     },
     {
-      "duration": 10,
+      "duration": 3,
       "pre_wave_pause": 5,
       "monsters": [
         {
@@ -25,7 +25,7 @@
           "speed": 1,
           "armour": 0.7,
           "mana_gained_on_kill": 20,
-          "quantity": 15
+          "quantity": 1
         }
       ]
     },
@@ -39,7 +39,7 @@
           "speed": 1,
           "armour": 0.7,
           "mana_gained_on_kill": 70,
-          "quantity": 25
+          "quantity": 1
         },
         {
           "type": "gremlin",
@@ -47,7 +47,7 @@
           "speed": 1,
           "armour": 0.7,
           "mana_gained_on_kill": 10,
-          "quantity": 15
+          "quantity": 1
         }
       ]
     }
