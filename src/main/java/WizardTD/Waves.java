@@ -71,7 +71,6 @@ public class Waves {
                 randomMonsterIndex = random.nextInt(monsterTypeList.size());
             } else {
                 randomMonsterIndex = 0;
-
             }
 
             MonsterType monsterType = monsterTypeList.get(randomMonsterIndex);
@@ -110,10 +109,19 @@ public class Waves {
 
             if (quantity != 0) {
                 // int numOfMonsters = 0;
-                int spawnTime;
+                int spawnTime =0;
 
                 if (numOfMonsters > 0) {
-                    spawnTime = (int) (((float) duration / numOfMonsters) * 60);
+                    if (numOfMonsters == 1) {
+                        spawnTime = 0;
+                    } else {
+                        spawnTime = (int) (((float) duration / numOfMonsters) * 60);
+                        // if (App.getIs2X()) {
+                        //     spawnTime *= 0.5;
+                        // }
+                    }
+                    
+                    // System.out.println(spawnTime);
                 } else {
                     return;
                 }

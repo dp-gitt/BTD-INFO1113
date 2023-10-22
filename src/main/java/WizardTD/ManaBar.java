@@ -25,9 +25,10 @@ public class ManaBar {
     }
 
     public static void decreaseMana(float amount) {
-        currMana -= amount;
-        if (currMana < 0) {
-            currMana = 0; // Ensure mana doesn't go negative
+        if (currMana - amount < 0) {
+            return;
+        } else {
+            currMana -= amount;
         }
     }
 
@@ -40,7 +41,12 @@ public class ManaBar {
     }
 
     public static void addTrickle() {
-        currMana += manaGainedPerSecond;
+        if (currMana + manaGainedPerSecond > maxMana) {
+            return;
+        } else {
+            currMana += manaGainedPerSecond;
+        }
+        
     }
 
     public void draw(PApplet app, float x, float y, float width, float height) {

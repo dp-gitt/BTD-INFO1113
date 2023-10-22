@@ -202,47 +202,55 @@ public class Monster {
     }
 
     public void drawMonster() {
-        // if (isDying) {
-        //     if (!gotType) {
-        //         deathType = type;
-        //         // System.out.println(deathType);
-        //         gotType = true;
-        //         dyingStartFrame = app.frameCount;
-        //         // handleRespawn = false;
-        //     }
-    
-        //     // Calculate the frame difference since dying started
-        //     int frameDifference = app.frameCount - dyingStartFrame;
-        //     int deathAnimationFrames = 20;  // Adjust the duration based on your preference
-    
-        //     // Display different dying images based on the frame difference
 
-        //     // System.out.println(deathType);
-        //     // System.out.println(frameDifference);
-        //     // System.out.println(deathAnimationFrames);
-        // if ((frameDifference < deathAnimationFrames  && deathType.compareTo("gremlin") == 0)) {
-        //     System.out.println(deathType);
-        //     if (frameDifference < 4) {
-        //         app.image(gremlinDying1, x, y);              
-        //     } else if (frameDifference < 8) {
-        //         app.image(gremlinDying2, x, y);
-        //     } else if (frameDifference < 12) {
-        //         app.image(gremlinDying3, x, y);
-        //     } else if (frameDifference < 16) {
-        //         app.image(gremlinDying4, x, y);
-        //     } else {
-        //         app.image(gremlinDying5, x, y);
-        //     }
-        //     } else {
-        //         // Dying animation is finished
-        //         // System.out.println("death type " + deathType);
-        //         deathAnimationPlayed = true;
-        //         isDying = false;
-        //         killMonster = true;
+
+
+
+
+
+
+        if (isDying) {
+                // deathType = type;
+            if (!gotType) {
+                System.out.println(deathType);
+                gotType = true;
+                dyingStartFrame = app.frameCount;
+                handleRespawn = false;
+            }
+    
+            // Calculate the frame difference since dying started
+            int frameDifference = app.frameCount - dyingStartFrame;
+            int deathAnimationFrames = 20;  // Adjust the duration based on your preference
+    
+            // Display different dying images based on the frame difference
+
+            // System.out.println(deathType);
+            // System.out.println(frameDifference);
+            // System.out.println(deathAnimationFrames);
+        if (frameDifference < deathAnimationFrames) {
+            System.out.println(deathType);
+            if (frameDifference < 4) {
+                app.image(gremlinDying1, x, y);              
+            } else if (frameDifference < 8) {
+                app.image(gremlinDying2, x, y);
+            } else if (frameDifference < 12) {
+                app.image(gremlinDying3, x, y);
+            } else if (frameDifference < 16) {
+                app.image(gremlinDying4, x, y);
+                // System.out.println("HIJQBWDIQBWIUJDBQIWDBIQBWUIDBIQUWBDUIQWBD");
+            } else {
+                app.image(gremlinDying5, x, y);
+            }
+            } else {
+                // Dying animation is finished
+                // System.out.println("death type " + deathType);
+                deathAnimationPlayed = true;
+                isDying = false;
+                killMonster = true;
                 
-        //     }
-        //     return;
-        // }
+            }
+            return;
+        }
 
 
 
@@ -259,16 +267,16 @@ public class Monster {
         //     int frameDifference = app.frameCount - dyingStartFrame;
 
         //     // Display different dying images based on the frame difference
-        //     if (frameDifference < 4 && type == "gremlin") {
+        //     if (frameDifference < 4 ) {
         //         app.image(gremlinDying1, x, y);
         //         System.out.println(type);
-        //     } else if (frameDifference < 8 && type == "gremlin") {
+        //     } else if (frameDifference < 8 ) {
         //         app.image(gremlinDying2, x, y);
-        //     } else if (frameDifference < 12 && type == "gremlin") {
+        //     } else if (frameDifference < 12 ) {
         //         app.image(gremlinDying3, x, y);
-        //     } else if (frameDifference < 16 && type == "gremlin") {
+        //     } else if (frameDifference < 16 ) {
         //         app.image(gremlinDying4, x, y);
-        //     } else if (frameDifference < 20 && type == "gremlin") {
+        //     } else if (frameDifference < 20 ) {
         //         app.image(gremlinDying5, x, y);
         //     } else {
         //         // Dying animation is finished
@@ -283,9 +291,9 @@ public class Monster {
         // System.out.println(y);
 
         // public void drawMonster() {
-        // //System.out.println(x);
-        // //System.out.println(y);
-        // if (isDying && type == "gremlin") {
+        //System.out.println(x);
+        //System.out.println(y);
+        // if (isDying) {
         // // Calculate the frame difference since dying started
         // int frameDifference = app.frameCount - dyingStartFrame;
 
@@ -312,10 +320,10 @@ public class Monster {
         // return;
         // }
 
-        if (monsterPathList.isEmpty()) {
-            // System.out.println("monster list is empty");
-            return;
-        }
+        // if (monsterPathList.isEmpty()) {
+        //     // System.out.println("monster list is empty");
+        //     return;
+        // }
 
         
         app.image(sprite, x, y);
@@ -356,7 +364,7 @@ public class Monster {
         currHp -= damage;
         if (currHp <= 0 && !isDying) {
             isDying = true;
-            killMonster = true;
+            killMonster = false;
             dyingStartFrame = app.frameCount; // Record the frame when dying starts
         }
     }

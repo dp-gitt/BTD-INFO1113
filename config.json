@@ -11,12 +11,12 @@
           "speed": 1,
           "armour": 0.5,
           "mana_gained_on_kill": 10,
-          "quantity": 1
+          "quantity": 40
         }
 	  ]
     },
     {
-      "duration": 3,
+      "duration": 7,
       "pre_wave_pause": 5,
       "monsters": [
         {
@@ -25,13 +25,13 @@
           "speed": 1,
           "armour": 0.7,
           "mana_gained_on_kill": 20,
-          "quantity": 1
+          "quantity": 3
         }
       ]
     },
     {
       "duration": 5,
-      "pre_wave_pause": 5,
+      "pre_wave_pause": 6,
       "monsters": [
         {
           "type": "beetle",
@@ -39,7 +39,7 @@
           "speed": 1,
           "armour": 0.7,
           "mana_gained_on_kill": 70,
-          "quantity": 1
+          "quantity": 4
         },
         {
           "type": "gremlin",
@@ -47,7 +47,7 @@
           "speed": 1,
           "armour": 0.7,
           "mana_gained_on_kill": 10,
-          "quantity": 1
+          "quantity": 3
         }
       ]
     }

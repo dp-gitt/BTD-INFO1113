@@ -378,3 +378,172 @@
     //         }
     //     }
     // }
+
+
+
+
+
+
+                // if (!isPaused) {
+
+            //     if (wasPaused) {
+            //         currentTime = timeBeforePause;
+            //         timePausedFor = millis() - timeBeforePause;
+
+            //         if (!waveChanged) {
+            //             waveStartTime = millis() + timePausedFor; // Store the start time of the current wave
+            //             System.out.println("wave" + (k + 1) + "Start time " + waveStartTime);
+            //             // System.out.println("wave start time" f+ waveStartTime);
+            //             waveChanged = true;
+            //         }
+
+            //         Waves wave = waveList.get(k);
+            //         wave.startWave();
+
+            //         Waves.increaseFrameCounter();
+            //         // int totalPreviousDurations = wave.getDuration();
+
+            //         waveDuration = wave.getDuration();
+
+            //         if (currentTime - waveStartTime >= waveDuration * 1000 && k < waveList.size() - 1 && waveChanged) {
+            //             // System.out.println(millis() - totalPreviousDurations);
+            //             // System.out.println("wave get duration " + wave.getDuration()*1000);
+
+            //             String countdownText = "Wave " + (k + 2) + " starts in "
+            //                     + ((preWavePauseTime - (currentTime - waveFinishedAt)) / 1000) + " seconds";
+            //             fill(0); // Set text color to white
+            //             textSize(20);
+            //             text(countdownText, 10, 25); // Adjust position as needed
+
+            //             if (!gotWaveFinishedTime) {
+            //                 waveFinishedAt = millis() + timePausedFor;
+            //                 // System.out.println(waveFinishedAt);
+            //                 gotWaveFinishedTime = true;
+            //             }
+
+            //             Waves nextWave = waveList.get(k + 1);
+            //             preWavePauseTime = (int) (nextWave.getPreWavePause() * 1000);
+
+            //             if (currentTime >= waveFinishedAt + preWavePauseTime) {
+            //                 // We've waited for the pre-wave pause, so we can now move to the next wave.
+            //                 System.out.println(millis());
+            //                 System.out.println("NEW WAVE");
+            //                 k++;
+            //                 waveChanged = false;
+            //                 gotWaveFinishedTime = false;
+            //             }
+            //         }
+
+            //         wasPaused = false;
+            //         gotTimeBeforePaused = false;
+
+            //     } else {
+            //         currentTime = millis();
+            //         if (!waveChanged) {
+            //             waveStartTime = millis(); // Store the start time of the current wave
+            //             System.out.println("wave" + (k + 1) + "Start time " + waveStartTime);
+            //             // System.out.println("wave start time" + waveStartTime);
+            //             waveChanged = true;
+            //         }
+
+            //         Waves wave = waveList.get(k);
+            //         wave.startWave();
+
+            //         Waves.increaseFrameCounter();
+            //         // int totalPreviousDurations = wave.getDuration();
+
+            //         waveDuration = wave.getDuration();
+
+            //         if (currentTime - waveStartTime >= waveDuration * 1000 && k < waveList.size() - 1 && waveChanged) {
+            //             // System.out.println(millis() - totalPreviousDurations);
+            //             // System.out.println("wave get duration " + wave.getDuration()*1000);
+
+            //             String countdownText = "Wave " + (k + 2) + " starts in "
+            //                     + ((preWavePauseTime - (currentTime - waveFinishedAt)) / 1000) + " seconds";
+            //             fill(0); // Set text color to white
+            //             textSize(20);
+            //             text(countdownText, 10, 25); // Adjust position as needed
+
+            //             if (!gotWaveFinishedTime) {
+            //                 waveFinishedAt = millis();
+            //                 // System.out.println(waveFinishedAt);
+            //                 gotWaveFinishedTime = true;
+            //             }
+
+            //             Waves nextWave = waveList.get(k + 1);
+            //             preWavePauseTime = (int) (nextWave.getPreWavePause() * 1000);
+
+            //             if (currentTime >= waveFinishedAt + preWavePauseTime) {
+            //                 // We've waited for the pre-wave pause, so we can now move to the next wave.
+            //                 System.out.println(millis());
+            //                 System.out.println("NEW WAVE");
+            //                 k++;
+            //                 waveChanged = false;
+            //                 gotWaveFinishedTime = false;
+            //             }
+            //         }
+            //     }
+
+                
+
+            //     if (monsterList.isEmpty() && k == waveList.size() - 1) {
+            //         System.out.println("YOU WON");
+            //         gameWon = true;
+            //     }
+
+            // }
+
+                        // if (!isPaused && wasPaused) {
+
+            // Waves wave = waveList.get(k);
+            // wave.startWave();
+
+            // if (monsterList.isEmpty() && k == waveList.size() - 1) {
+            // System.out.println("YOU WON");
+            // gameWon = true;
+            // }
+
+            // Waves.increaseFrameCounter();
+            // // int totalPreviousDurations = wave.getDuration();
+
+            // if (!waveChanged) {
+            // waveStartTime = millis(); // Store the start time of the current wave
+            // System.out.println("wave" + (k+1) + "Start time " + waveStartTime);
+            // // System.out.println("wave start time" + waveStartTime);
+            // waveChanged = true;
+            // }
+
+            // waveDuration = wave.getDuration();
+
+            // if (timeBeforePause - waveStartTime >= waveDuration * 1000 && k <
+            // waveList.size() - 1 && waveChanged) {
+            // // System.out.println(millis() - totalPreviousDurations);
+            // // System.out.println("wave get duration " + wave.getDuration()*1000);
+
+            // String countdownText = "Wave " + (k + 2) + " starts in "
+            // + ((preWavePauseTime - (timeBeforePause - waveFinishedAt)) / 1000) + "
+            // seconds";
+            // fill(0); // Set text color to white
+            // textSize(20);
+            // text(countdownText, 10, 25); // Adjust position as needed
+
+            // if (!gotWaveFinishedTime) {
+            // waveFinishedAt = millis();
+            // // System.out.println(waveFinishedAt);
+            // gotWaveFinishedTime = true;
+            // }
+
+            // Waves nextWave = waveList.get(k + 1);
+            // preWavePauseTime = (int) (nextWave.getPreWavePause() * 1000);
+
+            // if (timeBeforePause >= waveFinishedAt + preWavePauseTime) {
+            // // We've waited for the pre-wave pause, so we can now move to the next wave.
+            // System.out.println(millis());
+            // System.out.println("NEW WAVE");
+            // k++;
+            // waveChanged = false;
+            // gotWaveFinishedTime = false;
+            // }
+            // }
+
+            // }
