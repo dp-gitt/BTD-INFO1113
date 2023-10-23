@@ -42,6 +42,11 @@ public class App extends PApplet {
 
     public String configPath;
     private PImage fireballSprite;
+    
+    public PImage getFireballSprite() {
+        return fireballSprite;
+    }
+
     public Random random = new Random();
     private boolean x = false;
     public static char[][] mapGrid;
@@ -383,24 +388,8 @@ public class App extends PApplet {
     @Override
     public void setup() {
         frameRate(FPS);
-
-        fireballSprite = loadImage("src/main/resources/WizardTD/fireball.png");
-        PImage tower0 = loadImage("src/main/resources/WizardTD/tower0.png");
-        towerImageList[0] = tower0;
-        PImage tower1 = loadImage("src/main/resources/WizardTD/tower1.png");
-        towerImageList[1] = tower1;
-        PImage tower2 = loadImage("src/main/resources/WizardTD/tower2.png");
-
-        gremlinSprite = loadImage("src/main/resources/WizardTD/gremlin.png");
-        beetleSprite = loadImage("src/main/resources/WizardTD/beetle.png");
-        wormSprite = loadImage("src/main/resources/WizardTD/worm.png");
-
-        gremlinDying1 = loadImage("src/main/resources/WizardTD/gremlin1.png");
-        gremlinDying2 = loadImage("src/main/resources/WizardTD/gremlin2.png");
-        gremlinDying3 = loadImage("src/main/resources/WizardTD/gremlin3.png");
-        gremlinDying4 = loadImage("src/main/resources/WizardTD/gremlin4.png");
-        gremlinDying5 = loadImage("src/main/resources/WizardTD/gremlin5.png");
-
+        
+        loadImages();
         loadWizShrubPathImages();
         loadPathImages();
 
@@ -414,7 +403,7 @@ public class App extends PApplet {
 
         mapGrid = loadLevelData(levelLines);
         createMapElements(mapGrid);
-        towerImageList[2] = tower2;
+        
 
 
 
@@ -439,6 +428,27 @@ public class App extends PApplet {
         // loadImage("src/main/resources/WizardTD/tower0.png");
         // loadImage("src/main/resources/WizardTD/tower1.png");
         // loadImage("src/main/resources/WizardTD/tower2.png");
+    }
+
+    public void loadImages() {
+        
+        fireballSprite = loadImage("src/main/resources/WizardTD/fireball.png");
+        PImage tower0 = loadImage("src/main/resources/WizardTD/tower0.png");
+        towerImageList[0] = tower0;
+        PImage tower1 = loadImage("src/main/resources/WizardTD/tower1.png");
+        towerImageList[1] = tower1;
+        PImage tower2 = loadImage("src/main/resources/WizardTD/tower2.png");
+        towerImageList[2] = tower2;
+
+        gremlinSprite = loadImage("src/main/resources/WizardTD/gremlin.png");
+        beetleSprite = loadImage("src/main/resources/WizardTD/beetle.png");
+        wormSprite = loadImage("src/main/resources/WizardTD/worm.png");
+
+        gremlinDying1 = loadImage("src/main/resources/WizardTD/gremlin1.png");
+        gremlinDying2 = loadImage("src/main/resources/WizardTD/gremlin2.png");
+        gremlinDying3 = loadImage("src/main/resources/WizardTD/gremlin3.png");
+        gremlinDying4 = loadImage("src/main/resources/WizardTD/gremlin4.png");
+        gremlinDying5 = loadImage("src/main/resources/WizardTD/gremlin5.png");
     }
 
     public char[][] getTowerGrid() {
@@ -777,9 +787,13 @@ public class App extends PApplet {
 
             List<MonsterType> copyList = new ArrayList<>();
             copyList.addAll(monsterTypeList);
-            Waves wave = new Waves(this, duration, preWavePause, copyList, MonsterSpawnPointsList, gremlinSprite,
-                    beetleSprite, wormSprite, manaBar, monsterList);
-            waveList.add(wave);
+            if (this != null) {
+                        Waves wave = new Waves(this, duration, preWavePause, copyList, MonsterSpawnPointsList, gremlinSprite,
+                beetleSprite, wormSprite, manaBar, monsterList);
+                waveList.add(wave);
+            }
+
+            
             // System.out.println(monsterTypeList.size());
             monsterTypeList.clear();
 
@@ -940,50 +954,50 @@ public class App extends PApplet {
     // }
     // }
 
-    public void drawAnimation(Monster monster, float x, float y) {
-        int deathAnimationFrames = 20; // Adjust the duration based on your preference
+    // public void drawAnimation(Monster monster, float x, float y) {
+    //     int deathAnimationFrames = 20; // Adjust the duration based on your preference
 
-        if (!monster.gotDeathFrame()) {
-            monster.setDeathStartFrame(frameCount);
-            monster.setGotDeathFrame(true);
-        }
+    //     if (!monster.gotDeathFrame()) {
+    //         monster.setDeathStartFrame(frameCount);
+    //         monster.setGotDeathFrame(true);
+    //     }
 
-        int frameDifference = frameCount - monster.getDeathStartFrame();
+    //     int frameDifference = frameCount - monster.getDeathStartFrame();
 
-        if (frameDifference < deathAnimationFrames) {
-            int frameIndex = floor(map(frameDifference, 0, deathAnimationFrames, 0, 5));
-            PImage deathFrame = null;
+    //     if (frameDifference < deathAnimationFrames) {
+    //         int frameIndex = floor(map(frameDifference, 0, deathAnimationFrames, 0, 5));
+    //         PImage deathFrame = null;
 
-            if (monster.getType().equals("gremlin")) {
-                // Set the appropriate death frame based on the frame index
-                switch (frameIndex) {
-                    case 0:
-                        deathFrame = gremlinDying1;
-                        break;
-                    case 1:
-                        deathFrame = gremlinDying2;
-                        break;
-                    case 2:
-                        deathFrame = gremlinDying3;
-                        break;
-                    case 3:
-                        deathFrame = gremlinDying4;
-                        break;
-                    case 4:
-                        deathFrame = gremlinDying5;
-                        monster.setDeathAnimationPlayed(true);
-                        break;
-                }
-            }
+    //         if (monster.getType().equals("gremlin")) {
+    //             // Set the appropriate death frame based on the frame index
+    //             switch (frameIndex) {
+    //                 case 0:
+    //                     deathFrame = gremlinDying1;
+    //                     break;
+    //                 case 1:
+    //                     deathFrame = gremlinDying2;
+    //                     break;
+    //                 case 2:
+    //                     deathFrame = gremlinDying3;
+    //                     break;
+    //                 case 3:
+    //                     deathFrame = gremlinDying4;
+    //                     break;
+    //                 case 4:
+    //                     deathFrame = gremlinDying5;
+    //                     monster.setDeathAnimationPlayed(true);
+    //                     break;
+    //             }
+    //         }
 
-            if (deathFrame != null) {
-                image(deathFrame, x, y);
-            }
-        } else {
-            monster.setDeathAnimationPlayed(true);
-            gotDeathFrame = false;
-        }
-    }
+    //         if (deathFrame != null) {
+    //             image(deathFrame, x, y);
+    //         }
+    //     } else {
+    //         monster.setDeathAnimationPlayed(true);
+    //         gotDeathFrame = false;
+    //     }
+    // }
 
     // if (monsterType.equals("gremlin")) {
     // // Load gremlin death animation frames as PImage variables
@@ -1011,6 +1025,14 @@ public class App extends PApplet {
 
     // }
 
+    public boolean isPaused() {
+        return isPaused;
+    }
+
+    public PImage[] getTowerImageList() {
+        return towerImageList;
+    }
+
     public static boolean getIs2X() {
         return is2X;
     }
@@ -1020,11 +1042,16 @@ public class App extends PApplet {
         background(255);
         // System.out.println("1");
         for (Paths pathsToDraw : pathsList) {
-            pathsToDraw.draw(this);
+            if (this != null) {
+                pathsToDraw.draw(this);
+            }
         }
         // System.out.println("2");
         for (MapElements elementToDraw : elementsList) {
-            elementToDraw.draw(this);
+            if ( this != null) {
+                elementToDraw.draw(this);
+            }
+            
         }
         // System.out.println("3");
         for (WizardHouse wizardHouse : wizardHouseList) {
@@ -1050,18 +1077,26 @@ public class App extends PApplet {
         fill(132, 115, 74);
         rect(0, 0, 760, 40);
         fill(132, 115, 74);
-
-        manaBar.draw(this, 375, 9, 345, 22);
+        if (this!= null) {
+            manaBar.draw(this, 375, 9, 345, 22);
+        }
+        
         // manaBar.increaseMana(1);
         // System.out.println("6");
+        if (buttonsList != null) {
+
+        
         for (Buttons button : buttonsList) {
             if (button.getLabel() == "M") {
                 button.changeText("Mana Pool cost: " + (int) manaBar.getManaPoolCost());
             }
-            button.drawText();
-            button.drawButton();
-            button.drawLabel();
+            if (button != null) {
+                button.drawText();
+                button.drawButton();
+                button.drawLabel();
+            }
         }
+    }
 
         if (!gameLost) {
 
@@ -1091,18 +1126,11 @@ public class App extends PApplet {
                         // System.out.println("wave start time" + waveStartTime);
                         waveChanged = true;
                     }
-                    // try {
-                    // Waves previousWave = waveList.get(k);
-                    // waveDuration = previousWave.getDuration();
-                    // } catch (Exception e) {
-                    // waveDuration = wave.getDuration();
-                    // }
+
 
                     waveDuration = wave.getDuration();
 
                     if (millis() - waveStartTime >= waveDuration * 1000 && k < waveList.size() - 1 && waveChanged) {
-                        // System.out.println(millis() - totalPreviousDurations);
-                        // System.out.println("wave get duration " + wave.getDuration()*1000);
 
                         String countdownText = "Wave " + (k + 1) + " starts in "
                                 + ((preWavePauseTime - (millis() - waveFinishedAt)) / 1000) + " seconds";
@@ -1118,10 +1146,6 @@ public class App extends PApplet {
 
                         Waves nextWave = waveList.get(k + 1);
                         preWavePauseTime = (int) (nextWave.getPreWavePause() * 1000);
-                        // System.out.println("prewave pause time " + preWavePauseTime);
-
-                        // System.out.println("Wave " + (k + 1) + "starts in " + (preWavePauseTime -
-                        // (millis() - waveFinishedAt))/1000 );
 
                         if (millis() >= waveFinishedAt + preWavePauseTime) {
                             // We've waited for the pre-wave pause, so we can now move to the next wave.
@@ -1157,25 +1181,7 @@ public class App extends PApplet {
                 for (Monster monster : monstersKilledList) {
                     System.out.println("12");
                     ManaBar.increaseMana((int) monster.getManaGainedOnKill());
-
-                    // String monsterType = monster.getType();
-                    // float deathX = monster.getX();
-                    // float deathY = monster.getY();
-
-                    // drawAnimation(monster, deathX, deathY);
-
-                    // if (monster.getDeathAnimationPlayed()) {
-                    // monsterList.remove(monster);
-                    // }
-
                     monsterList.remove(monster);
-
-                    // if (monster.getDeathAnimationPlayed() ) {
-                    // System.out.println("hello");
-                    // ManaBar.increaseMana((int) monster.getManaGainedOnKill());
-                    // System.out.println("REMOVING MONSTER");
-                    // monsterList.remove(monster);
-                    // }
 
                 }
 
@@ -1219,8 +1225,6 @@ public class App extends PApplet {
 
                 }
             }
-            // System.out.println("10");
-            // fireballList.clear();
 
             if (!isPaused) {
 
@@ -1243,9 +1247,6 @@ public class App extends PApplet {
                     }
                 }
 
-                // System.out.println("12");
-                // System.out.println(fireballList.size());
-                // System.out.println(fireballsToRemoveList.size());
                 for (Fireball fireball : fireballsToRemoveList) {
                     fireball.removeFireball();
                 }
@@ -1265,19 +1266,10 @@ public class App extends PApplet {
             // Update the last timestamp to the current time
             lastSecond = currentTime;
         }
-
-        // System.out.println("Method finished at" + millis());
-        // System.out.println(frameRate);
     }
-
-    // if (spawnCounter >= framesBetweenSpawn && numMonstersCreated <
-    // noOfMonstersNeeded) {
-    // createMonster(); // Spawn a new monster
-    // spawnCounter = 0; // Reset the counter
-    // numMonstersCreated++; // Increment the number of monsters created
-    // } else {
-    // spawnCounter++; // Increment the counter on each frame
-    // }
+    public ArrayList<Fireball> getFireballList() {
+        return fireballList;
+    }
 
     private void drawButtonCost(String label) {
         if (label == "T") {
