@@ -30,6 +30,11 @@ public class ManaBar {
     }
 
 
+    public static int getManaPoolSpellCost() {
+        return manaPoolSpellCost;
+    }
+
+
     public static void increaseMana(int amount) {
         int copyCurrMana = (int) currMana;
         copyCurrMana += amount;
@@ -129,6 +134,11 @@ public class ManaBar {
         float manaTextWidth = app.textWidth("MANA");
         app.text("MANA: ",x - manaTextWidth - 10,y + height/2 + app.textAscent()/2 - 2);
         app.textSize(12);
+    }
+
+
+    public static void setMana(int i) {
+        currMana = i;
     }
 
     // public void draw(PApplet app, float x, float y, float width, float height) {

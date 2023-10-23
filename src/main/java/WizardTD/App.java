@@ -46,13 +46,17 @@ public class App extends PApplet {
     private boolean x = false;
     public static char[][] mapGrid;
 
+    public ArrayList<Tower> getTowerList() {
+        return towerList;
+    }
+
     public char[][] towerGrid;
     public static PVector wizardSpawnPoint;
     private int numMonstersCreated = 0;
     private int j;
     private int counter = 0;
-    private Buttons upgradeRangeButton;
-    private Buttons buildTowerButton;
+    public Buttons upgradeRangeButton;
+    public Buttons buildTowerButton;
     private PImage gremlinSprite;
     private PImage beetleSprite;
     int initialTowerCost;
@@ -73,19 +77,19 @@ public class App extends PApplet {
     private int numberOfPossibleSpawns;
 
     ManaBar manaBar;
-    private int framesBetweenSpawn = 30;
-    private int spawnCounter = 0;
+    // private int framesBetweenSpawn = 30;
+    // private int spawnCounter = 0;
     private boolean isPaused = false;
     private int yellow = color(255, 255, 0);
     private int brown = color(132, 115, 74);
     private boolean towerMode;
     private boolean towerHover;
     ArrayList<Fireball> fireballList = new ArrayList<Fireball>();
-    Buttons twoXButton;
-    Buttons pauseButton;
-    Buttons upgradeSpeedButton;
-    Buttons upgradeDamageButton;
-    Buttons manaPoolButton;
+    private Buttons twoXButton;
+    private Buttons pauseButton;
+    public Buttons upgradeSpeedButton;
+    public Buttons upgradeDamageButton;
+    public Buttons manaPoolButton;
 
     public ArrayList<Monster> monstersToRemoveList = new ArrayList<>();
     public ArrayList<Monster> monstersToRespawnList = new ArrayList<>();
@@ -128,6 +132,12 @@ public class App extends PApplet {
     float manaPoolSpellCapMultiplier;
     float manaPoolSpellManaGainedMultiplier;
     private ToolTip toolTip;
+    private PImage grassImage;
+    private PImage shrubImage;
+    private PImage wizardHouseImage;
+    private String[] testLevelLines;
+    private String[] LevelLines;
+    private String[] levelLines;
 
     // public int[][] mapGrid;
 
@@ -174,12 +184,28 @@ public class App extends PApplet {
 
     // }
 
-    public char[][] loadLevelData(String levelName) {
-        String[] levelLines = loadStrings(levelName);
+    // public char[][] loadLevelData(String levelName) {
+    //     String[] levelLines = loadStrings(levelName);
+    //     int numRows = levelLines.length;
+    //     int numColumns = levelLines[0].length();
+    //     char[][] levelDataMatrix = new char[numRows][numColumns];
+    //     for (int currRow = 0; currRow < numRows; currRow++) {
+    //         for (int currCol = 0; currCol < numColumns; currCol++) {
+    //             char currentChar = ' ';
+    //             if (currCol < levelLines[currRow].length()) {
+    //                 currentChar = levelLines[currRow].charAt(currCol);
+    //             }
+    //             levelDataMatrix[currRow][currCol] = currentChar;
+    //         }
+    //     }
+    //     return levelDataMatrix;
+    // }
+
+    public char[][] loadLevelData(String[] levelLines) {
+        // String[] levelLines = loadStrings(levelName);
         int numRows = levelLines.length;
         int numColumns = levelLines[0].length();
         char[][] levelDataMatrix = new char[numRows][numColumns];
-
         for (int currRow = 0; currRow < numRows; currRow++) {
             for (int currCol = 0; currCol < numColumns; currCol++) {
                 char currentChar = ' ';
@@ -201,18 +227,18 @@ public class App extends PApplet {
                 // System.out.println(xPos);
 
                 if (mapSymbol == ' ') {
-                    elementsList.add(new Grass(xPos, yPos, loadImage("src/main/resources/WizardTD/grass.png")));
+                    elementsList.add(new Grass(xPos, yPos, grassImage));
                     // new instance of grass
                     // added to list of elements to draw
                 } else if (mapSymbol == 'S') {
-                    elementsList.add(new Shrub(xPos, yPos, loadImage("src/main/resources/WizardTD/shrub.png")));
+                    elementsList.add(new Shrub(xPos, yPos, shrubImage));
                     // new instance of shrub
                 } else if (mapSymbol == 'W') {
                     wizardSpawnPoint = new PVector(row, column);
                     xPos += (CELLSIZE - 48) / 2; // Center horizontally
                     yPos += (CELLSIZE - 48) / 2; // Center vertically
                     wizardHouseList.add(
-                            new WizardHouse(xPos, yPos, loadImage("src/main/resources/WizardTD/wizard_house.png")));
+                            new WizardHouse(xPos, yPos, wizardHouseImage));
                     // new instance of Wizard House
                 } else if (mapSymbol == 'X') {
                     createMapPaths(levelDataMatrix, row, column);
@@ -234,17 +260,6 @@ public class App extends PApplet {
     /* It loads in all the different paths and rotates them accordingly */
     public void createMapPaths(char[][] levelDataMatrix, int row, int column) {
         // put these in setup.
-        PImage horizontalPath = loadImage("src/main/resources/WizardTD/path0.png");
-        PImage verticalPath = rotateImageByDegrees(horizontalPath, 90);
-        PImage downT = loadImage("src/main/resources/WizardTD/path2.png");
-        PImage leftT = rotateImageByDegrees(downT, 90);
-        PImage upT = rotateImageByDegrees(downT, 180);
-        PImage rightT = rotateImageByDegrees(downT, 270);
-        PImage intersection = loadImage("src/main/resources/WizardTD/path3.png");
-        PImage rightDown = loadImage("src/main/resources/WizardTD/path1.png");
-        PImage downLeft = rotateImageByDegrees(rightDown, 90);
-        PImage leftUp = rotateImageByDegrees(rightDown, 180);
-        PImage upRight = rotateImageByDegrees(rightDown, 270);
 
         // Edges Or Corners
         int xPos = column * CELLSIZE;
@@ -309,16 +324,22 @@ public class App extends PApplet {
         } else if (!isAbove && !isBelow && !isToRight && isToLeft) {
             pathsList.add(new Paths(xPos, yPos, horizontalPath));
         }
+    }
 
-        else {
-            System.out.println("right: " + isToRight);
-            System.out.println("lef: " + isToLeft);
-            System.out.println("up: " + isAbove);
-            System.out.println("down: " + isBelow);
-            System.out.println(row);
-            System.out.println(column);
-            System.out.println("not drawn");
-        }
+    public Buttons getUpgradeRangeButton() {
+        return upgradeRangeButton;
+    }
+
+    public Buttons getBuildTowerButton() {
+        return buildTowerButton;
+    }
+
+    public Buttons getUpgradeSpeedButton() {
+        return upgradeSpeedButton;
+    }
+
+    public Buttons getUpgradeDamageButton() {
+        return upgradeDamageButton;
     }
 
     public void createButtons() {
@@ -337,6 +358,10 @@ public class App extends PApplet {
         buttonsList.add(upgradeSpeedButton);
         buttonsList.add(upgradeDamageButton);
         buttonsList.add(manaPoolButton);
+    }
+
+    public ArrayList<Buttons> getButtonsList() {
+        return buttonsList;
     }
 
     public App() {
@@ -376,14 +401,22 @@ public class App extends PApplet {
         gremlinDying4 = loadImage("src/main/resources/WizardTD/gremlin4.png");
         gremlinDying5 = loadImage("src/main/resources/WizardTD/gremlin5.png");
 
+        loadWizShrubPathImages();
+        loadPathImages();
+
         config = loadJSONObject("config.json");
         parseConfig(config);
 
-        towerGrid = loadLevelData(levelName);
+        levelLines = loadStrings(levelName);
 
-        mapGrid = loadLevelData(levelName);
+
+        towerGrid = loadLevelData(levelLines);
+
+        mapGrid = loadLevelData(levelLines);
         createMapElements(mapGrid);
         towerImageList[2] = tower2;
+
+
 
         // while (numMonstersCreated < noOfMonstersNeeded) {
         // createMonsters();
@@ -406,6 +439,10 @@ public class App extends PApplet {
         // loadImage("src/main/resources/WizardTD/tower0.png");
         // loadImage("src/main/resources/WizardTD/tower1.png");
         // loadImage("src/main/resources/WizardTD/tower2.png");
+    }
+
+    public char[][] getTowerGrid() {
+        return towerGrid;
     }
 
     /**
@@ -625,7 +662,6 @@ public class App extends PApplet {
         if (row >= 0 && row < towerGrid.length && col >= 0 && col < towerGrid[0].length) {
             return towerGrid[row][col] != 'S' && towerGrid[row][col] != 'T' && towerGrid[row][col] != 'X';
         }
-
         return false; // invalid coordinates. e.g. outside map
     }
 
@@ -673,6 +709,10 @@ public class App extends PApplet {
                 towerGrid[gridRow][gridColumn] = 'T';
             }
         }
+    }
+
+    public ArrayList<MapElements> getElementsList() {
+        return elementsList;
     }
 
     public static char[][] getMapGrid() {
@@ -792,6 +832,54 @@ public class App extends PApplet {
         removeMonsters = true;
     }
 
+    public int getInitialTowerCost() {
+        return initialTowerCost;
+    }
+
+    public String getLevelName() {
+        return levelName;
+    }
+
+    public int getInitialTowerRange() {
+        return initialTowerRange;
+    }
+
+    public int getInitialTowerDamage() {
+        return initialTowerDamage;
+    }
+
+    public float getInitialTowerFiringSpeed() {
+        return initialTowerFiringSpeed;
+    }
+
+    public int getInitialMana() {
+        return initialMana;
+    }
+
+    public int getInitialManaCap() {
+        return initialManaCap;
+    }
+
+    public float getInitialManaGainedPerSecond() {
+        return initialManaGainedPerSecond;
+    }
+
+    public int getManaPoolSpellInitialCost() {
+        return manaPoolSpellInitialCost;
+    }
+
+    public int getManaPoolSpellCostIncreasePerUse() {
+        return manaPoolSpellCostIncreasePerUse;
+    }
+
+    public float getManaPoolSpellCapMultiplier() {
+        return manaPoolSpellCapMultiplier;
+    }
+
+    public float getManaPoolSpellManaGainedMultiplier() {
+        return manaPoolSpellManaGainedMultiplier;
+    }
+
     public ArrayList<Waves> getWaveList() {
         return waveList;
     }
@@ -805,6 +893,17 @@ public class App extends PApplet {
     private int timeBeforePause;
     private boolean wasPaused = false;
     private int timePausedFor;
+    private PImage horizontalPath;
+    private PImage verticalPath;
+    private PImage downT;
+    private PImage leftT;
+    private PImage upT;
+    private PImage rightT;
+    private PImage intersection;
+    private PImage rightDown;
+    private PImage downLeft;
+    private PImage leftUp;
+    private PImage upRight;
 
     // public void drawAnimation(String monsterType, float x, float y) {
 
@@ -1114,6 +1213,11 @@ public class App extends PApplet {
                 } else {
                     button.changeButtonColour(brown);
                 }
+
+                if (button.isMouseOver() && (button.getLabel() == "T" || button.getLabel() == "M")) {
+                    drawButtonCost(button.getLabel());
+
+                }
             }
             // System.out.println("10");
             // fireballList.clear();
@@ -1175,6 +1279,34 @@ public class App extends PApplet {
     // spawnCounter++; // Increment the counter on each frame
     // }
 
+    private void drawButtonCost(String label) {
+        if (label == "T") {
+            fill(255);
+
+            rect(580, 160, 55, 15);
+            strokeWeight(1);
+            fill(0);
+            textSize(12);
+
+            text("Cost: " + initialTowerCost, 582, 170);
+
+            // change fill to white
+            // draw rectangle next to button
+            // draw text on top of button
+        } else if (label == "M") {
+            fill(255);
+
+            rect(580, 360, 55, 15);
+            strokeWeight(1);
+            fill(0);
+            textSize(12);
+
+            text("Cost: " + ManaBar.getManaPoolSpellCost(), 582, 370);
+
+        }
+
+    }
+
     private void checkUpgradeStatus(Tower tower) {
 
         if (tower.isMouseOver()) {
@@ -1185,13 +1317,11 @@ public class App extends PApplet {
             if (!buildTowerButton.getIsToggled() && (rangeToggle || speedToggle || damageToggle)) {
                 toolTip.drawToolTip(this, rangeToggle, speedToggle, damageToggle, tower);
                 // could use checkCostToolTip to extend the tooltip table. e.g. I can use that
-                }
-            } else {
-                return;
             }
+        } else {
+            return;
         }
-
-    
+    }
 
     public static void main(String[] args) {
         PApplet.main("WizardTD.App");
@@ -1240,6 +1370,26 @@ public class App extends PApplet {
 
     public static ArrayList<Monster> getMonsterList() {
         return monsterList;
+    }
+
+    public void loadWizShrubPathImages() {
+        grassImage = loadImage("src/main/resources/WizardTD/grass.png");
+        shrubImage = loadImage("src/main/resources/WizardTD/shrub.png");
+        wizardHouseImage = loadImage("src/main/resources/WizardTD/wizard_house.png");
+    }
+
+    public void loadPathImages() {
+        horizontalPath = loadImage("src/main/resources/WizardTD/path0.png");
+        verticalPath = rotateImageByDegrees(horizontalPath, 90);
+        downT = loadImage("src/main/resources/WizardTD/path2.png");
+        leftT = rotateImageByDegrees(downT, 90);
+        upT = rotateImageByDegrees(downT, 180);
+        rightT = rotateImageByDegrees(downT, 270);
+        intersection = loadImage("src/main/resources/WizardTD/path3.png");
+        rightDown = loadImage("src/main/resources/WizardTD/path1.png");
+        downLeft = rotateImageByDegrees(rightDown, 90);
+        leftUp = rotateImageByDegrees(rightDown, 180);
+        upRight = rotateImageByDegrees(rightDown, 270);
     }
 
 }
