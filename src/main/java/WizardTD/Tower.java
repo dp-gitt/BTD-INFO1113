@@ -415,19 +415,44 @@ public class Tower {
     }
 
     public void upgradeRange() {
-        rangeLevel += 1;
-        towerRange += 32;
 
+        int newLevel = rangeLevel + 1; 
+        int upgradeCost = newLevel * 10 + 10;
+
+        if (ManaBar.getMana() - upgradeCost <= 0) {
+            return;
+        } else {
+            rangeLevel += 1;
+            towerRange += 32;
+            ManaBar.decreaseMana(upgradeCost);
+        }
     }
 
     public void upgradeDamage() {
-        damageLevel += 1;
-        towerDamage += (float) (0.5 * initialTowerDamage);
+        int newLevel = damageLevel + 1; 
+        int upgradeCost = newLevel * 10 + 10;
+
+        if (ManaBar.getMana() - upgradeCost <= 0) {
+            return;
+        } else {
+            damageLevel += 1;
+            towerDamage += (float) (0.5 * initialTowerDamage);
+            ManaBar.decreaseMana(upgradeCost);
+        }
     }
 
     public void upgradeSpeed() {
-        speedLevel += 1;
-        towerFiringSpeed += 0.5;
+
+        int newLevel = speedLevel + 1;
+        int upgradeCost = newLevel * 10 + 10;
+
+        if (ManaBar.getMana() - upgradeCost <= 0) {
+            return;
+        } else {
+            speedLevel += 1;
+            towerFiringSpeed += 0.5;
+            ManaBar.decreaseMana(upgradeCost);
+        }
     }
 
     // public boolean isMouseOver() {

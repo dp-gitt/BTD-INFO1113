@@ -11,7 +11,7 @@
           "speed": 1,
           "armour": 0.5,
           "mana_gained_on_kill": 10,
-          "quantity": 40
+          "quantity": 5
         }
 	  ]
     },
@@ -55,7 +55,7 @@
   "initial_tower_range": 96,
   "initial_tower_firing_speed": 1.5,
   "initial_tower_damage": 40,
-  "initial_mana": 200,
+  "initial_mana": 500,
   "initial_mana_cap": 1000,
   "initial_mana_gained_per_second": 2,
   "tower_cost": 100,

@@ -44,4 +44,8 @@ class MonsterType {
     public void decreaseQuantity(int q) {
         quantity -= q;
     }
+
+    public void multiplyManaGainedOnKill(float manaPoolSpellManaGainedMultiplier) {
+        manaGainedOnKill *= manaPoolSpellManaGainedMultiplier;
+    }
 }

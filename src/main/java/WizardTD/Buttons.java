@@ -61,8 +61,8 @@ public class Buttons {
     }
 
     public void drawText() {
-        app.fill(0);
-        app.text(text,x + width + 5,y + height/2 - 15,60,40);
+            app.fill(0);
+            app.text(text,x + width + 5,y + height/2 - 15,60,40);
     }
 
     public void drawLabel() {
@@ -86,6 +86,10 @@ public class Buttons {
         float topEdge = y;
         float bottomEdge = y + height;
         return app.mouseX >= leftEdge && app.mouseX <= rightEdge && app.mouseY >= topEdge && app.mouseY <= bottomEdge;
+    }
+
+    public void changeText(String text) {
+        this.text = text;
     }
 
 }

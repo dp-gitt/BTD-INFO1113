@@ -193,12 +193,16 @@ public class Waves {
         return preWavePause;
     }
 
-    public ArrayList<Monster> getMonsterList() {
-        return monsterList;
+    public List<MonsterType> getMonsterList() {
+        return monsterTypeList;
     }
 
     public static void increaseFrameCounter() {
         frameCounter++;
+    }
+
+    public List<Monster> getMonsterTypeList() {
+        return copyList;
     }
 
     // public void drawWaveCounter() {

@@ -1,16 +1,32 @@
 package WizardTD;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import processing.core.PApplet;
 
 public class ManaBar {
     public static float maxMana;
     public static float currMana;
     public static float manaGainedPerSecond;
+    public static int manaPoolSpellCost;
+    public static int manaPoolSpellCostIncreasePerUse;
+    public static float manaPoolSpellCapMultiplier;
+    public static float manaPoolSpellManaGainedMultiplier;
+    private static ArrayList<Monster> monsterList;
+    private static App app;
+    private static ArrayList<Waves> waveList;
+    private static List<MonsterType> monsterTypeList;
 
-    public ManaBar(int initialMana ,int maxMana, float initialManaGainedPerSecond) {
+    public ManaBar(App app,int initialMana ,int maxMana, float initialManaGainedPerSecond, int manaPoolSpellInitialCost, int manaPoolSpellCostIncreasePerUse, float manaPoolSpellCapMultiplier, float manaPoolSpellManaGainedMultiplier) {
         ManaBar.maxMana = maxMana;
         ManaBar.currMana = initialMana;
         ManaBar.manaGainedPerSecond = initialManaGainedPerSecond;
+        ManaBar.manaPoolSpellCost = manaPoolSpellInitialCost;
+        ManaBar.manaPoolSpellCostIncreasePerUse = manaPoolSpellCostIncreasePerUse;
+        ManaBar.manaPoolSpellCapMultiplier = manaPoolSpellCapMultiplier;
+        ManaBar.manaPoolSpellManaGainedMultiplier = manaPoolSpellManaGainedMultiplier;
+        ManaBar.app = app;
     }
 
 
@@ -47,6 +63,46 @@ public class ManaBar {
             currMana += manaGainedPerSecond;
         }
         
+    }
+
+    public static void manaSpell() {
+        if (currMana - manaPoolSpellCost <= 0) {
+            return;
+        } else {
+            
+            currMana -= manaPoolSpellCost;
+            manaPoolSpellCost += manaPoolSpellCostIncreasePerUse;
+            
+            maxMana *= manaPoolSpellCapMultiplier;
+            manaPoolSpellCapMultiplier += 0.1;
+            // System.out.println(manaGainedPerSecond);
+            manaGainedPerSecond *= manaPoolSpellManaGainedMultiplier;
+            // System.out.println(manaGainedPerSecond);
+            waveList = app.getWaveList();
+
+            for (Waves wave : waveList) {
+                monsterTypeList = wave.getMonsterList();
+                for (MonsterType monsterType : monsterTypeList) {
+                    System.out.println("before " + monsterType.getManaGainedOnKill());
+                    monsterType.multiplyManaGainedOnKill(manaPoolSpellManaGainedMultiplier);
+                    System.out.println("after" + monsterType.getManaGainedOnKill());
+                    // System.out.println("it is before " + monster.getManaGainedOnKill());
+                    // monster.multiplyManaGainedOnKill(manaPoolSpellManaGainedMultiplier);
+                    // System.out.println("it is after " + monster.getManaGainedOnKill());
+                }
+            }
+            // from every wave in waveList go to the monsterTYpeList, and then from that, search through the list, and increment the value of managainedonkill
+            
+            // monsterList = App.getMonsterList();
+            // for (Monster monster : monsterList) {
+            //     monster.multiplyManaGainedOnKill(manaPoolSpellManaGainedMultiplier);
+            // }
+            manaPoolSpellManaGainedMultiplier += 0.1;
+        }
+    }
+
+    public float getManaPoolCost() {
+        return manaPoolSpellCost;
     }
 
     public void draw(PApplet app, float x, float y, float width, float height) {

@@ -103,7 +103,7 @@ public class App extends PApplet {
     private ArrayList<WizardHouse> wizardHouseList = new ArrayList<WizardHouse>();
     private ArrayList<Buttons> buttonsList = new ArrayList<Buttons>();
     private ArrayList<PVector> MonsterSpawnPointsList = new ArrayList<PVector>();
-    private ArrayList<Monster> monsterList = new ArrayList<Monster>();
+    private static ArrayList<Monster> monsterList = new ArrayList<Monster>();
     private ArrayList<Tower> towerList = new ArrayList<Tower>();
     private ArrayList<Fireball> fireballsToRemoveList = new ArrayList<Fireball>();
     private ArrayList<Waves> waveList = new ArrayList<Waves>();
@@ -122,6 +122,12 @@ public class App extends PApplet {
     private static PImage gremlinDying3;
     private static PImage gremlinDying4;
     private static PImage gremlinDying5;
+
+    int manaPoolSpellInitialCost;
+    int manaPoolSpellCostIncreasePerUse;
+    float manaPoolSpellCapMultiplier;
+    float manaPoolSpellManaGainedMultiplier;
+
 
     // public int[][] mapGrid;
 
@@ -392,7 +398,7 @@ public class App extends PApplet {
         noStroke();
         textAlign(LEFT);
         createButtons();
-        manaBar = new ManaBar(initialMana, initialManaCap, initialManaGainedPerSecond);
+        manaBar = new ManaBar(this,initialMana, initialManaCap, initialManaGainedPerSecond, manaPoolSpellInitialCost, manaPoolSpellCostIncreasePerUse, manaPoolSpellCapMultiplier, manaPoolSpellManaGainedMultiplier);
 
         // Load images during setup
         // Eg:
@@ -470,37 +476,6 @@ public class App extends PApplet {
     @Override
     public void mouseMoved() {
 
-        // for (Buttons button : buttonsList) {
-        // if (!button.getIsToggled() && button.isMouseOver()) {
-        // button.changeButtonColour(color(200));
-        // }
-        // }
-
-        // for (Buttons button : buttonsList) {
-        // if (!button.getIsToggled() && button.isMouseOver()) {
-        // button.changeButtonColour(color(200));
-        // } else if (button.getIsToggled()) {
-        // button.changeButtonColour(yellow);
-        // } else {
-        // button.changeButtonColour(brown);
-        // }
-        // }
-
-        // for (Buttons button : buttonsList) {
-        // if (button.isMouseOver() ) {
-        // if (button.getIsToggled()) {
-        // button.changeButtonColour(yellow);
-        // } else {
-        // button.changeButtonColour(color(200)); // Change to grey
-        // }
-        // } else {
-        // if (!button.getIsToggled()) {
-        // button.changeButtonColour(brown); // Reset to the original color
-        // }
-
-        // }
-        // }
-
         if (!towerList.isEmpty()) {
             for (Tower tower : towerList) {
                 if (tower.isMouseOver()) {
@@ -518,6 +493,9 @@ public class App extends PApplet {
         for (Buttons button : buttonsList) {
             if (button.isMouseOver()) {
                 if (button.getIsToggled() == false)
+                    // if (button.getLabel() == "M") {
+
+                    // }
                     button.changeButtonColour(yellow);
                 else {
                     button.changeButtonColour(brown);
@@ -536,6 +514,8 @@ public class App extends PApplet {
                     towerMode = !towerMode;
                     System.out.println(towerMode);
                 }
+
+
             }
         }
 
@@ -562,6 +542,12 @@ public class App extends PApplet {
                         tower.upgradeDamage();
 
                     } else if (rangeToggle && speedToggle && !damageToggle) {
+
+                        // tooltipCostCheck(true, true, false);
+                        /// with arguments (range, speed, damage)
+                        // it then reads the levels and then checks the cost. If there is insufficient, then it doesnt allow the lines below. 
+                        // tooltip.drawCost()
+
                         tower.upgradeRange();
                         tower.upgradeSpeed();
                     } else if (rangeToggle && !speedToggle && damageToggle) {
@@ -695,10 +681,10 @@ public class App extends PApplet {
         initialManaCap = config.getInt("initial_mana_cap");
         initialManaGainedPerSecond = config.getFloat("initial_mana_gained_per_second");
         initialTowerCost = config.getInt("tower_cost");
-        int manaPoolSpellInitialCost = config.getInt("mana_pool_spell_initial_cost");
-        int manaPoolSpellCostIncreasePerUse = config.getInt("mana_pool_spell_cost_increase_per_use");
-        float manaPoolSpellCapMultiplier = config.getFloat("mana_pool_spell_cap_multiplier");
-        float manaPoolSpellManaGainedMultiplier = config.getFloat("mana_pool_spell_mana_gained_multiplier");
+        manaPoolSpellInitialCost = config.getInt("mana_pool_spell_initial_cost");
+        manaPoolSpellCostIncreasePerUse = config.getInt("mana_pool_spell_cost_increase_per_use");
+        manaPoolSpellCapMultiplier = config.getFloat("mana_pool_spell_cap_multiplier");
+        manaPoolSpellManaGainedMultiplier = config.getFloat("mana_pool_spell_mana_gained_multiplier");
 
         JSONArray waves = config.getJSONArray("waves");
         for (int i = 0; i < waves.size(); i++) {
@@ -785,6 +771,10 @@ public class App extends PApplet {
     public void removeMonsters(Monster monsterToRemove, Monster monsterToSpawn) {
         System.out.println("this method called");
         removeMonsters = true;
+    }
+
+    public ArrayList<Waves> getWaveList() {
+        return waveList;
     }
 
     private boolean gotDeathFrame = false;
@@ -947,6 +937,9 @@ public class App extends PApplet {
         // manaBar.increaseMana(1);
         // System.out.println("6");
         for (Buttons button : buttonsList) {
+            if (button.getLabel() == "M") {
+                button.changeText("Mana Pool cost: " + (int) manaBar.getManaPoolCost());
+            }
             button.drawText();
             button.drawButton();
             button.drawLabel();
@@ -976,7 +969,7 @@ public class App extends PApplet {
     
                     if (!waveChanged) {
                         waveStartTime = millis(); // Store the start time of the current wave
-                        System.out.println("wave" + (k+1) + "Start time " + waveStartTime);
+                        // System.out.println("wave" + (k+1) + "Start time " + waveStartTime);
                         // System.out.println("wave start time" + waveStartTime);
                         waveChanged = true;
                     }
@@ -1087,10 +1080,19 @@ public class App extends PApplet {
             }
             // System.out.println("9");
             for (Buttons button : buttonsList) {
-                if (!button.getIsToggled() && button.isMouseOver()) {
+                // if it is NOT toggled, and the mouse is over it, turn it gray
+
+                if (button.getIsToggled() && button.getLabel() == "M") {
+                    ManaBar.manaSpell();
+                    button.setIsToggled(false);
+                } else if (!button.getIsToggled() && button.isMouseOver()) {
                     button.changeButtonColour(color(200));
+
+
                 } else if (button.getIsToggled()) {
                     button.changeButtonColour(yellow);
+
+
                 } else {
                     button.changeButtonColour(brown);
                 }
@@ -1198,6 +1200,10 @@ public class App extends PApplet {
         }
 
         return result;
+    }
+
+    public static ArrayList<Monster> getMonsterList() {
+        return monsterList;
     }
 
 }

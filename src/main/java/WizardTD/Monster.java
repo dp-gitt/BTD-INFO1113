@@ -108,7 +108,7 @@ public class Monster {
         List<Point> path = Point.FindPath(this.map, start, end);
 
         if (path != null) {
-            System.out.println("Path found:");
+            // System.out.println("Path found:");
             for (Point point : path) {
                 // System.out.println("made it!");
                 // System.out.println(point);
@@ -443,6 +443,10 @@ public class Monster {
 
     public int getDeathStartFrame() {
         return deathStartFrame;
+    }
+
+    public void multiplyManaGainedOnKill(float manaPoolSpellManaGainedMultiplier) {
+        manaGainedOnKill *= manaPoolSpellManaGainedMultiplier;
     }
 
 }
