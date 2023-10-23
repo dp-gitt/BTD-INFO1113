@@ -428,6 +428,13 @@ public class Tower {
         }
     }
 
+    public int getUpgradeRangeCost() {
+        int newLevel = rangeLevel + 1; 
+        int upgradeCost = newLevel * 10 + 10;
+
+        return upgradeCost; 
+    }
+
     public void upgradeDamage() {
         int newLevel = damageLevel + 1; 
         int upgradeCost = newLevel * 10 + 10;
@@ -441,8 +448,14 @@ public class Tower {
         }
     }
 
-    public void upgradeSpeed() {
+    public int getUpgradeDamageCost() {
+        int newLevel = damageLevel + 1; 
+        int upgradeCost = newLevel * 10 + 10;
 
+        return upgradeCost;
+    }
+
+    public void upgradeSpeed() {
         int newLevel = speedLevel + 1;
         int upgradeCost = newLevel * 10 + 10;
 
@@ -453,6 +466,13 @@ public class Tower {
             towerFiringSpeed += 0.5;
             ManaBar.decreaseMana(upgradeCost);
         }
+    }
+
+    public int getUpgradeSpeedCost() {
+        int newLevel = speedLevel + 1;
+        int upgradeCost = newLevel * 10 + 10;
+
+        return upgradeCost;
     }
 
     // public boolean isMouseOver() {

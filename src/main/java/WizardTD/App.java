@@ -127,7 +127,7 @@ public class App extends PApplet {
     int manaPoolSpellCostIncreasePerUse;
     float manaPoolSpellCapMultiplier;
     float manaPoolSpellManaGainedMultiplier;
-
+    private ToolTip toolTip;
 
     // public int[][] mapGrid;
 
@@ -398,8 +398,9 @@ public class App extends PApplet {
         noStroke();
         textAlign(LEFT);
         createButtons();
-        manaBar = new ManaBar(this,initialMana, initialManaCap, initialManaGainedPerSecond, manaPoolSpellInitialCost, manaPoolSpellCostIncreasePerUse, manaPoolSpellCapMultiplier, manaPoolSpellManaGainedMultiplier);
-
+        manaBar = new ManaBar(this, initialMana, initialManaCap, initialManaGainedPerSecond, manaPoolSpellInitialCost,
+                manaPoolSpellCostIncreasePerUse, manaPoolSpellCapMultiplier, manaPoolSpellManaGainedMultiplier);
+        toolTip = new ToolTip(manaBar);
         // Load images during setup
         // Eg:
         // loadImage("src/main/resources/WizardTD/tower0.png");
@@ -515,7 +516,6 @@ public class App extends PApplet {
                     System.out.println(towerMode);
                 }
 
-
             }
         }
 
@@ -537,32 +537,51 @@ public class App extends PApplet {
                 if (tower.isMouseOver()) {
 
                     if (rangeToggle && speedToggle && damageToggle) {
-                        tower.upgradeRange();
-                        tower.upgradeSpeed();
-                        tower.upgradeDamage();
+
+                        if (toolTip.toolTipCostCheck(rangeToggle, speedToggle, damageToggle, tower)) {
+                            tower.upgradeRange();
+                            tower.upgradeSpeed();
+                            tower.upgradeDamage();
+                        }
 
                     } else if (rangeToggle && speedToggle && !damageToggle) {
 
                         // tooltipCostCheck(true, true, false);
                         /// with arguments (range, speed, damage)
-                        // it then reads the levels and then checks the cost. If there is insufficient, then it doesnt allow the lines below. 
+                        // it then reads the levels and then checks the cost. If there is insufficient,
+                        // then it doesnt allow the lines below.
                         // tooltip.drawCost()
 
-                        tower.upgradeRange();
-                        tower.upgradeSpeed();
+                        if (toolTip.toolTipCostCheck(rangeToggle, speedToggle, damageToggle, tower)) {
+                            tower.upgradeRange();
+                            tower.upgradeSpeed();
+                        }
+
                     } else if (rangeToggle && !speedToggle && damageToggle) {
-                        tower.upgradeRange();
-                        tower.upgradeDamage();
+
+                        if (toolTip.toolTipCostCheck(rangeToggle, speedToggle, damageToggle, tower)) {
+                            tower.upgradeRange();
+                            tower.upgradeDamage();
+                        }
+
                     } else if (!rangeToggle && speedToggle && damageToggle) {
-                        tower.upgradeSpeed();
-                        tower.upgradeDamage();
+                        if (toolTip.toolTipCostCheck(rangeToggle, speedToggle, damageToggle, tower)) {
+                            tower.upgradeSpeed();
+                            tower.upgradeDamage();
+                        }
 
                     } else if (rangeToggle && !speedToggle && !damageToggle) {
-                        tower.upgradeRange();
+                        if (toolTip.toolTipCostCheck(rangeToggle, speedToggle, damageToggle, tower)) {
+                            tower.upgradeRange();
+                        }
                     } else if (!rangeToggle && speedToggle && !damageToggle) {
-                        tower.upgradeSpeed();
+                        if (toolTip.toolTipCostCheck(rangeToggle, speedToggle, damageToggle, tower)) {
+                            tower.upgradeSpeed();
+                        }
                     } else if (!rangeToggle && !speedToggle && damageToggle) {
-                        tower.upgradeDamage();
+                        if (toolTip.toolTipCostCheck(rangeToggle, speedToggle, damageToggle, tower)) {
+                            tower.upgradeDamage();
+                        }
                     }
                 }
 
@@ -958,15 +977,15 @@ public class App extends PApplet {
                 if (!isPaused) {
                     Waves wave = waveList.get(k);
                     wave.startWave();
-    
+
                     if (monsterList.isEmpty() && k == waveList.size() - 1) {
                         System.out.println("YOU WON");
                         gameWon = true;
                     }
-    
+
                     Waves.increaseFrameCounter();
                     // int totalPreviousDurations = wave.getDuration();
-    
+
                     if (!waveChanged) {
                         waveStartTime = millis(); // Store the start time of the current wave
                         // System.out.println("wave" + (k+1) + "Start time " + waveStartTime);
@@ -974,37 +993,37 @@ public class App extends PApplet {
                         waveChanged = true;
                     }
                     // try {
-                    //     Waves previousWave = waveList.get(k);
-                    //     waveDuration = previousWave.getDuration();
+                    // Waves previousWave = waveList.get(k);
+                    // waveDuration = previousWave.getDuration();
                     // } catch (Exception e) {
-                    //     waveDuration = wave.getDuration();
+                    // waveDuration = wave.getDuration();
                     // }
-    
+
                     waveDuration = wave.getDuration();
-    
+
                     if (millis() - waveStartTime >= waveDuration * 1000 && k < waveList.size() - 1 && waveChanged) {
                         // System.out.println(millis() - totalPreviousDurations);
                         // System.out.println("wave get duration " + wave.getDuration()*1000);
-    
+
                         String countdownText = "Wave " + (k + 1) + " starts in "
                                 + ((preWavePauseTime - (millis() - waveFinishedAt)) / 1000) + " seconds";
                         fill(0); // Set text color to white
                         textSize(20);
                         text(countdownText, 10, 25); // Adjust position as needed
-    
+
                         if (!gotWaveFinishedTime) {
                             waveFinishedAt = millis();
                             // System.out.println(waveFinishedAt);
                             gotWaveFinishedTime = true;
                         }
-    
+
                         Waves nextWave = waveList.get(k + 1);
                         preWavePauseTime = (int) (nextWave.getPreWavePause() * 1000);
                         // System.out.println("prewave pause time " + preWavePauseTime);
-    
+
                         // System.out.println("Wave " + (k + 1) + "starts in " + (preWavePauseTime -
                         // (millis() - waveFinishedAt))/1000 );
-    
+
                         if (millis() >= waveFinishedAt + preWavePauseTime) {
                             // We've waited for the pre-wave pause, so we can now move to the next wave.
                             System.out.println(millis());
@@ -1014,25 +1033,25 @@ public class App extends PApplet {
                             gotWaveFinishedTime = false;
                         }
                     }
-                } 
+                }
 
-            for (Monster monster : monsterList) {
-                monster.drawMonster();
-                // System.out.println("made it past here");
-                if (!isPaused) {
-                    monster.moveMonster();
+                for (Monster monster : monsterList) {
+                    monster.drawMonster();
+                    // System.out.println("made it past here");
+                    if (!isPaused) {
+                        monster.moveMonster();
 
-                    if (monster.getKillMonster()) {
-                        monstersKilledList.add(monster);
-                    }
+                        if (monster.getKillMonster()) {
+                            monstersKilledList.add(monster);
+                        }
 
-                    if (monster.getHandleRespawn()) {
-                        monstersToRespawnList.add(monster.getRespawnMonster());
-                        monstersToRemoveList.add(monster);
+                        if (monster.getHandleRespawn()) {
+                            monstersToRespawnList.add(monster.getRespawnMonster());
+                            monstersToRemoveList.add(monster);
+                        }
                     }
                 }
             }
-        }
 
             if (!isPaused) {
 
@@ -1077,6 +1096,7 @@ public class App extends PApplet {
 
             for (Tower tower : towerList) {
                 tower.drawTower();
+                checkUpgradeStatus(tower);
             }
             // System.out.println("9");
             for (Buttons button : buttonsList) {
@@ -1088,10 +1108,8 @@ public class App extends PApplet {
                 } else if (!button.getIsToggled() && button.isMouseOver()) {
                     button.changeButtonColour(color(200));
 
-
                 } else if (button.getIsToggled()) {
                     button.changeButtonColour(yellow);
-
 
                 } else {
                     button.changeButtonColour(brown);
@@ -1156,6 +1174,24 @@ public class App extends PApplet {
     // } else {
     // spawnCounter++; // Increment the counter on each frame
     // }
+
+    private void checkUpgradeStatus(Tower tower) {
+
+        if (tower.isMouseOver()) {
+            boolean rangeToggle = upgradeRangeButton.getIsToggled();
+            boolean speedToggle = upgradeSpeedButton.getIsToggled();
+            boolean damageToggle = upgradeDamageButton.getIsToggled();
+
+            if (!buildTowerButton.getIsToggled() && (rangeToggle || speedToggle || damageToggle)) {
+                toolTip.drawToolTip(this, rangeToggle, speedToggle, damageToggle, tower);
+                // could use checkCostToolTip to extend the tooltip table. e.g. I can use that
+                }
+            } else {
+                return;
+            }
+        }
+
+    
 
     public static void main(String[] args) {
         PApplet.main("WizardTD.App");
