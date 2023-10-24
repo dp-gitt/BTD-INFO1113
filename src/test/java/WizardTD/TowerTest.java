@@ -1,6 +1,8 @@
 package WizardTD;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +13,6 @@ public class TowerTest {
     public void testTowerDraw() throws InterruptedException {
         App app = new App(); // Replace with the actual class name for your Processing sketch
         PApplet.runSketch(new String[] { "Sketch " }, app);
-
 
         app.setup();
         app.loop();
@@ -29,7 +30,6 @@ public class TowerTest {
         app.mouseX = 200;
         app.mouseY = 200;
         app.mousePressed();
-
 
         app.key = 't';
         app.keyPressed();
@@ -51,7 +51,6 @@ public class TowerTest {
         app.mousePressed();
         app.mousePressed();
         app.mousePressed();
-
 
         app.key = '1';
         app.keyPressed();
@@ -75,10 +74,6 @@ public class TowerTest {
 
         // Thread.sleep(4000);
 
-
-
-
-
         // Make assertions based on the expected behavior of your draw function
         assertEquals(-1, -1); // Replace with your assertions
     }
@@ -87,22 +82,103 @@ public class TowerTest {
     public void testPauseButton() throws InterruptedException {
         App app = new App(); // Replace with the actual class name for your Processing sketch
         PApplet.runSketch(new String[] { "Sketch " }, app);
-        Thread.sleep(2000);
+
+        app.setup();
+        app.loop();
+        app.delay(1000);
+
         app.key = 'p';
         app.keyPressed();
 
-        
-        
         assertEquals(true, app.isPaused());
 
         app.key = 'p';
         app.keyPressed();
         assertEquals(false, app.isPaused());
-        
 
         app.key = 'f';
         app.keyPressed();
         assertEquals(true, App.getIs2X());
         Thread.sleep(5000);
     }
+
+    @Test
+    public void testPauseClicking() throws InterruptedException {
+        App app = new App();
+        PApplet.runSketch(new String[] { "Sketch " }, app);
+
+        // Run setup to initialize your app
+        app.setup();
+        app.loop();
+        app.delay(1000);
+
+        Buttons pauseButton = app.getPauseButton();
+
+        // Initially, the button should not be toggled
+        assertFalse(pauseButton.getIsToggled());
+
+        // Simulate a click on the pause button
+        app.mouseX = 660;
+        app.mouseY = 110;
+        app.mousePressed();
+
+        // app.delay(1000);
+        // Thread.sleep(1000);
+
+        // After clicking, it should be toggled
+        assertTrue(pauseButton.getIsToggled());
+
+        // Simulate another click on the pause button
+        app.mousePressed();
+
+        // After the second click, it should be untoggled
+        assertFalse(pauseButton.getIsToggled()); 
+    }
+
+    @Test
+    public void testManaSpell() {
+        App app = new App();
+        PApplet.runSketch(new String[] { "Sketch " }, app);
+        app.setup();
+
+        app.mouseX = 660;
+        app.mouseY = 360;
+        app.mousePressed();
+    }
+
+    @Test
+    public void testTowerBuildClicking() throws InterruptedException {
+        App app = new App();
+        PApplet.runSketch(new String[] { "Sketch " }, app);
+
+        app.setup();
+        app.loop();
+        app.delay(1000);
+
+        // Run setup to initialize your app
+        app.setup();
+
+        Buttons buildTowerButton = app.getBuildTowerButton();
+
+        assertFalse(buildTowerButton.getIsToggled());
+
+        app.mouseX = 660;
+        app.mouseY = 160;
+        Thread.sleep(3000);
+        app.mousePressed();
+
+        app.mouseX = 660;
+        app.mouseY = 160;
+
+        // Buttons manaPoolButton = app.getManaPoolButton();
+
+        // assertTrue(manaPoolButton.getIsToggled());
+
+        // app.mousePressed();
+
+        // assertFalse(manaPoolButton.getIsToggled());
+
+
+    }
+
 }

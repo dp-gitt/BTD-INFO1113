@@ -1385,4 +1385,11 @@ public class App extends PApplet {
         upRight = rotateImageByDegrees(rightDown, 270);
     }
 
+    public Buttons getPauseButton() {
+        return pauseButton;
+    }
+
+    public Buttons getManaPoolButton() {
+        return manaPoolButton;
+    }
 }

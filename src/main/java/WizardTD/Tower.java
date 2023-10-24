@@ -31,6 +31,21 @@ public class Tower {
     private int damageLevel;
     private float initialTowerDamage;
     // private PImage[] towerImageList;
+    private float oSize;
+    private float spacing;
+    private float yPos;
+
+    public float getoSize() {
+        return oSize;
+    }
+
+    public float getSpacing() {
+        return spacing;
+    }
+
+    public float getyPos() {
+        return yPos;
+    }
 
     public Tower(PApplet app, float towerXPos, float towerYPos, PImage[] towerImageList, int towerCost, int towerRange,
             float towerFiringSpeed, int towerDamage, PImage fireballSprite, ArrayList<Fireball> fireballList,
@@ -69,9 +84,9 @@ public class Tower {
         if (spriteID == 0) {
             if (rangeLevel >= 1) {
                 // Set the size of each "O"
-                float oSize = 4;
-                float spacing = 2;
-                float yPos = towerYPos + 3;
+                 oSize = 4;
+                 spacing = 2;
+                 yPos = towerYPos + 3;
                 app.stroke(255, 0, 255); // Magenta color (R, G, B)
                 app.strokeWeight(1);
 
@@ -352,6 +367,10 @@ public class Tower {
 
     public void setIsHovered(boolean isHovered) {
         this.isHovered = isHovered;
+    }
+
+    public int getSpriteID() {
+        return spriteID;
     }
 
     public void setTowerRange(int towerRange) {
