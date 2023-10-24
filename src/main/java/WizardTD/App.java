@@ -537,7 +537,8 @@ public class App extends PApplet {
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    // public void mousePressed(MouseEvent e) {
+    public void mousePressed() {
         for (Buttons button : buttonsList) {
             if (button.isMouseOver()) {
                 if (button.getIsToggled() == false)
