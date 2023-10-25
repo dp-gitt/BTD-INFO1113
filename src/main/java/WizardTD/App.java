@@ -1,7 +1,6 @@
 package WizardTD;
 
 import processing.core.PApplet;
-import processing.core.PFont;
 import processing.core.PImage;
 import processing.core.PVector;
 import processing.data.JSONArray;
@@ -12,14 +11,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-
-
-import java.io.*;
 import java.util.*;
 
 public class App extends PApplet {
@@ -48,60 +39,38 @@ public class App extends PApplet {
 
     public static final int FPS = 60;
 
-    public Buttons getTwoXButton() {
-        return twoXButton;
-    }
+
 
     public String configPath;
     private PImage fireballSprite;
-    
-    public PImage getFireballSprite() {
-        return fireballSprite;
-    }
-
-    public Random random = new Random();
-    private boolean x = false;
-    public static char[][] mapGrid;
-
-    public ArrayList<Tower> getTowerList() {
-        return towerList;
-    }
 
     public char[][] towerGrid;
     public static PVector wizardSpawnPoint;
-    private int numMonstersCreated = 0;
-    private int j;
-    private int counter = 0;
     public Buttons upgradeRangeButton;
     public Buttons buildTowerButton;
     private PImage gremlinSprite;
     private PImage beetleSprite;
-    int initialTowerCost;
+    private int initialTowerCost;
+    public Random random = new Random();
+    public static char[][] mapGrid;
 
     private PImage wormSprite;
     private ArrayList<MonsterType> monsterTypeList = new ArrayList<MonsterType>();
-    // public ArrayList<Waves> wavesList;
-    // private ArrayList<PImage> towerImageList = new ArrayList<PImage>();
     private PImage[] towerImageList = new PImage[3];
     // private int m;
 
     // private static final String levelName = "level2.txt";
     private String levelName;
-    private static int noOfMonstersNeeded = 5;
 
     public int firstSpawnVecX;
     public int firstSpawnVecY;
-    private int numberOfPossibleSpawns;
 
-    ManaBar manaBar;
-    // private int framesBetweenSpawn = 30;
-    // private int spawnCounter = 0;
+    public ManaBar manaBar;
     private boolean isPaused = false;
     private int yellow = color(255, 255, 0);
     private int brown = color(132, 115, 74);
     private boolean towerMode;
-    private boolean towerHover;
-    ArrayList<Fireball> fireballList = new ArrayList<Fireball>();
+    public ArrayList<Fireball> fireballList = new ArrayList<Fireball>();
     private Buttons twoXButton;
     private Buttons pauseButton;
     public Buttons upgradeSpeedButton;
@@ -111,14 +80,8 @@ public class App extends PApplet {
     public ArrayList<Monster> monstersToRemoveList = new ArrayList<>();
     public ArrayList<Monster> monstersToRespawnList = new ArrayList<>();
 
-    int currentWaveStartTime; // Keep track of the start time for the current wave
-    int delayStartTime; // Start time for the delay
-    boolean isDelaying = true; // Flag to indicate if you are in a delay
+    private JSONObject config;
 
-    JSONObject config;
-
-    // private int TESTING_VAR = 0;
-    // private char[][] levelDataMatrix;
     private ArrayList<MapElements> elementsList = new ArrayList<MapElements>();
     private ArrayList<Paths> pathsList = new ArrayList<Paths>();
     private ArrayList<WizardHouse> wizardHouseList = new ArrayList<WizardHouse>();
@@ -129,7 +92,6 @@ public class App extends PApplet {
     private ArrayList<Fireball> fireballsToRemoveList = new ArrayList<Fireball>();
     private ArrayList<Waves> waveList = new ArrayList<Waves>();
     private ArrayList<Monster> monstersKilledList = new ArrayList<Monster>();
-    private boolean removeMonsters;
     private int initialTowerRange;
     private int initialTowerDamage;
     private float initialTowerFiringSpeed;
@@ -137,7 +99,6 @@ public class App extends PApplet {
     private int initialManaCap;
     private float initialManaGainedPerSecond;
     public static boolean is2X = false;
-    // private static String levelName = "level2.txt";
     private static PImage gremlinDying1;
     private static PImage gremlinDying2;
     private static PImage gremlinDying3;
@@ -152,29 +113,36 @@ public class App extends PApplet {
     private PImage grassImage;
     private PImage shrubImage;
     private PImage wizardHouseImage;
-    private String[] testLevelLines;
-    private String[] LevelLines;
     private String[] levelLines;
 
-    // public int[][] mapGrid;
-
-    // Feel free to add any additional methods or attributes you want. Please put
-    // classes in different files.
-
-    /*
-     * This method extracts all the individual symbols located inside a
-     * level file, and stores them into a 2D matrix such that the symbols
-     * can be individually iterated through and the correct image is drawn.
-     */
+    private long lastSecond = 0;
+    private int waveDuration;
+    private boolean gotTimeBeforePaused = false;
+    private int timeBeforePause;
+    private PImage horizontalPath;
+    private PImage verticalPath;
+    private PImage downT;
+    private PImage leftT;
+    private PImage upT;
+    private PImage rightT;
+    private PImage intersection;
+    private PImage rightDown;
+    private PImage downLeft;
+    private PImage leftUp;
+    private PImage upRight;
+    private boolean gameJustLost;
 
     public static PVector getWizardSpawnPoint() {
         return wizardSpawnPoint;
     }
 
     
-    /* Called when the build tower button is toggled 
+    /** 
+     * Called when the build tower button is toggled 
      * displays a hover guider for placing towers.
-    */
+     * 
+     * @param towerList ArrayList of currently existing towers
+    */ 
     public void drawHoverExtension(ArrayList<Tower> towerList) { 
             int gridRow = (int) (mouseY / CELLSIZE);
             gridRow -= 1;
@@ -199,52 +167,15 @@ public class App extends PApplet {
                 }
             }
     }
-    // public void createMonsters() {
 
-    // int randomIndex = random.nextInt(MonsterSpawnPointsList.size());
-    // PVector firstCoordinate = MonsterSpawnPointsList.get(randomIndex); // gets a
-    // random spawnPoint
-    // // PVector firstCoordinate = MonsterSpawnPointsList.get(1); // Get the first
-    // // coordinate
-    // // int firstSpawnVecX = (int) firstCoordinate.x;
-    // // int firstSpawnVecY = (int) firstCoordinate.y;
-
-    // // int randomIndex = random.nextInt(myList.size());
-
-    // // MonsterSpawnPointsList =
-    // monsterList.add(new Monster(this, "gremlin", 100, 1, 150, 100,
-    // firstCoordinate, wizardSpawnPoint, mapGrid,
-    // gremlinSprite, manaBar, monsterList));
-    // // System.out.println("Monster has been added ot the list");
-    // Monster newMonster = monsterList.get(monsterList.size() - 1); // Get the last
-    // added monster
-    // newMonster.determineMonsterPath(); // Calculate the path for this specific
-    // monster
-    // // System.out.println(monsterList.size());
-
-    // // for (PVector coordinate : MonsterSpawnPointsList) {
-    // // monsterList.add(new Monster(this,"gremlin",100,2,150,100,coordinate,
-    // // wizardSpawnPoint, mapGrid));
-    // // }
-
-    // }
-
-    // public char[][] loadLevelData(String levelName) {
-    //     String[] levelLines = loadStrings(levelName);
-    //     int numRows = levelLines.length;
-    //     int numColumns = levelLines[0].length();
-    //     char[][] levelDataMatrix = new char[numRows][numColumns];
-    //     for (int currRow = 0; currRow < numRows; currRow++) {
-    //         for (int currCol = 0; currCol < numColumns; currCol++) {
-    //             char currentChar = ' ';
-    //             if (currCol < levelLines[currRow].length()) {
-    //                 currentChar = levelLines[currRow].charAt(currCol);
-    //             }
-    //             levelDataMatrix[currRow][currCol] = currentChar;
-    //         }
-    //     }
-    //     return levelDataMatrix;
-    // }
+    /**
+     * Extracts all the individual symbols located inside a
+     * level file, and stores them into a 2D matrix such that the symbols
+     * can be individually iterated through and the correct image is drawn.
+     * 
+     * @param levelLines List of strings representing each line in the level file
+     * @return 2D character matrix representing level file data 
+     */
 
     public char[][] loadLevelData(String[] levelLines) {
         // String[] levelLines = loadStrings(levelName);
@@ -262,6 +193,19 @@ public class App extends PApplet {
         }
         return levelDataMatrix;
     }
+
+
+    /** 
+     * Iterates through a 2D matrix's rows and columns to determine the position
+     * of different symbols according to their rows and columns with 
+     * (' ', 'S', 'W', and 'X') representing a grass tile, shrub, wizard house,
+     *  and path respectively. Consequently, each tile will result in a respective
+     *  instantiation of its class. 
+     * 
+     * Calls createMapPaths() method
+     * 
+     * @param levelDataMatrix 2D character matrix representing individual characters in the level file
+     */
 
     public void createMapElements(char[][] levelDataMatrix) {
         for (int row = 0; row < levelDataMatrix.length; row++) {
@@ -288,13 +232,9 @@ public class App extends PApplet {
                 } else if (mapSymbol == 'X') {
                     createMapPaths(levelDataMatrix, row, column);
                     if (row == 0 || row == 19) {
-                        System.out.println("Theres a path on the top or row");
                         MonsterSpawnPointsList.add(new PVector(row, column));
-                        numberOfPossibleSpawns += 1;
                     } else if (column == 0 || column == 19) {
                         MonsterSpawnPointsList.add(new PVector(row, column));
-                        System.out.println("theres a path on the first or last column");
-                        numberOfPossibleSpawns += 1;
                     }
                 }
             }
@@ -302,7 +242,15 @@ public class App extends PApplet {
         }
     }
 
-    /* It loads in all the different paths and rotates them accordingly */
+    /** 
+     * Accesses the character in the specified row and column and analyses its surrounding characters
+     * to determine the correct path sprite, and its relevant rotation. 
+     * 
+     * @param levelDataMatrix 2D character matrix representing individual characters in the level file
+     * @param row the row to access in levelDataMatrix
+     * @param column the column to access in levelDataMatrix
+     * 
+    */
     public void createMapPaths(char[][] levelDataMatrix, int row, int column) {
         // put these in setup.
 
@@ -334,7 +282,6 @@ public class App extends PApplet {
         // at the very top -> Vertical Path
         if (yPos == 40) {
             pathsList.add(new Paths(xPos, yPos, verticalPath));
-
         } else if (isAbove && isBelow && !isToLeft && !isToRight) {
             pathsList.add(new Paths(xPos, yPos, verticalPath));
             // System.out.println("VERTICAL DRAWN");
@@ -371,21 +318,11 @@ public class App extends PApplet {
         }
     }
 
-    public Buttons getUpgradeRangeButton() {
-        return upgradeRangeButton;
-    }
-
-    public Buttons getBuildTowerButton() {
-        return buildTowerButton;
-    }
-
-    public Buttons getUpgradeSpeedButton() {
-        return upgradeSpeedButton;
-    }
-
-    public Buttons getUpgradeDamageButton() {
-        return upgradeDamageButton;
-    }
+    /** 
+     * Calls the Buttons constructor and instantiates the 7 buttons 
+     * with their relative attributes, such as x and y values, 
+     * and their colours so that they can be drawn correctly.
+     */
 
     public void createButtons() {
 
@@ -405,13 +342,10 @@ public class App extends PApplet {
         buttonsList.add(manaPoolButton);
     }
 
-    public ArrayList<Buttons> getButtonsList() {
-        return buttonsList;
+    public void setPaused(boolean isPaused) {
+        this.isPaused = isPaused;
     }
 
-    public App() {
-        this.configPath = "config.json";
-    }
 
     /**
      * Initialise the setting of the window size.
@@ -420,6 +354,11 @@ public class App extends PApplet {
     public void settings() {
         size(WIDTH, HEIGHT);
     }
+
+    public void setTowerMode(boolean towerMode) {
+        this.towerMode = towerMode;
+    }
+
 
     /**
      * Load all resources such as images. Initialise the elements such as the
@@ -446,15 +385,6 @@ public class App extends PApplet {
 
         soundEffects = new SoundEffects();
 
-        // while (numMonstersCreated < noOfMonstersNeeded) {
-        // createMonsters();
-        // System.out.println("MONSTER CREATED");
-        // numMonstersCreated++;
-        // }
-
-        // for (Monster monster : monsterList) {
-        // monster.determineMonsterPath();
-        // }
         textFont(createFont("Arial", 12));
         noStroke();
         textAlign(LEFT);
@@ -462,12 +392,18 @@ public class App extends PApplet {
         manaBar = new ManaBar(this, initialMana, initialManaCap, initialManaGainedPerSecond, manaPoolSpellInitialCost,
                 manaPoolSpellCostIncreasePerUse, manaPoolSpellCapMultiplier, manaPoolSpellManaGainedMultiplier);
         toolTip = new ToolTip(manaBar);
-        // Load images during setup
-        // Eg:
-        // loadImage("src/main/resources/WizardTD/tower0.png");
-        // loadImage("src/main/resources/WizardTD/tower1.png");
-        // loadImage("src/main/resources/WizardTD/tower2.png");
     }
+
+    public boolean isTowerMode() {
+        return towerMode;
+    }
+
+
+    /** 
+     * Loads all the required sprites for the game. Also loads and appends the different 
+     * tower sprites in the correct order into a list, which is used for drawing
+     * the towers created according to their level. 
+     */
 
     public void loadImages() {
         
@@ -490,10 +426,6 @@ public class App extends PApplet {
         gremlinDying5 = loadImage("src/main/resources/WizardTD/gremlin5.png");
     }
 
-    public char[][] getTowerGrid() {
-        return towerGrid;
-    }
-
     /**
      * Receive key pressed signal from the keyboard.
      */
@@ -503,12 +435,6 @@ public class App extends PApplet {
         // not in tower toggle mode
         // be in tower upgrade Toggled
         // need to press on the tower. check towerList
-
-        // if (key == '1') {
-        // upgradeRangeButton.setIsToggled(!upgradeRangeButton.getIsToggled());
-        // } else if (key == 'p') {
-        // pauseButton.setIsToggled(!pauseButton.getIsToggled());
-        // }
 
         switch (key) {
             case 'f':
@@ -543,13 +469,6 @@ public class App extends PApplet {
 
         }
 
-        // if (!buildTowerButton.getIsToggled()) {
-        // if (key == '1') {
-        // upgradeRangeButton.setIsToggled(!upgradeRangeButton.getIsToggled());
-        // System.out.println("Button1 Toggled");
-        // System.out.println(upgradeRangeButton.getIsToggled());
-        // }
-        // }
     }
 
     /**
@@ -559,6 +478,10 @@ public class App extends PApplet {
     public void keyReleased() {
 
     }
+
+    /**
+     * Recieves mouse movement signals. 
+     */
 
     @Override
     public void mouseMoved() {
@@ -575,8 +498,10 @@ public class App extends PApplet {
 
     }
 
+    /**
+     * Recieves mouse press signals
+     */
     @Override
-    // public void mousePressed(MouseEvent e) {
     public void mousePressed() {
         for (Buttons button : buttonsList) {
             if (button.isMouseOver()) {
@@ -594,13 +519,13 @@ public class App extends PApplet {
                 if (button.getLabel() == "P") {
 
                     isPaused = !isPaused;
-                    System.out.println(isPaused);
+                    // System.out.println(isPaused);
                 }
 
                 if (button.getLabel() == "T") {
-                    System.out.println("Button T pressed");
+                    // System.out.println("Button T pressed");
                     towerMode = !towerMode;
-                    System.out.println(towerMode);
+                    // System.out.println(towerMode);
                 }
 
             }
@@ -610,11 +535,9 @@ public class App extends PApplet {
             int gridRow = (int) (mouseY / CELLSIZE);
             gridRow -= 1;
             int gridColumn = (int) (mouseX / CELLSIZE);
-            // System.out.println(gridRow);
-            // System.out.println(gridColumn);
+
             createTower(gridRow, gridColumn);
-            // System.out.println("playing sound");
-            // soundEffects.playTowerPlaceSound();
+
         }
 
         for (Tower tower : towerList) {
@@ -681,40 +604,20 @@ public class App extends PApplet {
                     }
                 }
 
-                // else if (rangeToggle && !speedToggle && !damageToggle) {
-                // tower.upgradeRange();
-                // } else if (rangeToggle && speedToggle && !damageToggle) {
-                // tower.upgradeRange();
-                // tower.upgradeSpeed();
-                // } else if (!rangeToggle && speedToggle && damageToggle) {
-                // tower.upgradeSpeed();
-                // tower.upgradeDamage();
-                // } else if (!rangeToggle && speedToggle && !damageToggle) {
-                // tower.upgradeSpeed();
-                // } else if (rangeToggle && speedToggle && !damageToggle) {
-                // tower.upgradeSpeed();
-                // }
-
-                // System.out.println("here");
-                // if (tower.isMouseOver()) {
-                // tower.upgradeRange();
-                // System.out.println("range upgrade!!");
-                // }
             }
         }
-
-        // if (!buildTowerButton.getIsToggled() && upgradeSpeedButton.getIsToggled()) {
-        // for (Tower tower : towerList) {
-        // if (tower.isMouseOver()) {
-        // tower.upgradeRange();
-        // System.out.println("RANGE UPGRADED");
-        // }
-        // }
-        // }
     }
 
+    public static void setIs2X(boolean is2x) {
+        is2X = is2x;
+    }
+
+
+    /**
+     * Recieves mouse release signals
+     */
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased() {
     }
 
     public boolean isTileEmpty(int row, int col) {
@@ -724,6 +627,16 @@ public class App extends PApplet {
         return false; // invalid coordinates. e.g. outside map
     }
 
+    /**
+     * Accesses the character specified by the given row and column within
+     * the 2D map matrix, to determine if a tower can be placed at this location.
+     * If the tower can be placed, a new tower is instantiated, and the relevant cost 
+     * is calculated and deducted from the player's mana. Plays a feedback sound if 
+     * tower is successfully placed. 
+     * 
+     * @param gridRow specified row within towerGrid to place tower
+     * @param gridColumn specified column within towerGrid to place tower
+     */
     public void createTower(int gridRow, int gridColumn) {
         int rangeLevel = 0;
         int speedLevel = 0;
@@ -753,12 +666,6 @@ public class App extends PApplet {
             int towerCost = initialTowerCost + 20 * (rangeLevel) + 20 * (speedLevel) + 20 * (damageLevel);
 
             if (ManaBar.getMana() > towerCost) {
-                System.out.println("Tower built has levels:");
-                System.out.println("range " + rangeLevel);
-                System.out.println("speed " + speedLevel);
-                System.out.println("damage " + damageLevel);
-                System.out.println("Cost " + towerCost);
-
                 Tower newTower = new Tower(this, towerXPos, towerYPos,
                         towerImageList, towerCost, initialTowerRange, initialTowerFiringSpeed, initialTowerDamage,
                         fireballSprite, fireballList, rangeLevel, speedLevel, damageLevel);
@@ -772,14 +679,6 @@ public class App extends PApplet {
         }
     }
 
-    public ArrayList<MapElements> getElementsList() {
-        return elementsList;
-    }
-
-    public static char[][] getMapGrid() {
-        return mapGrid;
-    }
-
     /*
      * @Override
      * public void mouseDragged(MouseEvent e) {
@@ -787,10 +686,17 @@ public class App extends PApplet {
      * }
      */
 
-    /**
-     * Draw all elements in the game by current frame.
-     */
 
+    /** 
+     * Parses through the specified config file, by accessing each JSONArray, and its
+     * objects. It will store the read values into the relevant attributes.
+     * Its logic follows by parsing through each wave, and its attributes 
+     * such as pre_wave_pause_time and monsterTypes, and will call the MonsterType constructor
+     * to initialise any monsterTypes and their attributes for that specific wave. This is followed by
+     * the instantiation of the waves themselves, as specified in the config. 
+     * 
+     * @param config The config file; initialised as a JSONObject. 
+     */
     public void parseConfig(JSONObject config) {
 
         levelName = config.getString("layout");
@@ -828,14 +734,6 @@ public class App extends PApplet {
 
             }
 
-            // System.out.println(monsterTypeList.size());
-            // for (Monster monster : mons)
-
-            // List<MonsterType> copyList = new ArrayList<>(monsterTypeList);
-            // for (MonsterType monsterType : copyList) {
-            // System.out.println(monsterType.getName());
-            // }
-
             List<MonsterType> copyList = new ArrayList<>();
             copyList.addAll(monsterTypeList);
             if (this != null) {
@@ -844,26 +742,7 @@ public class App extends PApplet {
                 waveList.add(wave);
             }
 
-            
-            // System.out.println(monsterTypeList.size());
             monsterTypeList.clear();
-
-            // each wave has a monsterTypesList, and the wave class will have
-            // a startWave method which will iterate through the monstertypes
-            // list and based on the quantity, and the individual waves timings
-            // spawn monsters randomly from the options it has.
-            // so in app.java i can iterate through the waveList, so i keep track
-            // of the number of waves and as i iterate through them i call
-            // startWave method.
-
-            // i have a waveList of waves. Each wave has its own Monstertype List.
-            // I can iterate through each wave to start the wave, and then
-            // for each wave, i can iterate through the monstertypeslist
-            // and then create instances of monster class using getter methods from it
-            // eg. for MonsterType monstertype : monsterTypeList {
-            // Monster newMonster = new Monster(monstertype.getHP())
-            // }
-            //
 
         }
     }
@@ -892,9 +771,12 @@ public class App extends PApplet {
         gameLost = true;
     }
 
-    public void removeMonsters(Monster monsterToRemove, Monster monsterToSpawn) {
-        System.out.println("this method called");
-        removeMonsters = true;
+    public ArrayList<MapElements> getElementsList() {
+        return elementsList;
+    }
+
+    public static char[][] getMapGrid() {
+        return mapGrid;
     }
 
     public int getInitialTowerCost() {
@@ -903,6 +785,10 @@ public class App extends PApplet {
 
     public String getLevelName() {
         return levelName;
+    }
+
+    public ArrayList<Buttons> getButtonsList() {
+        return buttonsList;
     }
 
     public int getInitialTowerRange() {
@@ -923,6 +809,10 @@ public class App extends PApplet {
 
     public int getInitialManaCap() {
         return initialManaCap;
+    }
+
+    public char[][] getTowerGrid() {
+        return towerGrid;
     }
 
     public float getInitialManaGainedPerSecond() {
@@ -949,133 +839,21 @@ public class App extends PApplet {
         return waveList;
     }
 
-    private boolean gotDeathFrame = false;
-    private int deathStartFrame;
-    private long lastSecond = 0;
-    private int waveDuration;
-    private int currentTime;
-    private boolean gotTimeBeforePaused = false;
-    private int timeBeforePause;
-    private boolean wasPaused = false;
-    private int timePausedFor;
-    private PImage horizontalPath;
-    private PImage verticalPath;
-    private PImage downT;
-    private PImage leftT;
-    private PImage upT;
-    private PImage rightT;
-    private PImage intersection;
-    private PImage rightDown;
-    private PImage downLeft;
-    private PImage leftUp;
-    private PImage upRight;
-    private boolean gameJustLost;
+        public Buttons getUpgradeRangeButton() {
+        return upgradeRangeButton;
+    }
 
-    // public void drawAnimation(String monsterType, float x, float y) {
+    public Buttons getBuildTowerButton() {
+        return buildTowerButton;
+    }
 
-    // if (monsterType.compareTo("gremlin") == 0) {
-    // if (!gotDeathFrame) {
-    // deathStartFrame = frameCount;
-    // gotDeathFrame = true;
-    // }
+    public Buttons getUpgradeSpeedButton() {
+        return upgradeSpeedButton;
+    }
 
-    // int frameDifference = frameCount - deathStartFrame;
-    // int deathAnimationFrames = 20;
-
-    // if (frameDifference < deathAnimationFrames) {
-    // if (frameDifference < 4) {
-    // System.out.println("playing 1");
-    // image(gremlinDying1, x, y);
-    // } else if (frameDifference < 8) {
-    // System.out.println("playing 2");
-    // image(gremlinDying2, x, y);
-    // } else if (frameDifference < 12) {
-    // System.out.println("playing 3");
-    // image(gremlinDying3, x, y);
-    // } else if (frameDifference < 16) {
-    // System.out.println("playing 4");
-    // image(gremlinDying4, x, y);
-    // } else {
-    // System.out.println("playing 5");
-    // image(gremlinDying5, x, y);
-    // }
-    // } else {
-    // gotDeathFrame = false;
-    // return;
-
-    // }
-    // }
-
-    // public void drawAnimation(Monster monster, float x, float y) {
-    //     int deathAnimationFrames = 20; // Adjust the duration based on your preference
-
-    //     if (!monster.gotDeathFrame()) {
-    //         monster.setDeathStartFrame(frameCount);
-    //         monster.setGotDeathFrame(true);
-    //     }
-
-    //     int frameDifference = frameCount - monster.getDeathStartFrame();
-
-    //     if (frameDifference < deathAnimationFrames) {
-    //         int frameIndex = floor(map(frameDifference, 0, deathAnimationFrames, 0, 5));
-    //         PImage deathFrame = null;
-
-    //         if (monster.getType().equals("gremlin")) {
-    //             // Set the appropriate death frame based on the frame index
-    //             switch (frameIndex) {
-    //                 case 0:
-    //                     deathFrame = gremlinDying1;
-    //                     break;
-    //                 case 1:
-    //                     deathFrame = gremlinDying2;
-    //                     break;
-    //                 case 2:
-    //                     deathFrame = gremlinDying3;
-    //                     break;
-    //                 case 3:
-    //                     deathFrame = gremlinDying4;
-    //                     break;
-    //                 case 4:
-    //                     deathFrame = gremlinDying5;
-    //                     monster.setDeathAnimationPlayed(true);
-    //                     break;
-    //             }
-    //         }
-
-    //         if (deathFrame != null) {
-    //             image(deathFrame, x, y);
-    //         }
-    //     } else {
-    //         monster.setDeathAnimationPlayed(true);
-    //         gotDeathFrame = false;
-    //     }
-    // }
-
-    // if (monsterType.equals("gremlin")) {
-    // // Load gremlin death animation frames as PImage variables
-    // PImage[] deathFrames = new PImage[5];
-    // deathFrames[0] = getGremlinDying1();
-    // deathFrames[1] = getGremlinDying2();
-    // deathFrames[2] = getGremlinDying3();
-    // deathFrames[3] = getGremlinDying4();
-    // deathFrames[4] = getGremlinDying5();
-
-    // // Calculate the frame index based on elapsed time and custom frame rate (4
-    // frames per second)
-    // int customFrameRate = 4; // 4 frames per second
-    // int frameIndex = (int)((millis() - waveFinishedAt) / (1000.0 /
-    // customFrameRate));
-
-    // // Display the current death frame
-    // if (frameIndex >= 0 && frameIndex < deathFrames.length) {
-    // System.out.println("animation played");
-    // image(deathFrames[frameIndex], x, y);
-    // } else {
-    // // Animation is complete, do additional logic if needed
-    // }
-    // }
-
-    // }
+    public Buttons getUpgradeDamageButton() {
+        return upgradeDamageButton;
+    }
 
     public boolean isPaused() {
         return isPaused;
@@ -1089,26 +867,61 @@ public class App extends PApplet {
         return is2X;
     }
 
+    public Buttons getTwoXButton() {
+        return twoXButton;
+    }
+    
+    public PImage getFireballSprite() {
+        return fireballSprite;
+    }
+
+    public ArrayList<Tower> getTowerList() {
+        return towerList;
+    }
+
+    public SoundEffects getSoundEffects() {
+        return soundEffects;
+    }
+
+
+    public static boolean isGameLost() {
+        return gameLost;
+    }
+
+    public static void setGameLost(boolean gameLost) {
+        App.gameLost = gameLost;
+    }
+
+    public ArrayList<Fireball> getFireballList() {
+        return fireballList;
+    }
+    public static void main(String[] args) {
+        PApplet.main("WizardTD.App");
+    }
+
+    /**
+     * Draw all elements in the game by current frame.
+     */
+
     @Override
     public void draw() {
+        System.out.println(mouseX);
+        System.out.println(mouseY);
 
-        // soundEffects.playTowerPlaceSound();
         background(255);
-        // soundEffects.playBackgroundMusic();
-        // System.out.println("1");
         for (Paths pathsToDraw : pathsList) {
             if (this != null) {
                 pathsToDraw.draw(this);
             }
         }
-        // System.out.println("2");
+
         for (MapElements elementToDraw : elementsList) {
             if ( this != null) {
                 elementToDraw.draw(this);
             }
             
         }
-        // System.out.println("3");
+
         for (WizardHouse wizardHouse : wizardHouseList) {
             int wizardXPos = wizardHouse.getXPos();
             int wizardYPos = wizardHouse.getYpos();
@@ -1117,13 +930,13 @@ public class App extends PApplet {
             grassUnderWizard.draw(this);
             wizardHouse.draw(this);
         }
-        // System.out.println("4");
+
         for (Tower tower : towerList) {
             if (tower.getIsHovered() == true && !gameLost) {
                 tower.drawRadius();
             }
         }
-        // System.out.println("5");
+
         rect(640, 40, 120, 640);
         fill(132, 115, 74);
 
@@ -1136,8 +949,6 @@ public class App extends PApplet {
             manaBar.draw(this, 375, 9, 345, 22);
         }
         
-        // manaBar.increaseMana(1);
-        // System.out.println("6");
         if (buttonsList != null) {
 
         
@@ -1154,12 +965,10 @@ public class App extends PApplet {
     }
 
         if (!gameLost) {
-
             if (isPaused & !gotTimeBeforePaused) {
 
                 timeBeforePause = millis();
                 gotTimeBeforePaused = true;
-                wasPaused = true;
             }
 
             if (!gameLost) {
@@ -1182,12 +991,9 @@ public class App extends PApplet {
                     }
 
                     Waves.increaseFrameCounter();
-                    // int totalPreviousDurations = wave.getDuration();
 
                     if (!waveChanged) {
                         waveStartTime = millis(); // Store the start time of the current wave
-                        // System.out.println("wave" + (k+1) + "Start time " + waveStartTime);
-                        // System.out.println("wave start time" + waveStartTime);
                         waveChanged = true;
                     }
 
@@ -1204,7 +1010,6 @@ public class App extends PApplet {
 
                         if (!gotWaveFinishedTime) {
                             waveFinishedAt = millis();
-                            // System.out.println(waveFinishedAt);
                             gotWaveFinishedTime = true;
                         }
 
@@ -1224,7 +1029,6 @@ public class App extends PApplet {
 
                 for (Monster monster : monsterList) {
                     monster.drawMonster();
-                    // System.out.println("made it past here");
                     if (!isPaused) {
                         monster.moveMonster();
 
@@ -1269,13 +1073,13 @@ public class App extends PApplet {
                 tower.drawTower();
                 checkUpgradeStatus(tower);
             }
-            // System.out.println("9");
             for (Buttons button : buttonsList) {
                 // if it is NOT toggled, and the mouse is over it, turn it gray
 
                 if (button.getIsToggled() && button.getLabel() == "M") {
                     ManaBar.manaSpell();
                     button.setIsToggled(false);
+
                 } else if (!button.getIsToggled() && button.isMouseOver()) {
                     button.changeButtonColour(color(200));
 
@@ -1299,7 +1103,7 @@ public class App extends PApplet {
                     fireballList.addAll(tower.getFireballList());
                     tower.updateTimer();
                 }
-                // System.out.println("11");
+
                 for (Fireball fireball : fireballList) {
                     fireball.updateTargetPosition();
                     fireball.moveFireball();
@@ -1316,7 +1120,7 @@ public class App extends PApplet {
                 for (Fireball fireball : fireballsToRemoveList) {
                     fireball.removeFireball();
                 }
-                // System.out.println("13");
+
                 fireballsToRemoveList.clear();
 
             }
@@ -1335,7 +1139,6 @@ public class App extends PApplet {
 
         if (gameLost) {
             // Display "Game Over" message
-            // soundEffects.close();
             background(255);
             fill(0,20,30); // Set text color to white
             textSize(32);
@@ -1349,20 +1152,12 @@ public class App extends PApplet {
             
         }
     }
-    public SoundEffects getSoundEffects() {
-        return soundEffects;
-    }
+    
 
-
-    public static boolean isGameLost() {
-        return gameLost;
-    }
-
-    public static void setGameLost(boolean gameLost) {
-        App.gameLost = gameLost;
-    }
-
-
+    /** 
+     * Handles the game restarting and resets any altered game logic since setup. 
+     * Clears all lists, storing monster data and tower data, and resets wave logic.
+     */
     public void resetGame() {
         
         for (Waves wave : waveList) {
@@ -1395,19 +1190,16 @@ public class App extends PApplet {
         manaBar = new ManaBar(this, initialMana, initialManaCap, initialManaGainedPerSecond, manaPoolSpellInitialCost,
         manaPoolSpellCostIncreasePerUse, manaPoolSpellCapMultiplier, manaPoolSpellManaGainedMultiplier);
         toolTip = new ToolTip(manaBar);
-
-        // delay(2);
-        
-        
-
     }
 
+    /**
+     * Draws the cost of the button's action beside it in text 
+     * that is overlayed on top of a small box. 
+     * 
+     * @param label label attribute of the relevant button
+     */
 
-    public ArrayList<Fireball> getFireballList() {
-        return fireballList;
-    }
-
-    private void drawButtonCost(String label) {
+    public void drawButtonCost(String label) {
         if (label == "T") {
             fill(255);
 
@@ -1435,6 +1227,14 @@ public class App extends PApplet {
 
     }
 
+    /**
+     * If the user's mouse is over the specified tower, 
+     * and at least one upgrade button is toggled, a tooltip will be drawn 
+     * to display the cost of applying the toggled upgrade(s) onto the specified tower. 
+     * 
+     * @param tower Tower object to check upgrade status 
+     */
+
     private void checkUpgradeStatus(Tower tower) {
 
         if (tower.isMouseOver()) {
@@ -1451,9 +1251,6 @@ public class App extends PApplet {
         }
     }
 
-    public static void main(String[] args) {
-        PApplet.main("WizardTD.App");
-    }
 
     /**
      * Source:

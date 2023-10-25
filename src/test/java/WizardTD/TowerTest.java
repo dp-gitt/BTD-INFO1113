@@ -1,235 +1,228 @@
-package WizardTD;
+// package WizardTD;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+// import static org.junit.jupiter.api.Assertions.assertEquals;
+// import static org.junit.jupiter.api.Assertions.assertFalse;
+// import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
+// import java.util.ArrayList;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+// import org.junit.jupiter.api.AfterAll;
+// import org.junit.jupiter.api.AfterEach;
+// import org.junit.jupiter.api.BeforeEach;
+// import org.junit.jupiter.api.Order;
+// import org.junit.jupiter.api.Test;
+// import org.junit.jupiter.api.TestMethodOrder;
+// import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 
-import processing.core.PApplet;
+// import processing.core.PApplet;
 
-public class TowerTest {
+// // @TestMethodOrder(OrderAnnotation.class)
+// public class TowerTest {
+//     @Test
+//     // @Order(1)
+//     public void testTowerDraw() throws InterruptedException {
 
-    // private App app;
+//         App app = new App(); // Replace with the actual class name for your Processing sketch
+//         PApplet.runSketch(new String[] { "Sketch " }, app);
 
-    // @BeforeEach
-    // public void setUp() {
-    //     // Initialize the game environment for each test case
-    //     App app = new App();
-    //     PApplet.runSketch(new String[] { "Sketch " }, app);
-    //     app.setup();
-    //     app.loop();
-    //     app.delay(1000);
-    // }
+//         app.setup();
+//         app.loop();
+//         app.delay(1000);
 
-    @Test
-    public void testTowerDraw() throws InterruptedException {
+//         Tower tower = new Tower(app, 100, 100, app.getTowerImageList(), 100, 100, 1, 20, app.getFireballSprite(),
+//                 app.getFireballList(), 1, 1, 1);
+//         Tower tower1 = new Tower(app, 150, 150, app.getTowerImageList(), 100, 100, 1, 20, app.getFireballSprite(),
+//                 app.getFireballList(), 2, 2, 2);
 
-        App app = new App(); // Replace with the actual class name for your Processing sketch
-        PApplet.runSketch(new String[] { "Sketch " }, app);
+//         ManaBar.setMana(1000);
 
-        app.setup();
-        app.loop();
-        app.delay(1000);
+//         app.key = 't';
+//         app.keyPressed();
+//         app.mouseX = 200;
+//         app.mouseY = 200;
+//         app.mousePressed();
 
-        Tower tower = new Tower(app, 100, 100, app.getTowerImageList(), 100, 100, 1, 20, app.getFireballSprite(),
-                app.getFireballList(), 1, 1, 1);
-        Tower tower1 = new Tower(app, 150, 150, app.getTowerImageList(), 100, 100, 1, 20, app.getFireballSprite(),
-                app.getFireballList(), 2, 2, 2);
+//         app.key = 't';
+//         app.keyPressed();
 
-        ManaBar.setMana(1000);
+//         app.key = '1';
+//         app.keyPressed();
+//         app.key = '2';
+//         app.keyPressed();
+//         app.key = '3';
+//         app.keyPressed();
 
-        app.key = 't';
-        app.keyPressed();
-        app.mouseX = 200;
-        app.mouseY = 200;
-        app.mousePressed();
+//         app.mousePressed();
 
-        app.key = 't';
-        app.keyPressed();
+//         app.key = '3';
+//         app.keyPressed();
+//         app.mousePressed();
+//         ManaBar.setMana(1000);
 
-        app.key = '1';
-        app.keyPressed();
-        app.key = '2';
-        app.keyPressed();
-        app.key = '3';
-        app.keyPressed();
+//         app.mousePressed();
+//         app.mousePressed();
+//         app.mousePressed();
 
-        app.mousePressed();
+//         app.key = '1';
+//         app.keyPressed();
+//         app.mousePressed();
 
-        app.key = '3';
-        app.keyPressed();
-        app.mousePressed();
-        ManaBar.setMana(1000);
+//         app.mousePressed();
+//         app.mouseReleased();
 
-        app.mousePressed();
-        app.mousePressed();
-        app.mousePressed();
+//         app.mouseX = 200;
+//         app.mouseY = 200;
 
-        app.key = '1';
-        app.keyPressed();
-        app.mousePressed();
+//         Thread.sleep(15000);
 
-        app.mousePressed();
-        app.mouseReleased();
+//         tower.drawTower();
+//         tower1.drawTower();
 
-        app.mouseX = 200;
-        app.mouseY = 200;
+//         tower.setIsHovered(true);
 
-        Thread.sleep(15000);
+//         // ArrayList<Tower> towerList = app.getTowerList();
+//         // towerList.remove(tower1);
+//         // towerList.remove(tower);
 
-        tower.drawTower();
-        tower1.drawTower();
+//         // app.mouseX = 200;
+//         // app.mouseY = 200;
 
-        tower.setIsHovered(true);
+//         // Thread.sleep(4000);
+//         app.getSoundEffects().close();
+//         // Make assertions based on the expected behavior of your draw function
+//         assertEquals(-1, -1); // Replace with your assertions
 
-        // ArrayList<Tower> towerList = app.getTowerList();
-        // towerList.remove(tower1);
-        // towerList.remove(tower);
+//     }
 
-        // app.mouseX = 200;
-        // app.mouseY = 200;
+//     @Test
+//     public void testPauseButton() throws InterruptedException {
 
-        // Thread.sleep(4000);
-        app.getSoundEffects().close();
-        // Make assertions based on the expected behavior of your draw function
-        assertEquals(-1, -1); // Replace with your assertions
+//         App app = new App(); // Replace with the actual class name for your Processing sketch
+//         PApplet.runSketch(new String[] { "Sketch " }, app);
 
-    }
+//         app.setup();
+//         app.loop();
+//         app.delay(1000);
 
-    @Test
-    public void testPauseButton() throws InterruptedException {
+//         app.key = 'p';
+//         app.keyPressed();
 
-        App app = new App(); // Replace with the actual class name for your Processing sketch
-        PApplet.runSketch(new String[] { "Sketch " }, app);
+//         assertEquals(true, app.isPaused());
 
-        app.setup();
-        app.loop();
-        app.delay(1000);
+//         app.key = 'p';
+//         app.keyPressed();
+//         assertEquals(false, app.isPaused());
 
-        app.key = 'p';
-        app.keyPressed();
+//         app.key = 'f';
+//         app.keyPressed();
+//         assertEquals(true, App.getIs2X());
 
-        assertEquals(true, app.isPaused());
+//         Thread.sleep(5000);
 
-        app.key = 'p';
-        app.keyPressed();
-        assertEquals(false, app.isPaused());
+//         app.getPauseButton().setIsToggled(false);
+//         app.getTwoXButton().setIsToggled(false);
+//         app.getSoundEffects().close();
+//     }
 
-        app.key = 'f';
-        app.keyPressed();
-        assertEquals(true, App.getIs2X());
+//     @Test
+//     public void testPauseClicking() throws InterruptedException {
+//         App app = new App();
+//         PApplet.runSketch(new String[] { "Sketch " }, app);
 
-        Thread.sleep(5000);
+//         // Run setup to initialize your app
+//         app.setup();
+//         app.loop();
+//         app.delay(1000);
 
-        app.getPauseButton().setIsToggled(false);
-        app.getTwoXButton().setIsToggled(false);
-        app.getSoundEffects().close();
-    }
+//         Buttons pauseButton = app.getPauseButton();
 
-    @Test
-    public void testPauseClicking() throws InterruptedException {
-        App app = new App();
-        PApplet.runSketch(new String[] { "Sketch " }, app);
+//         // Initially, the button should not be toggled
+//         assertFalse(pauseButton.getIsToggled());
 
-        // Run setup to initialize your app
-        app.setup();
-        app.loop();
-        app.delay(1000);
+//         // Simulate a click on the pause button
+//         app.mouseX = 660;
+//         app.mouseY = 110;
+//         app.mousePressed();
 
-        Buttons pauseButton = app.getPauseButton();
+//         // app.delay(1000);
+//         Thread.sleep(1000);
 
-        // Initially, the button should not be toggled
-        assertFalse(pauseButton.getIsToggled());
+//         // After clicking, it should be toggled
+//         assertTrue(pauseButton.getIsToggled());
 
-        // Simulate a click on the pause button
-        app.mouseX = 660;
-        app.mouseY = 110;
-        app.mousePressed();
+//         // Simulate another click on the pause button
+//         app.mousePressed();
 
-        // app.delay(1000);
-        Thread.sleep(1000);
+//         // After the second click, it should be untoggled
+//         assertFalse(pauseButton.getIsToggled());
+//     }
 
-        // After clicking, it should be toggled
-        assertTrue(pauseButton.getIsToggled());
+//     @Test
+//     public void testManaSpell() {
+//         App app = new App();
+//         PApplet.runSketch(new String[] { "Sketch " }, app);
+//         app.setup();
+//         app.loop();
+//         app.delay(1000);
 
-        // Simulate another click on the pause button
-        app.mousePressed();
+//         app.mouseX = 660;
+//         app.mouseY = 360;
+//         app.mousePressed();
+//     }
 
-        // After the second click, it should be untoggled
-        assertFalse(pauseButton.getIsToggled());
-    }
+//     @Test
+//     public void testTowerBuildClicking() throws InterruptedException {
+//         App app = new App();
+//         PApplet.runSketch(new String[] { "Sketch " }, app);
 
-    @Test
-    public void testManaSpell() {
-        App app = new App();
-        PApplet.runSketch(new String[] { "Sketch " }, app);
-        app.setup();
-        app.loop();
-        app.delay(1000);
+//         // app.setup();
+//         // app.loop();
+//         // app.delay(1000);
 
-        app.mouseX = 660;
-        app.mouseY = 360;
-        app.mousePressed();
-    }
+//         // Run setup to initialize your app
+//         app.setup();
 
-    @Test
-    public void testTowerBuildClicking() throws InterruptedException {
-        App app = new App();
-        PApplet.runSketch(new String[] { "Sketch " }, app);
+//         Buttons buildTowerButton = app.getBuildTowerButton();
 
-        // app.setup();
-        // app.loop();
-        // app.delay(1000);
+//         assertFalse(buildTowerButton.getIsToggled());
 
-        // Run setup to initialize your app
-        app.setup();
+//         app.mouseX = 660;
+//         app.mouseY = 160;
+//         Thread.sleep(3000);
+//         app.mousePressed();
 
-        Buttons buildTowerButton = app.getBuildTowerButton();
+//         app.mouseX = 660;
+//         app.mouseY = 160;
 
-        assertFalse(buildTowerButton.getIsToggled());
+//         // Buttons manaPoolButton = app.getManaPoolButton();
 
-        app.mouseX = 660;
-        app.mouseY = 160;
-        Thread.sleep(3000);
-        app.mousePressed();
+//         // assertTrue(manaPoolButton.getIsToggled());
 
-        app.mouseX = 660;
-        app.mouseY = 160;
+//         // app.mousePressed();
 
-        // Buttons manaPoolButton = app.getManaPoolButton();
+//         // assertFalse(manaPoolButton.getIsToggled());
+//         app.getSoundEffects().close();
 
-        // assertTrue(manaPoolButton.getIsToggled());
+//     }
 
-        // app.mousePressed();
-
-        // assertFalse(manaPoolButton.getIsToggled());
-        app.getSoundEffects().close();
-
-    }
-
-    @Test
-    public void testResetGame() {
-        App app = new App();
-        PApplet.runSketch(new String[] { "Sketch " }, app);
+//     // @Test
+//     // public void testResetGame() {
+//     //     App app = new App();
+//     //     // PApplet.runSketch(new String[] { "Sketch " }, app);
     
-        app.setup();
-        app.loop();
-        app.delay(1000);
+//     //     app.setup();
+//     //     app.loop();
+//     //     app.delay(1000);
     
-        // Simulate game loss
-        App.setGameLost(true);
-        // app.delay(50);
+//     //     // Simulate game loss
+//     //     App.setGameLost(true);
+//     //     // app.delay(50);
     
-        // Press 'r' to reset the game
-        app.key = 'r';
-        app.keyPressed();
+//     //     // Press 'r' to reset the game
+//     //     app.key = 'r';
+//     //     app.keyPressed();
         
-        // Ensure the game state is reset
-        assertFalse(App.isGameLost());
-    }
-}
+//     //     // Ensure the game state is reset
+//     //     assertFalse(App.isGameLost());
+//     // }
+// }

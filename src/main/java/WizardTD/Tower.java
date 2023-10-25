@@ -362,6 +362,18 @@ public class Tower {
         // towerYPos + 16;
     }
 
+    public int getRangeLevel() {
+        return rangeLevel;
+    }
+
+    public int getSpeedLevel() {
+        return speedLevel;
+    }
+
+    public int getDamageLevel() {
+        return damageLevel;
+    }
+
     public boolean getIsHovered() {
         return this.isHovered;
     }
@@ -411,19 +423,6 @@ public class Tower {
             canFire = false;
             cooldownTimer = 0;
         }
-
-        // if (!fireballList.isEmpty()) {
-        // for (Fireball fireball : fireballList) {
-        // if (targetMonster != null && fireball != null) {
-        // float distanceToMonster = PApplet.dist(fireball.getX(), fireball.getY(),
-        // targetMonster.getX(), targetMonster.getY());
-        // if (distanceToMonster <= 16) {
-        // targetMonster.decreaseHealth(fireball.getDamage());
-        // fireballsToRemove.add(fireball);
-        // }
-        // }
-        // }
-        // }
 
         for (Fireball fireball : fireballsToRemove) {
             removeFireball(fireball);
