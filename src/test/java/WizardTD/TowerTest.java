@@ -4,13 +4,31 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import processing.core.PApplet;
 
 public class TowerTest {
+
+    // private App app;
+
+    // @BeforeEach
+    // public void setUp() {
+    //     // Initialize the game environment for each test case
+    //     App app = new App();
+    //     PApplet.runSketch(new String[] { "Sketch " }, app);
+    //     app.setup();
+    //     app.loop();
+    //     app.delay(1000);
+    // }
+
     @Test
     public void testTowerDraw() throws InterruptedException {
+
         App app = new App(); // Replace with the actual class name for your Processing sketch
         PApplet.runSketch(new String[] { "Sketch " }, app);
 
@@ -69,18 +87,23 @@ public class TowerTest {
 
         tower.setIsHovered(true);
 
+        // ArrayList<Tower> towerList = app.getTowerList();
+        // towerList.remove(tower1);
+        // towerList.remove(tower);
+
         // app.mouseX = 200;
         // app.mouseY = 200;
 
-        Thread.sleep(4000);
+        // Thread.sleep(4000);
         app.getSoundEffects().close();
         // Make assertions based on the expected behavior of your draw function
         assertEquals(-1, -1); // Replace with your assertions
-        
+
     }
 
     @Test
     public void testPauseButton() throws InterruptedException {
+
         App app = new App(); // Replace with the actual class name for your Processing sketch
         PApplet.runSketch(new String[] { "Sketch " }, app);
 
@@ -100,8 +123,11 @@ public class TowerTest {
         app.key = 'f';
         app.keyPressed();
         assertEquals(true, App.getIs2X());
-        
+
         Thread.sleep(5000);
+
+        app.getPauseButton().setIsToggled(false);
+        app.getTwoXButton().setIsToggled(false);
         app.getSoundEffects().close();
     }
 
@@ -126,7 +152,7 @@ public class TowerTest {
         app.mousePressed();
 
         // app.delay(1000);
-        // Thread.sleep(1000);
+        Thread.sleep(1000);
 
         // After clicking, it should be toggled
         assertTrue(pauseButton.getIsToggled());
@@ -135,7 +161,7 @@ public class TowerTest {
         app.mousePressed();
 
         // After the second click, it should be untoggled
-        assertFalse(pauseButton.getIsToggled()); 
+        assertFalse(pauseButton.getIsToggled());
     }
 
     @Test
@@ -156,9 +182,9 @@ public class TowerTest {
         App app = new App();
         PApplet.runSketch(new String[] { "Sketch " }, app);
 
-        app.setup();
-        app.loop();
-        app.delay(1000);
+        // app.setup();
+        // app.loop();
+        // app.delay(1000);
 
         // Run setup to initialize your app
         app.setup();
@@ -190,20 +216,20 @@ public class TowerTest {
     public void testResetGame() {
         App app = new App();
         PApplet.runSketch(new String[] { "Sketch " }, app);
-
-
+    
         app.setup();
         app.loop();
         app.delay(1000);
-
-        App.setGameLost(true); 
-
-        app.delay(2000);
+    
+        // Simulate game loss
+        App.setGameLost(true);
+        // app.delay(50);
+    
+        // Press 'r' to reset the game
         app.key = 'r';
         app.keyPressed();
-        app.delay(2000);
-        app.getSoundEffects().close();
-
+        
+        // Ensure the game state is reset
+        assertFalse(App.isGameLost());
     }
-
 }

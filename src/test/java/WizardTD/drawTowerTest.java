@@ -98,7 +98,7 @@ public class drawTowerTest {
 
         app.setup();
         app.loop();
-        app.delay(1000);
+        
         
         
         // app.key = 't';
@@ -137,8 +137,9 @@ public class drawTowerTest {
 
         tower.drawTower();
 
-        Thread.sleep(1000);
+        
         app.getSoundEffects().close();
+        app.delay(1000);
 
     }
     
@@ -149,7 +150,7 @@ public class drawTowerTest {
 
         app.setup();
         app.loop();
-        app.delay(1000);
+        
         
         
         // app.key = 't';
@@ -181,15 +182,16 @@ public class drawTowerTest {
         tower.setSpeedLevel(2);
 
         tower.drawTower();
-        Thread.sleep(1000);
+        // Thread.sleep(1000);
 
         tower.setSpeedLevel(2);
         tower.setRangeLevel(1);
 
         tower.drawTower();
 
-        Thread.sleep(5000);
+        // Thread.sleep(5000);
         app.getSoundEffects().close();
+        app.delay(1000);
     }
 
         @Test
@@ -199,7 +201,7 @@ public class drawTowerTest {
 
         app.setup();
         app.loop();
-        app.delay(1000);
+        
         
         
         // app.key = 't';
@@ -239,8 +241,9 @@ public class drawTowerTest {
         tower.drawTower();
         tower.drawRadius();
 
-        Thread.sleep(5000);
+        // Thread.sleep(5000);
         app.getSoundEffects().close();
+        app.delay(1000);
 
     }
 

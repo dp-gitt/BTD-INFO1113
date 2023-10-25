@@ -48,6 +48,10 @@ public class App extends PApplet {
 
     public static final int FPS = 60;
 
+    public Buttons getTwoXButton() {
+        return twoXButton;
+    }
+
     public String configPath;
     private PImage fireballSprite;
     
@@ -1359,7 +1363,7 @@ public class App extends PApplet {
     }
 
 
-    private void resetGame() {
+    public void resetGame() {
         
         for (Waves wave : waveList) {
             List<Monster> copyList = wave.getCopyList();

@@ -4,12 +4,22 @@ import processing.core.PApplet;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 
 public class LevelLoadingTest extends App{
+
+    // @BeforeEach
+    // public void setUp() {
+    //     System.setProperty("java.awt.headless", "true");
+    // }
+
+
+
+
     @Test
     public void testLoadLevelData() {
         // Load a test resource containing level data
@@ -36,6 +46,9 @@ public class LevelLoadingTest extends App{
     public void testCreateMapElements() {
         // Create an instance of App (your main class)
         TestApp app = new TestApp();
+        // app.setup();
+        // app.loop();
+        // app.delay(1000);
 
         // Sample levelDataMatrix for testing
         char[][] sampleMatrix = {
@@ -59,6 +72,9 @@ public class LevelLoadingTest extends App{
     @Test
     public void testCreateButtons() {
         App app = new App();
+        // app.setup();
+        // app.loop();
+        // app.delay(1000);
 
         app.createButtons();
 
@@ -71,6 +87,10 @@ public class LevelLoadingTest extends App{
     // @Test
     // public void testCreateTower() {
     //     App app = new App();
+    //     PApplet.runSketch(new String[] { "Sketch " }, app);
+    //     app.setup();
+    //     app.loop();
+    //     app.delay(1000);
 
     //     // Simulate the game state or dependencies as needed for the test
     //     // Set up buildTowerButton, upgradeRangeButton, upgradeSpeedButton, and ManaBar

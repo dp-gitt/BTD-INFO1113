@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ParseConfigTest {
     @Test
     private JSONObject createSampleConfig() {
+
         JSONObject config = new JSONObject();
         config.setString("layout", "SampleMap");
         config.setInt("initial_tower_range", 3);
@@ -57,6 +58,7 @@ public class ParseConfigTest {
 
     @Test
     public void ConfigParseValuesTest() {
+
         
         App app = new App();
         JSONObject config = createSampleConfig();
