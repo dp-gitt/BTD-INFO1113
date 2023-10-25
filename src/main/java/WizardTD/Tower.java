@@ -34,6 +34,7 @@ public class Tower {
     private float oSize;
     private float spacing;
     private float yPos;
+    private SoundEffects soundEffects = new SoundEffects();
 
     public float getoSize() {
         return oSize;
@@ -400,6 +401,10 @@ public class Tower {
 
             Fireball fireball = new Fireball(app, targetMonster, towerXPos, towerYPos, targetX, targetY, 5, towerDamage,
                     fireballSprite, fireballList);
+
+            soundEffects.playTowerShotSound();
+
+
             // System.out.println("New Fireball created");
             fireballList.add(fireball);
             targetMonster = null;
@@ -423,6 +428,18 @@ public class Tower {
         for (Fireball fireball : fireballsToRemove) {
             removeFireball(fireball);
         }
+    }
+
+    public void setRangeLevel(int rangeLevel) {
+        this.rangeLevel = rangeLevel;
+    }
+
+    public void setSpeedLevel(int speedLevel) {
+        this.speedLevel = speedLevel;
+    }
+
+    public void setDamageLevel(int damageLevel) {
+        this.damageLevel = damageLevel;
     }
 
     public void removeFireball(Fireball fireball) {

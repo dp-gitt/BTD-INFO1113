@@ -55,6 +55,10 @@ public class Waves {
         }
     }
 
+    public List<Monster> getCopyList() {
+        return copyList;
+    }
+
     public void startWave() {
         // System.out.println(monsterTypeList.size());
         

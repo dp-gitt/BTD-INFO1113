@@ -16,6 +16,10 @@ public class drawTowerTest {
     public void testDrawTower() throws InterruptedException{
         App app = new App();
         PApplet.runSketch(new String[] { "Sketch " }, app);
+        
+        app.setup();
+        app.loop();
+        app.delay(1000);
 
         Tower tower = new Tower(app, 100, 100, app.getTowerImageList(), 100, 100, 1, 20, app.getFireballSprite(),
                 app.getFireballList(), 0, 0, 0);
@@ -30,9 +34,7 @@ public class drawTowerTest {
         Tower tower5 = new Tower(app, 150, 150, app.getTowerImageList(), 100, 100, 1, 20, app.getFireballSprite(),
                 app.getFireballList(),2, 1, 1);
 
-        app.setup();
-        app.loop();
-        app.delay(1000);
+
 
         ManaBar.setMana(1000);
 
@@ -83,8 +85,165 @@ public class drawTowerTest {
         tower4.drawRadius();
         tower5.drawRadius();
 
+        Thread.sleep(5000);
+
         assertEquals(-1, -1);
 
     }
+
+    @Test
+    public void level1TowerTest() throws InterruptedException {
+        App app = new App();
+        PApplet.runSketch(new String[] { "Sketch " }, app);
+
+        app.setup();
+        app.loop();
+        app.delay(1000);
+        
+        
+        // app.key = 't';
+        // app.keyPressed();
+
+        // app.mouseX = 200;
+        // app.mouseY = 200;
+        // app.mousePressed();
+
+
+        // app.key = 't';
+        // app.keyPressed();
+
+        // app.key = '1';
+        // app.mousePressed();
+        // app.mousePressed();
+
+        // Thread.sleep(1000);
+
+        // app.key = 2;
+        // app.mousePressed();
+        // app.mousePressed();
+
+        Tower tower = new Tower(app, 100, 100, app.getTowerImageList(), 100, 100, 1, 20, app.getFireballSprite(),
+        app.getFireballList(), 1, 1, 1);
+
+        tower.setDamageLevel(0);
+        tower.setRangeLevel(1);
+        tower.setSpeedLevel(1);
+
+        tower.drawTower();
+        // Thread.sleep(1000);
+
+        tower.setDamageLevel(1);
+        tower.setRangeLevel(0);
+
+        tower.drawTower();
+
+        Thread.sleep(1000);
+        app.getSoundEffects().close();
+
+    }
+    
+    @Test
+    public void level2TowerTest() throws InterruptedException {
+        App app = new App();
+        PApplet.runSketch(new String[] { "Sketch " }, app);
+
+        app.setup();
+        app.loop();
+        app.delay(1000);
+        
+        
+        // app.key = 't';
+        // app.keyPressed();
+
+        // app.mouseX = 200;
+        // app.mouseY = 200;
+        // app.mousePressed();
+
+
+        // app.key = 't';
+        // app.keyPressed();
+
+        // app.key = '1';
+        // app.mousePressed();
+        // app.mousePressed();
+
+        // Thread.sleep(1000);
+
+        // app.key = 2;
+        // app.mousePressed();
+        // app.mousePressed();
+
+        Tower tower = new Tower(app, 100, 100, app.getTowerImageList(), 100, 100, 1, 20, app.getFireballSprite(),
+        app.getFireballList(), 1, 1, 1);
+
+        tower.setDamageLevel(1);
+        tower.setRangeLevel(2);
+        tower.setSpeedLevel(2);
+
+        tower.drawTower();
+        Thread.sleep(1000);
+
+        tower.setSpeedLevel(2);
+        tower.setRangeLevel(1);
+
+        tower.drawTower();
+
+        Thread.sleep(5000);
+        app.getSoundEffects().close();
+    }
+
+        @Test
+    public void level3TowerTest() throws InterruptedException {
+        App app = new App();
+        PApplet.runSketch(new String[] { "Sketch " }, app);
+
+        app.setup();
+        app.loop();
+        app.delay(1000);
+        
+        
+        // app.key = 't';
+        // app.keyPressed();
+
+        // app.mouseX = 200;
+        // app.mouseY = 200;
+        // app.mousePressed();
+
+
+        // app.key = 't';
+        // app.keyPressed();
+
+        // app.key = '1';
+        // app.mousePressed();
+        // app.mousePressed();
+
+        // Thread.sleep(1000);
+
+        // app.key = 2;
+        // app.mousePressed();
+        // app.mousePressed();
+
+        Tower tower = new Tower(app, 100, 100, app.getTowerImageList(), 100, 100, 1, 20, app.getFireballSprite(),
+        app.getFireballList(), 1, 1, 1);
+
+        tower.setDamageLevel(2);
+        tower.setRangeLevel(3);
+        tower.setSpeedLevel(3);
+
+        tower.drawTower();
+        Thread.sleep(1000);
+
+        tower.setSpeedLevel(3);
+        tower.setRangeLevel(2);
+
+        tower.drawTower();
+        tower.drawRadius();
+
+        Thread.sleep(5000);
+        app.getSoundEffects().close();
+
+    }
+
+
 
 }

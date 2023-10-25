@@ -12,6 +12,13 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
+
 import java.io.*;
 import java.util.*;
 
@@ -24,6 +31,7 @@ public class App extends PApplet {
     static boolean gameLost = false;
     int preWavePauseTime;
     int currentWaveIndex = 0;
+    private SoundEffects soundEffects;
     private int k = 0;
     boolean waveChanged = false;
     boolean gotWaveFinishedTime = false;
@@ -159,6 +167,34 @@ public class App extends PApplet {
         return wizardSpawnPoint;
     }
 
+    
+    /* Called when the build tower button is toggled 
+     * displays a hover guider for placing towers.
+    */
+    public void drawHoverExtension(ArrayList<Tower> towerList) { 
+            int gridRow = (int) (mouseY / CELLSIZE);
+            gridRow -= 1;
+            int gridColumn = (int) (mouseX / CELLSIZE);
+            // System.out.println(gridRow);
+            // System.out.println(gridColumn);
+            // createTower(gridRow, gridColumn);
+
+            if (buildTowerButton.getIsToggled()) {
+
+                if (isTileEmpty(gridRow, gridColumn)) {
+                    // draw green hover over the cell. 
+                    fill(0, 255, 0, 100); // Green with alpha
+                } else {
+                    // draw red hover 
+                    fill(255, 0, 0, 100); // Red with alpha
+                }
+            
+                if (mouseX < 640 && mouseY > 40) {
+                    rect(gridColumn * CELLSIZE, gridRow * CELLSIZE + 40, CELLSIZE, CELLSIZE);
+   
+                }
+            }
+    }
     // public void createMonsters() {
 
     // int randomIndex = random.nextInt(MonsterSpawnPointsList.size());
@@ -403,9 +439,8 @@ public class App extends PApplet {
 
         mapGrid = loadLevelData(levelLines);
         createMapElements(mapGrid);
-        
 
-
+        soundEffects = new SoundEffects();
 
         // while (numMonstersCreated < noOfMonstersNeeded) {
         // createMonsters();
@@ -574,6 +609,8 @@ public class App extends PApplet {
             // System.out.println(gridRow);
             // System.out.println(gridColumn);
             createTower(gridRow, gridColumn);
+            // System.out.println("playing sound");
+            // soundEffects.playTowerPlaceSound();
         }
 
         for (Tower tower : towerList) {
@@ -590,6 +627,7 @@ public class App extends PApplet {
                             tower.upgradeRange();
                             tower.upgradeSpeed();
                             tower.upgradeDamage();
+                            soundEffects.playTowerUpgradeSound();
                         }
 
                     } else if (rangeToggle && speedToggle && !damageToggle) {
@@ -603,6 +641,7 @@ public class App extends PApplet {
                         if (toolTip.toolTipCostCheck(rangeToggle, speedToggle, damageToggle, tower)) {
                             tower.upgradeRange();
                             tower.upgradeSpeed();
+                            soundEffects.playTowerUpgradeSound();
                         }
 
                     } else if (rangeToggle && !speedToggle && damageToggle) {
@@ -610,25 +649,30 @@ public class App extends PApplet {
                         if (toolTip.toolTipCostCheck(rangeToggle, speedToggle, damageToggle, tower)) {
                             tower.upgradeRange();
                             tower.upgradeDamage();
+                            soundEffects.playTowerUpgradeSound();
                         }
 
                     } else if (!rangeToggle && speedToggle && damageToggle) {
                         if (toolTip.toolTipCostCheck(rangeToggle, speedToggle, damageToggle, tower)) {
                             tower.upgradeSpeed();
                             tower.upgradeDamage();
+                            soundEffects.playTowerUpgradeSound();
                         }
 
                     } else if (rangeToggle && !speedToggle && !damageToggle) {
                         if (toolTip.toolTipCostCheck(rangeToggle, speedToggle, damageToggle, tower)) {
                             tower.upgradeRange();
+                            soundEffects.playTowerUpgradeSound();
                         }
                     } else if (!rangeToggle && speedToggle && !damageToggle) {
                         if (toolTip.toolTipCostCheck(rangeToggle, speedToggle, damageToggle, tower)) {
                             tower.upgradeSpeed();
+                            soundEffects.playTowerUpgradeSound();
                         }
                     } else if (!rangeToggle && !speedToggle && damageToggle) {
                         if (toolTip.toolTipCostCheck(rangeToggle, speedToggle, damageToggle, tower)) {
                             tower.upgradeDamage();
+                            soundEffects.playTowerUpgradeSound();
                         }
                     }
                 }
@@ -714,6 +758,8 @@ public class App extends PApplet {
                 Tower newTower = new Tower(this, towerXPos, towerYPos,
                         towerImageList, towerCost, initialTowerRange, initialTowerFiringSpeed, initialTowerDamage,
                         fireballSprite, fireballList, rangeLevel, speedLevel, damageLevel);
+                
+                soundEffects.playTowerPlaceSound();
 
                 ManaBar.decreaseMana((float) towerCost);
                 towerList.add(newTower);
@@ -919,6 +965,7 @@ public class App extends PApplet {
     private PImage downLeft;
     private PImage leftUp;
     private PImage upRight;
+    private boolean gameJustLost;
 
     // public void drawAnimation(String monsterType, float x, float y) {
 
@@ -1040,7 +1087,10 @@ public class App extends PApplet {
 
     @Override
     public void draw() {
+
+        // soundEffects.playTowerPlaceSound();
         background(255);
+        // soundEffects.playBackgroundMusic();
         // System.out.println("1");
         for (Paths pathsToDraw : pathsList) {
             if (this != null) {
@@ -1110,6 +1160,15 @@ public class App extends PApplet {
 
             if (!gameLost) {
                 if (!isPaused) {
+
+                    if (gameJustLost) {
+                        k = 0;
+                        waveChanged = false;
+                        gotWaveFinishedTime = false;
+                        gameJustLost = false;
+                    }
+
+
                     Waves wave = waveList.get(k);
                     wave.startWave();
 
@@ -1133,7 +1192,7 @@ public class App extends PApplet {
 
                     if (millis() - waveStartTime >= waveDuration * 1000 && k < waveList.size() - 1 && waveChanged) {
 
-                        String countdownText = "Wave " + (k + 1) + " starts in "
+                        String countdownText = "Wave " + (k + 2) + " starts in "
                                 + ((preWavePauseTime - (millis() - waveFinishedAt)) / 1000) + " seconds";
                         fill(0); // Set text color to white
                         textSize(20);
@@ -1199,6 +1258,8 @@ public class App extends PApplet {
                     monsterList.remove(monster);
                 }
             }
+
+            drawHoverExtension((towerList));
 
             for (Tower tower : towerList) {
                 tower.drawTower();
@@ -1267,7 +1328,77 @@ public class App extends PApplet {
             // Update the last timestamp to the current time
             lastSecond = currentTime;
         }
+
+        if (gameLost) {
+            // Display "Game Over" message
+            // soundEffects.close();
+            background(255);
+            fill(0,20,30); // Set text color to white
+            textSize(32);
+            textAlign(CENTER, CENTER);
+            text("Game Over", width / 2, height / 2);
+            text("Press 'R' to restart", width / 2, height / 2 + 40);
+            if (key == 'r') {
+                resetGame();
+            }
+            textAlign(LEFT);
+            
+        }
     }
+    public SoundEffects getSoundEffects() {
+        return soundEffects;
+    }
+
+
+    public static boolean isGameLost() {
+        return gameLost;
+    }
+
+    public static void setGameLost(boolean gameLost) {
+        App.gameLost = gameLost;
+    }
+
+
+    private void resetGame() {
+        
+        for (Waves wave : waveList) {
+            List<Monster> copyList = wave.getCopyList();
+            List<Monster> localMonsterTypeList = wave.getMonsterTypeList();
+            // wave.frameCounter = 0;
+
+            copyList.clear();
+            localMonsterTypeList.clear();
+        }
+
+        gameJustLost = true;
+
+        monsterList.clear();
+        monstersToRemoveList.clear();
+        monstersKilledList.clear();
+        monstersToRespawnList.clear();
+        monsterTypeList.clear();
+        towerList.clear();
+        waveList.clear();
+        parseConfig(config);
+        towerGrid = loadLevelData(levelLines);
+        mapGrid = loadLevelData(levelLines);
+        gameLost = !gameLost;
+        is2X = false;
+        isPaused = false;
+        twoXButton.setIsToggled(false);
+        pauseButton.setIsToggled(false);
+        buildTowerButton.setIsToggled(false);
+        manaBar = new ManaBar(this, initialMana, initialManaCap, initialManaGainedPerSecond, manaPoolSpellInitialCost,
+        manaPoolSpellCostIncreasePerUse, manaPoolSpellCapMultiplier, manaPoolSpellManaGainedMultiplier);
+        toolTip = new ToolTip(manaBar);
+
+        // delay(2);
+        
+        
+
+    }
+
+
     public ArrayList<Fireball> getFireballList() {
         return fireballList;
     }

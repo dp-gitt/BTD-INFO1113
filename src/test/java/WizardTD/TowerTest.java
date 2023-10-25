@@ -72,10 +72,11 @@ public class TowerTest {
         // app.mouseX = 200;
         // app.mouseY = 200;
 
-        // Thread.sleep(4000);
-
+        Thread.sleep(4000);
+        app.getSoundEffects().close();
         // Make assertions based on the expected behavior of your draw function
         assertEquals(-1, -1); // Replace with your assertions
+        
     }
 
     @Test
@@ -99,7 +100,9 @@ public class TowerTest {
         app.key = 'f';
         app.keyPressed();
         assertEquals(true, App.getIs2X());
+        
         Thread.sleep(5000);
+        app.getSoundEffects().close();
     }
 
     @Test
@@ -140,6 +143,8 @@ public class TowerTest {
         App app = new App();
         PApplet.runSketch(new String[] { "Sketch " }, app);
         app.setup();
+        app.loop();
+        app.delay(1000);
 
         app.mouseX = 660;
         app.mouseY = 360;
@@ -177,7 +182,27 @@ public class TowerTest {
         // app.mousePressed();
 
         // assertFalse(manaPoolButton.getIsToggled());
+        app.getSoundEffects().close();
 
+    }
+
+    @Test
+    public void testResetGame() {
+        App app = new App();
+        PApplet.runSketch(new String[] { "Sketch " }, app);
+
+
+        app.setup();
+        app.loop();
+        app.delay(1000);
+
+        App.setGameLost(true); 
+
+        app.delay(2000);
+        app.key = 'r';
+        app.keyPressed();
+        app.delay(2000);
+        app.getSoundEffects().close();
 
     }
 
