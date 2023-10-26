@@ -4,17 +4,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.ArrayList;
-
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import processing.core.PApplet;
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class AppleTest {
 
-public class DrawTest {
+    // All tests were completed with the values in config.json changed to match RequiredConfig.json. Change before running test : )
 
     @Test
+    @Order(2)
     public void towerDrawing() throws InterruptedException {
         App app = new App();
         PApplet.runSketch(new String[] { "App " }, app);
@@ -24,6 +26,11 @@ public class DrawTest {
         App.setIs2X(false);
         // toggles the towerBuild button
         // app.resetGame();
+
+        if (App.isGameLost()) {
+            app.resetGame();
+        }
+
         app.key = 't';
         app.keyPressed();
 
@@ -151,6 +158,9 @@ public class DrawTest {
             assertEquals(4, tower.getDamageLevel());
         }
 
+        app.mouseX = 275;
+        app.mouseY = 80;
+        app.mouseMoved();
 
 
         boolean emptyTowerList = towerList.isEmpty();
@@ -160,16 +170,18 @@ public class DrawTest {
         
 
         app.delay(3000);
+        Thread.sleep(10000);
     }
 
     @Test
+    @Order(1)
     public void testCreateTower() {
         App app = new App();
         PApplet.runSketch(new String[] { "App " }, app);
         app.delay(3000);
         app.setup();
         app.loop();
-        app.delay(3000);
+        // app.delay(3000);
         App.setIs2X(false);
         ManaBar.setMana(1000);
 
@@ -194,6 +206,7 @@ public class DrawTest {
     }
 
     @Test
+    @Order(3)
     public void testCreateTower1() {
         App app = new App();
         PApplet.runSketch(new String[] { "App " }, app);
@@ -224,6 +237,7 @@ public class DrawTest {
     }
 
     @Test
+    @Order(4)
     public void testDrawTower() throws InterruptedException{
         App app = new App();
         PApplet.runSketch(new String[] { "Sketch " }, app);
@@ -262,7 +276,7 @@ public class DrawTest {
         tower6.drawTower();
         tower7.drawTower();
 
-
+        tower.setIsHovered(true);
         tower.drawRadius();
         tower1.drawRadius();
         tower2.drawRadius();

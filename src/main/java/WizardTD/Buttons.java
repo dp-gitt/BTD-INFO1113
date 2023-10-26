@@ -97,17 +97,10 @@ public class Buttons {
     public void changeButtonColour(int newColour) {
         this.fillColour = newColour;
         app.fill(newColour);
+        // Perform color-changing operations
+        this.fillColour = newColour;
+        app.fill(newColour);
 
-        if (newColour != 0) {
-            // Perform color-changing operations
-            this.fillColour = newColour;
-            app.fill(newColour);
-        } else {
-            // Handle null color gracefully (e.g., set a default color)
-            this.fillColour = app.color(132, 115, 74);
-            app.fill(app.color(132, 115, 74));
-
-        }
     }
 
     /**
@@ -126,16 +119,10 @@ public class Buttons {
         app.textSize(24);
         // float fontHeight = app.textAscent() + app.textDescent();
         if (label.length() == 2) {
-            if (label != null) {
-                app.text(label, x + width / 2 - app.textWidth(label) / 2, y + height / 2 + app.textAscent() / 2);
-            }
-
+            app.text(label, x + width / 2 - app.textWidth(label) / 2, y + height / 2 + app.textAscent() / 2);
         } else {
             app.textAlign(0);
-            if (label != null) {
-                app.text(label, x + 5, y + height / 2 + app.textAscent() / 2);
-            }
-
+            app.text(label, x + 5, y + height / 2 + app.textAscent() / 2);
         }
         app.textSize(12);
     }

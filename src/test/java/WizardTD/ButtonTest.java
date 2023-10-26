@@ -2,22 +2,34 @@ package WizardTD;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import processing.core.PApplet;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ButtonTest {
     
+    // @AfterAll
+    // public void cleanUp() {
+    //     App app = new App();
+    //     app.resetGame();
+    // }
 
     @Test
+    @Order(1)
     public void testKeyPressed() {
         App app = new App();
         PApplet.runSketch(new String[] { "App " }, app);
         app.setup();
         app.loop();
         app.delay(3000);
+
+        if (App.isGameLost()) {
+            app.resetGame();
+        }
 
         Buttons twoXButton = app.getTwoXButton();
         Buttons pauseButton = app.getPauseButton();
@@ -39,6 +51,9 @@ public class ButtonTest {
         app.keyPressed();
         assertEquals(true, twoXButton.getIsToggled());
         app.key = 'f';
+        app.keyPressed();
+
+        app.key = 'd';
         app.keyPressed();
         
 
@@ -79,12 +94,15 @@ public class ButtonTest {
     }
 
     @Test 
+    @Order(2)
     public void testMousePressed() {
         App app = new App();
         PApplet.runSketch(new String[] { "App " }, app);
         app.setup();
         app.loop();
         app.delay(3000);
+
+        ManaBar.setMana(1000);
 
         Buttons twoXButton = app.getTwoXButton();
         Buttons pauseButton = app.getPauseButton();
@@ -106,7 +124,7 @@ public class ButtonTest {
         app.setPaused(false);
         app.mouseX = 672;
         app.mouseY = 123;
-        app.mousePressed();
+        // app.mousePressed();
         app.mouseReleased();
         // assertTrue(pauseButton.getIsToggled());
         app.mousePressed();
@@ -117,9 +135,10 @@ public class ButtonTest {
         app.setTowerMode(false);
         app.mouseX = 668;
         app.mouseY = 169;
+
         app.mousePressed();
-        // boolean towerMode = app.isTowerMode();
-        // assertTrue(towerMode);
+        boolean towerMode = app.isTowerMode();
+        assertFalse(towerMode);
         app.mousePressed();
         // assertFalse(buildTowerButton.getIsToggled());
         ManaBar.setMana(1000);
@@ -129,6 +148,7 @@ public class ButtonTest {
     }
 
     @Test
+    @Order(3)
     public void manaSpell() {
         App app = new App();
         PApplet.runSketch(new String[] { "App " }, app);
@@ -144,6 +164,7 @@ public class ButtonTest {
     }
 
     @Test 
+    @Order(4)
     public void drawButtonCost() {
         App app = new App();
         PApplet.runSketch(new String[] { "App " }, app);
@@ -156,6 +177,50 @@ public class ButtonTest {
         app.drawButtonCost("T");
         app.drawButtonCost("M");
 
+        app.delay(1000);
+    }
+
+    @Test 
+    @Order(5)
+    public void testdrawTooltip() {
+        App app = new App();
+        PApplet.runSketch(new String[] { "App " }, app);
+        app.setup();
+        app.loop();
+        app.delay(3000);
+        Tower tower = new Tower(app, 100, 100, app.getTowerImageList(), 100, 100, 1, 20, app.getFireballSprite(),
+                app.getFireballList(), 0, 0, 0);
+        ToolTip tooltip = app.getToolTip();
+
+        tooltip.drawToolTip(app, true, true, true, tower);
+        tooltip.drawToolTip(app, false, false, false, tower);
+        tooltip.toolTipCostCheck(true, true, true, tower);
+        app.delay(1000);
+    }
+
+    // @Test
+    // @
+    // public void toggleTest() {
+    //     if 
+    // }
+
+    @Test
+    @Order(7)
+    public void testResetGame() {
+        App app = new App();
+        PApplet.runSketch(new String[] { "App " }, app);
+        app.setup();
+        app.loop();
+        app.delay(3000);
+
+        app.isTileEmpty(0, 0);
+
+        app.resetGame();
+        app.setPaused(true);
+        app.drawButtonCost("A");
+
+        SoundEffects sf = new SoundEffects();
+        sf.close();
         app.delay(1000);
     }
 }

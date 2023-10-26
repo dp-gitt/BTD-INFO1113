@@ -1,6 +1,6 @@
 package WizardTD;
 
-public class TestApp extends App{
+public class SampleTest extends App{
     @Override
     public void loadWizShrubPathImages() {
         
@@ -15,8 +15,4 @@ public class TestApp extends App{
     public void loadImages() {
 
     }
-
-    // @Override
-    // public void frameRate(float FPS){
-    // }
 }

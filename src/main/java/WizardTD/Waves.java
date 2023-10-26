@@ -60,10 +60,14 @@ public class Waves {
         this.app = app;
         this.monsterList = monsterList;
         copyList.addAll(monsterList);
+        
 
         for (MonsterType singleMonsterType : monsterTypeList) {
+
             numOfMonsters += singleMonsterType.getQuantity();
+            
         }
+    
     }
 
     /**

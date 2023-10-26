@@ -35,7 +35,7 @@ public class SoundEffects {
             towerShotSound.open(towerShotStream);
 
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
     }
 
@@ -43,15 +43,14 @@ public class SoundEffects {
         // if (backgroundMusic != null) {
         // backgroundMusic.close();
         // }
-        if (towerPlaceSound != null) {
             towerPlaceSound.close();
-        }
-        if (towerUpgradeSound != null) {
+
+
             towerUpgradeSound.close();
-        }
-        if (towerPlaceSound != null) {
+
+
             towerPlaceSound.close();
-        }
+
 
     }
     
@@ -62,23 +61,23 @@ public class SoundEffects {
     // }
 
     public void playTowerPlaceSound() {
-        if (towerPlaceSound != null) {
+
             towerPlaceSound.setFramePosition(0);
             towerPlaceSound.start();
-        }
+
     }
 
     public void playTowerUpgradeSound() {
-        if (towerUpgradeSound != null) {
+
             towerUpgradeSound.setFramePosition(0);
             towerUpgradeSound.start();
-        }
+
     }
 
     public void playTowerShotSound() {
-        if (towerShotSound != null) {
+
             towerShotSound.setFramePosition(0);
             towerShotSound.start();
-        }
+
     }
 }

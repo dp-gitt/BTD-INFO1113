@@ -470,10 +470,10 @@ public class App extends PApplet {
     /**
      * Receive key released signal from the keyboard.
      */
-    @Override
-    public void keyReleased() {
+    // @Override
+    // public void keyReleased() {
 
-    }
+    // }
 
     /**
      * Recieves mouse movement signals.
@@ -602,6 +602,10 @@ public class App extends PApplet {
 
             }
         }
+    }
+
+    public ToolTip getToolTip() {
+        return toolTip;
     }
 
     public static void setIs2X(boolean is2x) {
@@ -903,20 +907,20 @@ public class App extends PApplet {
 
     @Override
     public void draw() {
-        System.out.println(mouseX);
-        System.out.println(mouseY);
+
+
 
         background(255);
         for (Paths pathsToDraw : pathsList) {
-            if (this != null) {
+
                 pathsToDraw.draw(this);
-            }
+
         }
 
         for (MapElements elementToDraw : elementsList) {
-            if (this != null) {
+
                 elementToDraw.draw(this);
-            }
+
 
         }
 
@@ -943,23 +947,24 @@ public class App extends PApplet {
         fill(132, 115, 74);
         rect(0, 0, 760, 40);
         fill(132, 115, 74);
-        if (this != null) {
-            manaBar.draw(this, 375, 9, 345, 22);
-        }
 
-        if (buttonsList != null) {
+            manaBar.draw(this, 375, 9, 345, 22);
+        // if (gameWon) {
+        //     text("YOU WON!", CENTER, CENTER);
+        // }
+
+
 
             for (Buttons button : buttonsList) {
                 if (button.getLabel() == "M") {
                     button.changeText("Mana Pool cost: " + (int) manaBar.getManaPoolCost());
                 }
-                if (button != null) {
+
                     button.drawText();
                     button.drawButton();
                     button.drawLabel();
-                }
+
             }
-        }
 
         if (!gameLost) {
             if (isPaused & !gotTimeBeforePaused) {
@@ -982,7 +987,9 @@ public class App extends PApplet {
                     wave.startWave();
 
                     if (monsterList.isEmpty() && k == waveList.size() - 1) {
-                        System.out.println("YOU WON");
+                        // System.out.println("YOU WON");
+                        textSize(20);
+                        text("YOU WON!", 300, 300);
                         gameWon = true;
                     }
 
@@ -1178,6 +1185,7 @@ public class App extends PApplet {
         gameLost = !gameLost;
         is2X = false;
         isPaused = false;
+        gameWon = false;
         twoXButton.setIsToggled(false);
         pauseButton.setIsToggled(false);
         buildTowerButton.setIsToggled(false);
