@@ -4,34 +4,23 @@ import processing.core.PImage;
 import processing.core.PApplet;
 
 public class Grass extends MapElements {
-        public Grass(int xPos, int yPos, PImage sprite) {
-            super(xPos,yPos,sprite);
-        }
+    /**
+     * Constructs a Grass object with the specified position and sprite.
+     *
+     * @param xPos   The x-coordinate of the Grass's position.
+     * @param yPos   The y-coordinate of the Grass's position.
+     * @param sprite The image sprite representing the Grass.
+     */
+    public Grass(int xPos, int yPos, PImage sprite) {
+        super(xPos, yPos, sprite);
+    }
 
-        public void draw(PApplet app) {
-            app.image(sprite,xPos,yPos);
-        }
+    /**
+     * Draws the Grass on the screen using the provided PApplet.
+     *
+     * @param app The PApplet used for rendering.
+     */
+    public void draw(PApplet app) {
+        app.image(sprite, xPos, yPos);
+    }
 }
-
-// public class Grass {
-    
-//     private int x;
-//     private int y;
-//     private PImage sprite;
-
-
-//     public Grass(int x, int y, PImage sprite) {
-//         this.x = x;
-//         this.y = y;
-//         this.sprite = sprite; 
-//     }
-
-//     public void tick() {
-//         //logic for drawing grass 
-//     }
-
-//     public void draw (PApplet appGrass) {
-//         //drawing grass
-//         appGrass.image(this.sprite,this.x,this.y);   
-//     } 
-// }

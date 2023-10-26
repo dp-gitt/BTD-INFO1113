@@ -156,8 +156,6 @@ public class DrawTest {
         boolean emptyTowerList = towerList.isEmpty();
         // app.mousePressed();
 
-        
-
         assertFalse(emptyTowerList);
         
 
@@ -168,6 +166,7 @@ public class DrawTest {
     public void testCreateTower() {
         App app = new App();
         PApplet.runSketch(new String[] { "App " }, app);
+        app.delay(3000);
         app.setup();
         app.loop();
         app.delay(3000);

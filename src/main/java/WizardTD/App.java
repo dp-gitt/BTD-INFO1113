@@ -39,8 +39,6 @@ public class App extends PApplet {
 
     public static final int FPS = 60;
 
-
-
     public String configPath;
     private PImage fireballSprite;
 
@@ -136,36 +134,35 @@ public class App extends PApplet {
         return wizardSpawnPoint;
     }
 
-    
-    /** 
-     * Called when the build tower button is toggled 
+    /**
+     * Called when the build tower button is toggled
      * displays a hover guider for placing towers.
      * 
      * @param towerList ArrayList of currently existing towers
-    */ 
-    public void drawHoverExtension(ArrayList<Tower> towerList) { 
-            int gridRow = (int) (mouseY / CELLSIZE);
-            gridRow -= 1;
-            int gridColumn = (int) (mouseX / CELLSIZE);
-            // System.out.println(gridRow);
-            // System.out.println(gridColumn);
-            // createTower(gridRow, gridColumn);
+     */
+    public void drawHoverExtension(ArrayList<Tower> towerList) {
+        int gridRow = (int) (mouseY / CELLSIZE);
+        gridRow -= 1;
+        int gridColumn = (int) (mouseX / CELLSIZE);
+        // System.out.println(gridRow);
+        // System.out.println(gridColumn);
+        // createTower(gridRow, gridColumn);
 
-            if (buildTowerButton.getIsToggled()) {
+        if (buildTowerButton.getIsToggled()) {
 
-                if (isTileEmpty(gridRow, gridColumn)) {
-                    // draw green hover over the cell. 
-                    fill(0, 255, 0, 100); // Green with alpha
-                } else {
-                    // draw red hover 
-                    fill(255, 0, 0, 100); // Red with alpha
-                }
-            
-                if (mouseX < 640 && mouseY > 40) {
-                    rect(gridColumn * CELLSIZE, gridRow * CELLSIZE + 40, CELLSIZE, CELLSIZE);
-   
-                }
+            if (isTileEmpty(gridRow, gridColumn)) {
+                // draw green hover over the cell.
+                fill(0, 255, 0, 100); // Green with alpha
+            } else {
+                // draw red hover
+                fill(255, 0, 0, 100); // Red with alpha
             }
+
+            if (mouseX < 640 && mouseY > 40) {
+                rect(gridColumn * CELLSIZE, gridRow * CELLSIZE + 40, CELLSIZE, CELLSIZE);
+
+            }
+        }
     }
 
     /**
@@ -174,7 +171,7 @@ public class App extends PApplet {
      * can be individually iterated through and the correct image is drawn.
      * 
      * @param levelLines List of strings representing each line in the level file
-     * @return 2D character matrix representing level file data 
+     * @return 2D character matrix representing level file data
      */
 
     public char[][] loadLevelData(String[] levelLines) {
@@ -194,17 +191,17 @@ public class App extends PApplet {
         return levelDataMatrix;
     }
 
-
-    /** 
+    /**
      * Iterates through a 2D matrix's rows and columns to determine the position
-     * of different symbols according to their rows and columns with 
+     * of different symbols according to their rows and columns with
      * (' ', 'S', 'W', and 'X') representing a grass tile, shrub, wizard house,
-     *  and path respectively. Consequently, each tile will result in a respective
-     *  instantiation of its class. 
+     * and path respectively. Consequently, each tile will result in a respective
+     * instantiation of its class.
      * 
      * Calls createMapPaths() method
      * 
-     * @param levelDataMatrix 2D character matrix representing individual characters in the level file
+     * @param levelDataMatrix 2D character matrix representing individual characters
+     *                        in the level file
      */
 
     public void createMapElements(char[][] levelDataMatrix) {
@@ -242,15 +239,17 @@ public class App extends PApplet {
         }
     }
 
-    /** 
-     * Accesses the character in the specified row and column and analyses its surrounding characters
-     * to determine the correct path sprite, and its relevant rotation. 
+    /**
+     * Accesses the character in the specified row and column and analyses its
+     * surrounding characters
+     * to determine the correct path sprite, and its relevant rotation.
      * 
-     * @param levelDataMatrix 2D character matrix representing individual characters in the level file
-     * @param row the row to access in levelDataMatrix
-     * @param column the column to access in levelDataMatrix
+     * @param levelDataMatrix 2D character matrix representing individual characters
+     *                        in the level file
+     * @param row             the row to access in levelDataMatrix
+     * @param column          the column to access in levelDataMatrix
      * 
-    */
+     */
     public void createMapPaths(char[][] levelDataMatrix, int row, int column) {
         // put these in setup.
 
@@ -318,9 +317,9 @@ public class App extends PApplet {
         }
     }
 
-    /** 
-     * Calls the Buttons constructor and instantiates the 7 buttons 
-     * with their relative attributes, such as x and y values, 
+    /**
+     * Calls the Buttons constructor and instantiates the 7 buttons
+     * with their relative attributes, such as x and y values,
      * and their colours so that they can be drawn correctly.
      */
 
@@ -346,7 +345,6 @@ public class App extends PApplet {
         this.isPaused = isPaused;
     }
 
-
     /**
      * Initialise the setting of the window size.
      */
@@ -359,7 +357,6 @@ public class App extends PApplet {
         this.towerMode = towerMode;
     }
 
-
     /**
      * Load all resources such as images. Initialise the elements such as the
      * player, enemies and map elements.
@@ -367,7 +364,7 @@ public class App extends PApplet {
     @Override
     public void setup() {
         frameRate(FPS);
-        
+
         loadImages();
         loadWizShrubPathImages();
         loadPathImages();
@@ -376,7 +373,6 @@ public class App extends PApplet {
         parseConfig(config);
 
         levelLines = loadStrings(levelName);
-
 
         towerGrid = loadLevelData(levelLines);
 
@@ -398,15 +394,15 @@ public class App extends PApplet {
         return towerMode;
     }
 
-
-    /** 
-     * Loads all the required sprites for the game. Also loads and appends the different 
+    /**
+     * Loads all the required sprites for the game. Also loads and appends the
+     * different
      * tower sprites in the correct order into a list, which is used for drawing
-     * the towers created according to their level. 
+     * the towers created according to their level.
      */
 
     public void loadImages() {
-        
+
         fireballSprite = loadImage("src/main/resources/WizardTD/fireball.png");
         PImage tower0 = loadImage("src/main/resources/WizardTD/tower0.png");
         towerImageList[0] = tower0;
@@ -480,7 +476,7 @@ public class App extends PApplet {
     }
 
     /**
-     * Recieves mouse movement signals. 
+     * Recieves mouse movement signals.
      */
 
     @Override
@@ -612,7 +608,6 @@ public class App extends PApplet {
         is2X = is2x;
     }
 
-
     /**
      * Recieves mouse release signals
      */
@@ -630,11 +625,12 @@ public class App extends PApplet {
     /**
      * Accesses the character specified by the given row and column within
      * the 2D map matrix, to determine if a tower can be placed at this location.
-     * If the tower can be placed, a new tower is instantiated, and the relevant cost 
-     * is calculated and deducted from the player's mana. Plays a feedback sound if 
-     * tower is successfully placed. 
+     * If the tower can be placed, a new tower is instantiated, and the relevant
+     * cost
+     * is calculated and deducted from the player's mana. Plays a feedback sound if
+     * tower is successfully placed.
      * 
-     * @param gridRow specified row within towerGrid to place tower
+     * @param gridRow    specified row within towerGrid to place tower
      * @param gridColumn specified column within towerGrid to place tower
      */
     public void createTower(int gridRow, int gridColumn) {
@@ -669,7 +665,7 @@ public class App extends PApplet {
                 Tower newTower = new Tower(this, towerXPos, towerYPos,
                         towerImageList, towerCost, initialTowerRange, initialTowerFiringSpeed, initialTowerDamage,
                         fireballSprite, fireballList, rangeLevel, speedLevel, damageLevel);
-                
+
                 soundEffects.playTowerPlaceSound();
 
                 ManaBar.decreaseMana((float) towerCost);
@@ -686,16 +682,18 @@ public class App extends PApplet {
      * }
      */
 
-
-    /** 
-     * Parses through the specified config file, by accessing each JSONArray, and its
+    /**
+     * Parses through the specified config file, by accessing each JSONArray, and
+     * its
      * objects. It will store the read values into the relevant attributes.
-     * Its logic follows by parsing through each wave, and its attributes 
-     * such as pre_wave_pause_time and monsterTypes, and will call the MonsterType constructor
-     * to initialise any monsterTypes and their attributes for that specific wave. This is followed by
-     * the instantiation of the waves themselves, as specified in the config. 
+     * Its logic follows by parsing through each wave, and its attributes
+     * such as pre_wave_pause_time and monsterTypes, and will call the MonsterType
+     * constructor
+     * to initialise any monsterTypes and their attributes for that specific wave.
+     * This is followed by
+     * the instantiation of the waves themselves, as specified in the config.
      * 
-     * @param config The config file; initialised as a JSONObject. 
+     * @param config The config file; initialised as a JSONObject.
      */
     public void parseConfig(JSONObject config) {
 
@@ -737,8 +735,8 @@ public class App extends PApplet {
             List<MonsterType> copyList = new ArrayList<>();
             copyList.addAll(monsterTypeList);
             if (this != null) {
-                        Waves wave = new Waves(this, duration, preWavePause, copyList, MonsterSpawnPointsList, gremlinSprite,
-                beetleSprite, wormSprite, manaBar, monsterList);
+                Waves wave = new Waves(this, duration, preWavePause, copyList, MonsterSpawnPointsList, gremlinSprite,
+                        beetleSprite, wormSprite, manaBar, monsterList);
                 waveList.add(wave);
             }
 
@@ -839,7 +837,7 @@ public class App extends PApplet {
         return waveList;
     }
 
-        public Buttons getUpgradeRangeButton() {
+    public Buttons getUpgradeRangeButton() {
         return upgradeRangeButton;
     }
 
@@ -870,7 +868,7 @@ public class App extends PApplet {
     public Buttons getTwoXButton() {
         return twoXButton;
     }
-    
+
     public PImage getFireballSprite() {
         return fireballSprite;
     }
@@ -883,7 +881,6 @@ public class App extends PApplet {
         return soundEffects;
     }
 
-
     public static boolean isGameLost() {
         return gameLost;
     }
@@ -895,6 +892,7 @@ public class App extends PApplet {
     public ArrayList<Fireball> getFireballList() {
         return fireballList;
     }
+
     public static void main(String[] args) {
         PApplet.main("WizardTD.App");
     }
@@ -916,10 +914,10 @@ public class App extends PApplet {
         }
 
         for (MapElements elementToDraw : elementsList) {
-            if ( this != null) {
+            if (this != null) {
                 elementToDraw.draw(this);
             }
-            
+
         }
 
         for (WizardHouse wizardHouse : wizardHouseList) {
@@ -945,24 +943,23 @@ public class App extends PApplet {
         fill(132, 115, 74);
         rect(0, 0, 760, 40);
         fill(132, 115, 74);
-        if (this!= null) {
+        if (this != null) {
             manaBar.draw(this, 375, 9, 345, 22);
         }
-        
+
         if (buttonsList != null) {
 
-        
-        for (Buttons button : buttonsList) {
-            if (button.getLabel() == "M") {
-                button.changeText("Mana Pool cost: " + (int) manaBar.getManaPoolCost());
-            }
-            if (button != null) {
-                button.drawText();
-                button.drawButton();
-                button.drawLabel();
+            for (Buttons button : buttonsList) {
+                if (button.getLabel() == "M") {
+                    button.changeText("Mana Pool cost: " + (int) manaBar.getManaPoolCost());
+                }
+                if (button != null) {
+                    button.drawText();
+                    button.drawButton();
+                    button.drawLabel();
+                }
             }
         }
-    }
 
         if (!gameLost) {
             if (isPaused & !gotTimeBeforePaused) {
@@ -981,7 +978,6 @@ public class App extends PApplet {
                         gameJustLost = false;
                     }
 
-
                     Waves wave = waveList.get(k);
                     wave.startWave();
 
@@ -996,7 +992,6 @@ public class App extends PApplet {
                         waveStartTime = millis(); // Store the start time of the current wave
                         waveChanged = true;
                     }
-
 
                     waveDuration = wave.getDuration();
 
@@ -1140,7 +1135,7 @@ public class App extends PApplet {
         if (gameLost) {
             // Display "Game Over" message
             background(255);
-            fill(0,20,30); // Set text color to white
+            fill(0, 20, 30); // Set text color to white
             textSize(32);
             textAlign(CENTER, CENTER);
             text("Game Over", width / 2, height / 2);
@@ -1149,17 +1144,16 @@ public class App extends PApplet {
                 resetGame();
             }
             textAlign(LEFT);
-            
+
         }
     }
-    
 
-    /** 
-     * Handles the game restarting and resets any altered game logic since setup. 
+    /**
+     * Handles the game restarting and resets any altered game logic since setup.
      * Clears all lists, storing monster data and tower data, and resets wave logic.
      */
     public void resetGame() {
-        
+
         for (Waves wave : waveList) {
             List<Monster> copyList = wave.getCopyList();
             List<Monster> localMonsterTypeList = wave.getMonsterTypeList();
@@ -1188,13 +1182,13 @@ public class App extends PApplet {
         pauseButton.setIsToggled(false);
         buildTowerButton.setIsToggled(false);
         manaBar = new ManaBar(this, initialMana, initialManaCap, initialManaGainedPerSecond, manaPoolSpellInitialCost,
-        manaPoolSpellCostIncreasePerUse, manaPoolSpellCapMultiplier, manaPoolSpellManaGainedMultiplier);
+                manaPoolSpellCostIncreasePerUse, manaPoolSpellCapMultiplier, manaPoolSpellManaGainedMultiplier);
         toolTip = new ToolTip(manaBar);
     }
 
     /**
-     * Draws the cost of the button's action beside it in text 
-     * that is overlayed on top of a small box. 
+     * Draws the cost of the button's action beside it in text
+     * that is overlayed on top of a small box.
      * 
      * @param label label attribute of the relevant button
      */
@@ -1228,11 +1222,12 @@ public class App extends PApplet {
     }
 
     /**
-     * If the user's mouse is over the specified tower, 
-     * and at least one upgrade button is toggled, a tooltip will be drawn 
-     * to display the cost of applying the toggled upgrade(s) onto the specified tower. 
+     * If the user's mouse is over the specified tower,
+     * and at least one upgrade button is toggled, a tooltip will be drawn
+     * to display the cost of applying the toggled upgrade(s) onto the specified
+     * tower.
      * 
-     * @param tower Tower object to check upgrade status 
+     * @param tower Tower object to check upgrade status
      */
 
     private void checkUpgradeStatus(Tower tower) {
@@ -1250,7 +1245,6 @@ public class App extends PApplet {
             return;
         }
     }
-
 
     /**
      * Source:

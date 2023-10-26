@@ -4,10 +4,25 @@ public class ToolTip {
 
         ManaBar manaBar;
 
+        /**
+         * Creates a new ToolTip associated with the given ManaBar.
+         *
+         * @param manaBar The ManaBar instance to associate the ToolTip with.
+         */
         public ToolTip(ManaBar manaBar) {
                 this.manaBar = manaBar;
         }
 
+        /**
+         * Checks if there is enough mana to purchase the selected tower upgrades.
+         *
+         * @param rangeUpgrade  Indicates whether the range upgrade is selected.
+         * @param speedUpgrade  Indicates whether the speed upgrade is selected.
+         * @param damageUpgrade Indicates whether the damage upgrade is selected.
+         * @param tower         The tower for which upgrades are being checked.
+         * 
+         * @return `true` if there is enough mana, `false` otherwise.
+         */
         public boolean toolTipCostCheck(boolean rangeUpgrade, boolean speedUpgrade, boolean damageUpgrade,
                         Tower tower) {
 
@@ -41,6 +56,15 @@ public class ToolTip {
 
         }
 
+        /**
+         * Draws a tooltip on the screen with information about selected tower upgrades.
+         *
+         * @param app           The main app instance.
+         * @param rangeUpgrade  Indicates whether the range upgrade is selected.
+         * @param speedUpgrade  Indicates whether the speed upgrade is selected.
+         * @param damageUpgrade Indicates whether the damage upgrade is selected.
+         * @param tower         The tower for which upgrades are being displayed.
+         */
         public void drawToolTip(App app, boolean rangeUpgrade, boolean speedUpgrade, boolean damageUpgrade,
                         Tower tower) {
 
@@ -58,8 +82,6 @@ public class ToolTip {
                 app.fill(255); // Background color (white)
                 app.stroke(0); // Border color (black)
                 app.strokeWeight(1);
-
-                
 
                 // Draw the tooltip background with rounded corners
                 app.rect(tooltipX, tooltipY - 20, tooltipWidth, tooltipHeight, cornerRadius);
@@ -122,48 +144,7 @@ public class ToolTip {
                 // Display the total cost at the bottom of the tooltip
                 app.fill(0); // Text color (black)
                 app.textSize(14);
-                app.text("Total Cost: " + totalCost, tooltipX + 5, tooltipY + 80);      
+                app.text("Total Cost: " + totalCost, tooltipX + 5, tooltipY + 80);
                 app.text("Upgrade Cost", tooltipX + 5, tooltipY);
-
-
-
-                // int totalCost = 0;
-
-                // app.fill(255);
-                // app.rect(tooltipX + 5 ,tooltipY, 90 , 100);
-                // app.textSize(12);
-                // app.stroke(1);
-
-                // app.strokeWeight(5);
-                // app.fill(0);
-
-                // if (rangeUpgrade) {
-                // app.text("Range Upgrade: " + rangeUpgradeCost, tooltipX + 10, tooltipY + 20);
-                // totalCost += rangeUpgradeCost;
-                // }
-
-                // // Check if speed upgrade is selected and display its cost
-                // if (speedUpgrade) {
-                // app.text("Speed Upgrade: " + speedUpgradeCost, tooltipX + 10, tooltipY + 40);
-                // totalCost += speedUpgradeCost;
-                // }
-
-                // // Check if damage upgrade is selected and display its cost
-                // if (damageUpgrade) {
-                // app.text("Damage Upgrade: " + damageUpgradeCost, tooltipX + 10, tooltipY +
-                // 60);
-                // totalCost += damageUpgradeCost;
-                // }
-
-                // // Display the total cost at the bottom of the tooltip
-                // app.text("Total Cost: " + totalCost, tooltipX + 10, tooltipY + 80);
-
         }
-
-        // tooltipCostCheck(true, true, false);
-        /// with arguments (range, speed, damage)
-        // it then reads the levels and then checks the cost. If there is insufficient,
-        // then it doesnt allow the lines below.
-        // tooltip.drawCost()
-
 }

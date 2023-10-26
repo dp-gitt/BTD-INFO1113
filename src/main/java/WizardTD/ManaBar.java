@@ -13,12 +13,33 @@ public class ManaBar {
     public static int manaPoolSpellCostIncreasePerUse;
     public static float manaPoolSpellCapMultiplier;
     public static float manaPoolSpellManaGainedMultiplier;
-    private static ArrayList<Monster> monsterList;
     private static App app;
     private static ArrayList<Waves> waveList;
     private static List<MonsterType> monsterTypeList;
 
-    public ManaBar(App app,int initialMana ,int maxMana, float initialManaGainedPerSecond, int manaPoolSpellInitialCost, int manaPoolSpellCostIncreasePerUse, float manaPoolSpellCapMultiplier, float manaPoolSpellManaGainedMultiplier) {
+    /**
+     * Constructs a ManaBar object with the specified parameters.
+     *
+     * @param app                               The PApplet used for rendering and
+     *                                          interaction.
+     * @param initialMana                       The initial mana available in the
+     *                                          ManaBar.
+     * @param maxMana                           The maximum mana capacity of the
+     *                                          ManaBar.
+     * @param initialManaGainedPerSecond        The initial rate at which mana is
+     *                                          gained per second.
+     * @param manaPoolSpellInitialCost          The initial cost of the mana pool
+     *                                          spell.
+     * @param manaPoolSpellCostIncreasePerUse   The amount by which the mana pool
+     *                                          spell cost increases with each use.
+     * @param manaPoolSpellCapMultiplier        The multiplier that affects the mana
+     *                                          pool spell's capacity.
+     * @param manaPoolSpellManaGainedMultiplier The multiplier that affects the mana
+     *                                          gained with the mana pool spell.
+     */
+    public ManaBar(App app, int initialMana, int maxMana, float initialManaGainedPerSecond,
+            int manaPoolSpellInitialCost, int manaPoolSpellCostIncreasePerUse, float manaPoolSpellCapMultiplier,
+            float manaPoolSpellManaGainedMultiplier) {
         ManaBar.maxMana = maxMana;
         ManaBar.currMana = initialMana;
         ManaBar.manaGainedPerSecond = initialManaGainedPerSecond;
@@ -29,12 +50,21 @@ public class ManaBar {
         ManaBar.app = app;
     }
 
-
+    /**
+     * Retrieves the cost of the mana pool spell.
+     *
+     * @return The cost of the mana pool spell.
+     */
     public static int getManaPoolSpellCost() {
         return manaPoolSpellCost;
     }
 
-
+    /**
+     * Increases the current mana by the specified amount, capping it at the maximum
+     * mana capacity.
+     *
+     * @param amount The amount of mana to increase.
+     */
     public static void increaseMana(int amount) {
         int copyCurrMana = (int) currMana;
         copyCurrMana += amount;
@@ -45,6 +75,12 @@ public class ManaBar {
         }
     }
 
+    /**
+     * Decreases the current mana by the specified amount, disallowing decreases
+     * that would result in a current mana value less than 0.
+     * 
+     * @param amount The amount of mana to decrease
+     */
     public static void decreaseMana(float amount) {
         if (currMana - amount < 0) {
             return;
@@ -53,31 +89,30 @@ public class ManaBar {
         }
     }
 
-    public static float getMana() {
-        return currMana;
-    } 
-
-    public float getMaxMana() {
-        return maxMana;
-    }
-
+    /**
+     * Adds mana to the current mana pool at a specified rate per second, up to the
+     * maximum mana capacity.
+     */
     public static void addTrickle() {
         if (currMana + manaGainedPerSecond > maxMana) {
             return;
         } else {
             currMana += manaGainedPerSecond;
         }
-        
+
     }
 
+    /**
+     * Executes the mana pool spell, spending mana and applying various effects.
+     */
     public static void manaSpell() {
         if (currMana - manaPoolSpellCost <= 0) {
             return;
         } else {
-            
+
             currMana -= manaPoolSpellCost;
             manaPoolSpellCost += manaPoolSpellCostIncreasePerUse;
-            
+
             maxMana *= manaPoolSpellCapMultiplier;
             manaPoolSpellCapMultiplier += 0.1;
             // System.out.println(manaGainedPerSecond);
@@ -88,91 +123,81 @@ public class ManaBar {
             for (Waves wave : waveList) {
                 monsterTypeList = wave.getMonsterList();
                 for (MonsterType monsterType : monsterTypeList) {
-                    System.out.println("before " + monsterType.getManaGainedOnKill());
                     monsterType.multiplyManaGainedOnKill(manaPoolSpellManaGainedMultiplier);
-                    System.out.println("after" + monsterType.getManaGainedOnKill());
-                    // System.out.println("it is before " + monster.getManaGainedOnKill());
-                    // monster.multiplyManaGainedOnKill(manaPoolSpellManaGainedMultiplier);
-                    // System.out.println("it is after " + monster.getManaGainedOnKill());
                 }
             }
-            // from every wave in waveList go to the monsterTYpeList, and then from that, search through the list, and increment the value of managainedonkill
-            
-            // monsterList = App.getMonsterList();
-            // for (Monster monster : monsterList) {
-            //     monster.multiplyManaGainedOnKill(manaPoolSpellManaGainedMultiplier);
-            // }
+            // from every wave in waveList go to the monsterTYpeList, and then from that,
+            // search through the list, and increment the value of managainedonkill
+
             manaPoolSpellManaGainedMultiplier += 0.1;
         }
     }
 
-    public float getManaPoolCost() {
-        return manaPoolSpellCost;
-    }
+    /**
+     * Draws the ManaBar UI on the screen at the specified position and dimensions.
+     *
+     * @param app    The PApplet used for rendering.
+     * @param x      The X-coordinate of the top-left corner of the UI.
+     * @param y      The Y-coordinate of the top-left corner of the UI.
+     * @param width  The width of the UI.
+     * @param height The height of the UI.
+     */
 
     public void draw(PApplet app, float x, float y, float width, float height) {
         app.textSize(18);
         app.stroke(0);
         app.strokeWeight(2);
         app.fill(255);
-        app.rect(x,y,width,height);
+        app.rect(x, y, width, height);
 
         float barWidth = (currMana / maxMana) * width;
-        // System.out.println(barWidth);
-        //float floatBarWidth = (float) barWidth;
-        // System.out.println(currMana);
-        // System.out.println(maxMana);
-        // System.out.println(width);
-        // System.out.println(200/1000);
         app.fill(0, 214, 214);
-        app.rect(x,y,barWidth,height);
-        
+        app.rect(x, y, barWidth, height);
+
         app.fill(0);
         float manaNumberWidth = app.textWidth(currMana + "/" + maxMana);
-        app.text((int) currMana+ "/" + (int) maxMana, x + (width - manaNumberWidth)/2,y + height/2 + app.textAscent()/2 - 2);
+        app.text((int) currMana + "/" + (int) maxMana, x + (width - manaNumberWidth) / 2,
+                y + height / 2 + app.textAscent() / 2 - 2);
         app.noStroke();
         float manaTextWidth = app.textWidth("MANA");
-        app.text("MANA: ",x - manaTextWidth - 10,y + height/2 + app.textAscent()/2 - 2);
+        app.text("MANA: ", x - manaTextWidth - 10, y + height / 2 + app.textAscent() / 2 - 2);
         app.textSize(12);
     }
 
+    /**
+     * Retrieves the current mana
+     * 
+     * @return The current mana
+     */
+    public static float getMana() {
+        return currMana;
+    }
 
+    /**
+     * Retrieves the maximum mana capacity of the mana pool.
+     *
+     * @return The maximum mana capacity.
+     */
+    public float getMaxMana() {
+        return maxMana;
+    }
+
+    /**
+     * Retrieves the cost of the mana pool spell.
+     *
+     * @return The cost of the mana pool spell.
+     */
+    public float getManaPoolCost() {
+        return manaPoolSpellCost;
+    }
+
+    /**
+     * Sets the current mana value as specified
+     * 
+     * @param i The amount to set the current mana
+     */
     public static void setMana(int i) {
         currMana = i;
     }
-
-    // public void draw(PApplet app, float x, float y, float width, float height) {
-    //     // Draw white background rectangle
-    //     app.fill(255);
-    //     app.rect(x, y, width, height);
-
-    //     // Calculate the width of the blue bar based on current mana
-    //     float barWidth = PApplet.map(mana, 0, maxMana, 0, width);
-
-    //     // Draw the blue bar
-    //     app.fill(0, 0, 255); // Blue color
-    //     app.rect(x, y, barWidth, height);
-
-    //     // Display mana amount text
-    //     app.fill(0); // Black color for text
-    //     app.text("Mana: " + mana, x + 10, y + height / 2 + 5);
-    // }
-    
-
-    // public void draw(PApplet app, float x, float y, float width, float height) {
-    // // Draw white background rectangle
-    // app.fill(255);
-    // app.rect(x, y, width, height);
-
-    // // Calculate the width of the blue bar based on current mana
-    // float barWidth = PApplet.map(mana, 0, maxMana, 0, width);
-
-    // // Draw the blue bar
-    // app.fill(0, 0, 255); // Blue color
-    // app.rect(x, y, barWidth, height);
-
-    // // Display mana amount text
-    // app.fill(0); // Black color for text
-    // app.text("Mana: " + mana, x + 10, y + height / 2 + 5);
 
 }

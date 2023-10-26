@@ -54,7 +54,7 @@ public class SoundEffects {
         }
 
     }
-
+    
     // public void playBackgroundMusic() {
     // if (backgroundMusic != null && !backgroundMusic.isRunning()) {
     // backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);

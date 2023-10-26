@@ -32,6 +32,20 @@ public class Waves {
     private ArrayList<Monster> monsterList;
     private boolean waveFinished = false;
 
+    /**
+     * Constructs a Waves object with the specified parameters.
+     *
+     * @param app                    The main PApplet.
+     * @param duration               The duration of the wave.
+     * @param preWavePause           The pause before the wave starts.
+     * @param monsterTypeList        The list of monster types for the wave.
+     * @param MonsterSpawnPointsList The list of monster spawn points.
+     * @param gremlinSprite          The sprite for the Gremlin monster.
+     * @param beetleSprite           The sprite for the Beetle monster.
+     * @param wormSprite             The sprite for the Worm monster.
+     * @param manaBar                The mana bar.
+     * @param monsterList            The list of monsters in the game.
+     */
     public Waves(PApplet app, int duration, int preWavePause, List<MonsterType> monsterTypeList,
             ArrayList<PVector> MonsterSpawnPointsList, PImage gremlinSprite, PImage beetleSprite, PImage wormSprite,
             ManaBar manaBar, ArrayList<Monster> monsterList) {
@@ -44,31 +58,32 @@ public class Waves {
         this.beetleSprite = beetleSprite;
         this.wormSprite = wormSprite;
         this.app = app;
-        this.manaBar = manaBar;
-        this.map = map;
         this.monsterList = monsterList;
         copyList.addAll(monsterList);
 
         for (MonsterType singleMonsterType : monsterTypeList) {
             numOfMonsters += singleMonsterType.getQuantity();
-            System.out.println("NUMBER OF MONSTERS" + numOfMonsters);
         }
     }
 
+    /**
+     * Gets a copy of the original monster list.
+     *
+     * @return A copy of the original monster list.
+     */
     public List<Monster> getCopyList() {
         return copyList;
     }
 
+    /**
+     * Starts a wave, spawning monsters based on configured parameters.
+     */
     public void startWave() {
-        // System.out.println(monsterTypeList.size());
-        
         int randomMonsterIndex;
         int randomIndex;
 
-        // for (MonsterType monsterType : monsterTypeList)
         if (monsterTypeList.isEmpty()) {
             waveFinished = true;
-            // System.out.println("MONSTER TYPELIST IS EMPTY");
         } else {
 
             if (monsterTypeList.size() != 1) {
@@ -78,10 +93,6 @@ public class Waves {
             }
 
             MonsterType monsterType = monsterTypeList.get(randomMonsterIndex);
-
-            // System.out.println(MonsterSpawnPointsList.size());
-            // System.out.println("MAMEER");
-
             randomIndex = random.nextInt(MonsterSpawnPointsList.size());
             PVector spawnPoint = MonsterSpawnPointsList.get(randomIndex);
 
@@ -109,35 +120,27 @@ public class Waves {
             int manaGainedOnKill = (int) monsterType.getManaGainedOnKill();
 
             int quantity = monsterType.getQuantity();
-            // System.out.println("QUANITTY TIS" + quantity);
 
             if (quantity != 0) {
-                // int numOfMonsters = 0;
-                int spawnTime =0;
+                int spawnTime = 0;
 
                 if (numOfMonsters > 0) {
                     if (numOfMonsters == 1) {
                         spawnTime = 0;
                     } else {
                         spawnTime = (int) (((float) duration / numOfMonsters) * 60);
-                        // if (App.getIs2X()) {
-                        //     spawnTime *= 0.5;
-                        // }
                     }
-                    
-                    // System.out.println(spawnTime);
+
                 } else {
                     return;
                 }
 
-                // can mess up if there is a bug in framecounting
                 if (frameCounter >= spawnTime) {
                     map = App.getMapGrid();
                     Monster newMonster = new Monster(app, monsterName, maxHP, speed, armour, manaGainedOnKill,
                             spawnPoint,
                             wizardSpawnPoint, map, sprite, manaBar, monsterList, maxHP);
 
-                    // System.out.println("NEW MONSTER CREATED");
                     monsterList.add(newMonster);
                     newMonster.determineMonsterPath();
                     monsterType.decreaseQuantity(1);
@@ -148,84 +151,50 @@ public class Waves {
             if (quantity == 0) {
                 monsterTypeList.remove(monsterType);
             }
-
-            // System.out.println(frameCounter);
-
-            // addded the monster
-
-            // need the monster list to constantly check if the monster has reached
-            // destination in app.java (LAST THING TO DO)
-            // if it has then i need to make it go back to its specific spawnpoint
-
-            // monster attribute - local variable
-
-            // app - app
-            // type - monsterName
-            // maxHP - maxHP
-            // speed - speed
-            // armour - armour
-            // manaGainedOnKill
-            // SpawnPoint - firstCoordinate
-            // wizardSpawnPoint - wizardSpawnPoint
-            // map - map
-            // sprite - sprite
-            // manabar - manaBar
-            // monsterList - monsterList
-
-            // quantity - quantity
-
-            // need to use duration of wave
-            // use prewavePause\
-            // chooses a monster wihti the monster list randomly based on randonm between
-            // index of max size - 1
-            // chceks if there anymore remaining
-            // and then uses determine path,
-            // and then decreases the quanitty of the monstertype.getquanityt - 1
-            // have a for loop checking the quantity at the end, and remove it from the
-            // luist if theres any left
-            // TO WIN WE CHECK THE (!isempty) of the monsterTypeList, and then in the else
-            // we do the you win
-
         }
     }
 
+    /**
+     * Gets the duration of the wave.
+     *
+     * @return The duration of the wave.
+     */
     public int getDuration() {
         return duration;
     }
 
+    /**
+     * Gets the pause duration before the wave starts.
+     *
+     * @return The pause duration before the wave starts.
+     */
     public int getPreWavePause() {
         return preWavePause;
     }
 
+    /**
+     * Gets the list of monster types for the wave.
+     *
+     * @return The list of monster types for the wave.
+     */
     public List<MonsterType> getMonsterList() {
         return monsterTypeList;
     }
+
+    /**
+     * Increases the frame counter for wave spawning.
+     */
 
     public static void increaseFrameCounter() {
         frameCounter++;
     }
 
+    /**
+     * Gets a copy of the original monster list.
+     *
+     * @return A copy of the original monster list.
+     */
     public List<Monster> getMonsterTypeList() {
         return copyList;
     }
-
-    // public void drawWaveCounter() {
-
-    // }
-
-
-
-    // public void drawWaveCounter(int ) {
-    //     if (currentWaveIndex < waveList.size() - 1) {
-    //         if (millis() > waveStartTime + waveList.get(currentWaveIndex).getDuration() * 1000) {
-    //             int remainingTime = nextWaveStartTime - millis();
-    //             if (remainingTime > 0) {
-    //                 String countdownText = "Wave " + (currentWaveIndex + 2) + " will start in: " + (remainingTime / 1000) + " seconds";
-    //                 app.fill(255); // Set text color to white
-    //                 app.text(countdownText, 20, 20); // Adjust position as needed
-    //             }
-    //         }
-    //     }
-    // }
-
 }
